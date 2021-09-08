@@ -1,22 +1,31 @@
-import { FontAwesome } from '@expo/vector-icons';
-import { openURL } from 'expo-linking';
-import * as React from 'react';
-import { StyleSheet, FlatList, StatusBar, Image, TouchableHighlight } from 'react-native';
-import HTMLView from 'react-native-htmlview';
-import { WebView } from 'react-native-webview';
+import { FontAwesome } from "@expo/vector-icons";
+import { openURL } from "expo-linking";
+import * as React from "react";
+import {
+  StyleSheet,
+  FlatList,
+  StatusBar,
+  Image,
+  TouchableHighlight,
+  Pressable,
+} from "react-native";
+import HTMLView from "react-native-htmlview";
+import { WebView } from "react-native-webview";
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import Colors from '../constants/Colors';
-import { usePosts, Post } from '../hooks/lotide';
-import { RootTabScreenProps } from '../types';
+import EditScreenInfo from "../components/EditScreenInfo";
+import { Text, View } from "../components/Themed";
+import Colors from "../constants/Colors";
+import { usePosts, Post } from "../hooks/lotide";
+import { RootTabScreenProps } from "../types";
 
-export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+export default function TabOneScreen({
+  navigation,
+}: RootTabScreenProps<"TabOne">) {
   const [refreshCount, setRefreshCount] = React.useState(1);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const posts = usePosts(refreshCount);
-  const renderItem = ({ item }: {item: Post}) => (
-    <Item post={item} />
+  const renderItem = ({ item }: { item: Post }) => (
+    <Item post={item} navigation={navigation} />
   );
   return (
     <View style={styles.container}>
@@ -28,7 +37,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
         onRefresh={() => {
           setIsRefreshing(true);
           setTimeout(() => {
-            setRefreshCount(c => c + 1);
+            setRefreshCount((c) => c + 1);
             setIsRefreshing(false);
           }, 1000);
         }}
@@ -43,7 +52,7 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
     marginVertical: 0,
     marginHorizontal: 0,
     borderBottomColor: "#5555",
@@ -52,7 +61,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     padding: 15,
-    color: "#eee"
+    color: "#eee",
   },
   contentText: {
     fontSize: 12,
@@ -67,7 +76,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: undefined,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   foot: {
     display: "flex",
@@ -85,17 +94,23 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 18,
-    color: "#bbb"
-  }
+    color: "#bbb",
+  },
 });
 
-function renderNode(node: any, index: any, siblings: any, parent: any, defaultRenderer: any) {
-  if (node.name == 'iframe' || node.name == 'img' || node.name == "hr") {
+function renderNode(
+  node: any,
+  index: any,
+  siblings: any,
+  parent: any,
+  defaultRenderer: any
+) {
+  if (node.name == "iframe" || node.name == "img" || node.name == "hr") {
     return null;
   }
 }
 
-const Item = ({post}: {post: Post}) => {
+const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
   const [imgAspect, setImgAspect] = React.useState(1);
   const isImage = isImageUrl(post.href);
   const seconds = Math.round((Date.now() - Date.parse(post.created)) / 1000);
@@ -103,22 +118,43 @@ const Item = ({post}: {post: Post}) => {
   const hours = Math.round(minutes / 60);
   const days = Math.round(hours / 24);
   const weeks = Math.round(days / 7);
-  const displayTime = (minutes < 60 && `${minutes}m`) || (hours < 24 && `${hours}h`) || (days < 7 && `${days}d`) || `${weeks}w`;
+  const displayTime =
+    (minutes < 60 && `${minutes}m`) ||
+    (hours < 24 && `${hours}h`) ||
+    (days < 7 && `${days}d`) ||
+    `${weeks}w`;
   return (
-    <TouchableHighlight onPressOut={() => console.log("Post")}>
+    <Pressable
+      onPress={() => navigation.navigate("Post", { post })}
+      onLongPress={() => console.log("long press")}
+    >
       <View style={styles.item}>
-      <Text style={styles.title}>{post.title}</Text>
-      {isImage
-        ? <Image
-            style={{...styles.image, aspectRatio: imgAspect}}
+        <Text style={styles.title}>{post.title}</Text>
+        {isImage ? (
+          <Image
+            style={{ ...styles.image, aspectRatio: imgAspect }}
             source={{
               uri: post.href,
             }}
-            onLoad={event => setImgAspect(Math.max(event.nativeEvent.source.width/event.nativeEvent.source.height, 0.25))}
+            onLoad={(event) =>
+              setImgAspect(
+                Math.max(
+                  event.nativeEvent.source.width /
+                    event.nativeEvent.source.height,
+                  0.25
+                )
+              )
+            }
           />
-        : <TouchableHighlight style={styles.link} onPress={() => openURL(post.href)}><Text>{post.href}</Text></TouchableHighlight>
-      }
-      {/* <View>
+        ) : (
+          <TouchableHighlight
+            style={styles.link}
+            onPress={() => openURL(post.href)}
+          >
+            <Text>{post.href}</Text>
+          </TouchableHighlight>
+        )}
+        {/* <View>
         <HTMLView
           value={"<p><a href=\"http://reddit.com/r/GoldandBlack/comments/pk3vtk/hemingway_on_inflation_and_war/\" rel=\"ugc noopener noreferrer\">link to original reddit post</a> by <a href=\"http://reddit.com/user/mechatomb\" rel=\"ugc noopener noreferrer\">/u/mechatomb</a></p><p>“The first panacea for a mismanaged nation is inflation of the currency; the second is war. Both bring a temporary prosperity; both bring a permanent ruin. But both are the refuge of political and economic opportunists.”<br>Ernest Hemingway, “Notes on the Next War: A Serious Topical Letter” , 1935</p>"}
           // value={post.content_html.replaceAll("<hr>", "").replaceAll("\n", "")}
@@ -126,53 +162,56 @@ const Item = ({post}: {post: Post}) => {
           stylesheet={{p: {color: '#fff', borderColor: '#f00', borderWidth: 1}}}
         />
       </View> */}
-      <View style={styles.foot}>
-        <View>
-          <Text>{post.community.name}</Text>
-          <Text style={styles.by}>by {post.author.username}</Text>
-        </View>
-        <View>
-          <Text style={styles.footText}>
-            <FontAwesome
-              name="history"
-              size={12}
-              style={{ marginRight: 15 }}
-            />
-            {" "}{displayTime}
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.footText}>
-            <FontAwesome
-              name="comment"
-              size={12}
-              style={{ marginRight: 15 }}
-            />
-            {" "}{post.replies_count_total}
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.footText}>
-            <FontAwesome
-              name="chevron-up"
-              size={20}
-              style={{ marginRight: 15 }}
-              
-            />
-            {"   "}<Text style={styles.score}>{post.score}</Text>{"   "}
-            <FontAwesome
-              name="chevron-down"
-              size={20}
-              style={{ marginRight: 15 }}
-            />
-          </Text>
+        <View style={styles.foot}>
+          <View>
+            <Text>{post.community.name}</Text>
+            <Text style={styles.by}>by {post.author.username}</Text>
+          </View>
+          <View>
+            <Text style={styles.footText}>
+              <FontAwesome
+                name="history"
+                size={12}
+                style={{ marginRight: 15 }}
+              />{" "}
+              {displayTime}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.footText}>
+              <FontAwesome
+                name="comment"
+                size={12}
+                style={{ marginRight: 15 }}
+              />{" "}
+              {post.replies_count_total}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.footText}>
+              <FontAwesome
+                name="chevron-up"
+                size={20}
+                style={{ marginRight: 15 }}
+              />
+              {"   "}
+              <Text style={styles.score}>{post.score}</Text>
+              {"   "}
+              <FontAwesome
+                name="chevron-down"
+                size={20}
+                style={{ marginRight: 15 }}
+              />
+            </Text>
+          </View>
         </View>
       </View>
-      </View>
-    </TouchableHighlight>
+    </Pressable>
   );
 };
 
 function isImageUrl(url: string): boolean {
-  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some(ext => url.endsWith(ext));
+  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some((ext) =>
+    url.endsWith(ext)
+  );
 }
