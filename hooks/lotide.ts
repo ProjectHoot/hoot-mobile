@@ -30,7 +30,7 @@ export interface Community {
     remote_url?: string;
 }
 
-export function usePosts(): Post[] {
+export function usePosts(refreshCount: number): Post[] {
     const [posts, setPosts] = useState([] as any[]);
     useEffect(() => {
         console.log("fetching");
@@ -48,6 +48,6 @@ export function usePosts(): Post[] {
                 // console.log(data);
                 setPosts(data);
             });
-    }, []);
+    }, [refreshCount]);
     return posts;
 }
