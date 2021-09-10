@@ -14,7 +14,7 @@ import HTMLView from "react-native-htmlview";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
-import { Comments, Comment, Post, useComments } from "../hooks/lotide";
+import { Replies, Reply, Post, useReplies } from "../hooks/lotide";
 import { RootStackParamList, RootStackScreenProps } from "../types";
 
 export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
@@ -22,7 +22,7 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
   if (!post) {
     return null;
   }
-  const comments = useComments(post.id);
+  const replies = useReplies(post.id);
   const [imgAspect, setImgAspect] = React.useState(1);
   const isImage = isImageUrl(post.href);
   const seconds = Math.round((Date.now() - Date.parse(post.created)) / 1000);
@@ -65,7 +65,6 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
         )}
         <View>
           <HTMLView
-            // value={"<p><a href=\"http://reddit.com/r/GoldandBlack/comments/pk3vtk/hemingway_on_inflation_and_war/\" rel=\"ugc noopener noreferrer\">link to original reddit post</a> by <a href=\"http://reddit.com/user/mechatomb\" rel=\"ugc noopener noreferrer\">/u/mechatomb</a></p><p>“The first panacea for a mismanaged nation is inflation of the currency; the second is war. Both bring a temporary prosperity; both bring a permanent ruin. But both are the refuge of political and economic opportunists.”<br>Ernest Hemingway, “Notes on the Next War: A Serious Topical Letter” , 1935</p>"}
             value={post.content_html
               .replaceAll("<hr>", "")
               .replaceAll("\n", "")}
@@ -139,12 +138,12 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
             color="#ccc"
           />
         </View>
-        <CommentsDisplay comments={comments} />
+        <RepliesDisplay replies={replies} />
       </View>
       <View>
         <Text style={{ textAlign: "center" }}>
           {"\n"}
-          {comments.items.length === 0 ? "No replies yet" : "No more replies"}
+          {replies.items.length === 0 ? "No replies yet" : "No more replies"}
           {"\n\n\n\n"}
         </Text>
       </View>
@@ -230,31 +229,25 @@ function isImageUrl(url: string): boolean {
   );
 }
 
-function CommentsDisplay({
-  comments,
+function RepliesDisplay({
+  replies,
   layer = 0,
 }: {
-  comments: Comments;
+  replies: Replies;
   layer?: number;
 }) {
   return (
     <View>
-      {comments.items.map((comment) => (
-        <CommentDisplay comment={comment} layer={layer} key={comment.id} />
+      {replies.items.map((reply) => (
+        <ReplyDisplay reply={reply} layer={layer} key={reply.id} />
       ))}
     </View>
   );
 }
 
-function CommentDisplay({
-  comment,
-  layer = 0,
-}: {
-  comment: Comment;
-  layer: number;
-}) {
+function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
   const [showChildren, setShowChildren] = React.useState(true);
-  const seconds = Math.round((Date.now() - Date.parse(comment.created)) / 1000);
+  const seconds = Math.round((Date.now() - Date.parse(reply.created)) / 1000);
   const minutes = Math.round(seconds / 60);
   const hours = Math.round(minutes / 60);
   const days = Math.round(hours / 24);
@@ -283,7 +276,7 @@ function CommentDisplay({
             }}
           >
             <Text style={{ color: "#fff", fontSize: 16, marginBottom: 5 }}>
-              {comment.author.username}
+              {reply.author.username}
               {"  "}
               <Text style={{ color: "#888", fontSize: 14 }}>
                 <FontAwesome
@@ -292,7 +285,7 @@ function CommentDisplay({
                   style={{ marginRight: 15 }}
                   color="#888a"
                 />{" "}
-                {comment.score}
+                {reply.score}
                 {"   "}
                 <FontAwesome
                   name="history"
@@ -305,7 +298,7 @@ function CommentDisplay({
             </Text>
             {showChildren && (
               <HTMLView
-                value={comment.content_html.replaceAll("\n", "")}
+                value={reply.content_html.replaceAll("\n", "")}
                 // value="<h1>hello</h1>"
                 stylesheet={{
                   p: { color: "#ddd", fontSize: 16 },
@@ -319,9 +312,9 @@ function CommentDisplay({
           </View>
         </Pressable>
       </View>
-      {comment.replies.items.length > 0 && showChildren && (
+      {reply.replies.items.length > 0 && showChildren && (
         <View style={{ paddingLeft: 15 }}>
-          <CommentsDisplay comments={comment.replies} layer={layer + 1} />
+          <RepliesDisplay replies={reply.replies} layer={layer + 1} />
         </View>
       )}
     </View>

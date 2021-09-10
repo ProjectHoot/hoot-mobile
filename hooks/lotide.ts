@@ -33,12 +33,12 @@ export interface Community {
   remote_url?: string;
 }
 
-export interface Comments {
-  items: Comment[];
+export interface Replies {
+  items: Reply[];
   next_page: string;
 }
 
-export interface Comment {
+export interface Reply {
   id: number;
   content_text: string;
   content_html: string;
@@ -51,7 +51,7 @@ export interface Comment {
   created: string;
   deleted: boolean;
   local: boolean;
-  replies: Comments;
+  replies: Replies;
   your_vote: {};
   score: number;
 }
@@ -74,17 +74,17 @@ export function usePosts(refreshCount: number): Post[] {
   return posts;
 }
 
-export function useComments(postId: number): Comments {
-  const [comments, setComments] = useState({
-    items: [] as Comment[],
-  } as Comments);
+export function useReplies(postId: number): Replies {
+  const [replies, setReplies] = useState({
+    items: [] as Reply[],
+  } as Replies);
   useEffect(() => {
     fetch(`https://hoot.goldandblack.xyz/api/unstable/posts/${postId}/replies`)
       .then((data) => data.json())
       .then((data) => {
         console.log(JSON.stringify(data, null, 2));
-        setComments(data);
+        setReplies(data);
       });
   }, []);
-  return comments;
+  return replies;
 }
