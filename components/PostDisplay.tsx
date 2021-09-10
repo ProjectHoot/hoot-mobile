@@ -1,6 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { openURL } from "expo-linking";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,7 +21,7 @@ export interface PostDisplayProps {
 
 export default function PostDisplay(props: PostDisplayProps) {
   const [imgAspect, setImgAspect] = useState(1);
-  const isImage = isImageUrl(props.post.href);
+  const isImage = useMemo(() => isImageUrl(props.post.href), [props.post.href]);
   return (
     <View>
       <Text style={styles.title}>{props.post.title}</Text>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
 });
 
 function isImageUrl(url: string): boolean {
-  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some((ext) =>
+  return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"].some((ext) =>
     url.endsWith(ext)
   );
 }
