@@ -13,7 +13,10 @@ import HTMLView from "react-native-htmlview";
 import { WebView } from "react-native-webview";
 
 import EditScreenInfo from "../components/EditScreenInfo";
+import ElapsedTime from "../components/ElapsedTime";
+import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
+import VoteCounter, { VoteState } from "../components/VoteCounter";
 import Colors from "../constants/Colors";
 import { usePosts, Post } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
@@ -129,82 +132,7 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
       onLongPress={() => console.log("long press")}
     >
       <View style={styles.item}>
-        <Text style={styles.title}>{post.title}</Text>
-        {isImage ? (
-          <Image
-            style={{ ...styles.image, aspectRatio: imgAspect }}
-            source={{
-              uri: post.href,
-            }}
-            onLoad={(event) =>
-              setImgAspect(
-                Math.max(
-                  event.nativeEvent.source.width /
-                    event.nativeEvent.source.height,
-                  0.25
-                )
-              )
-            }
-          />
-        ) : (
-          <TouchableHighlight
-            style={styles.link}
-            onPress={() => openURL(post.href)}
-          >
-            <Text>{post.href}</Text>
-          </TouchableHighlight>
-        )}
-        {/* <View>
-        <HTMLView
-          value={"<p><a href=\"http://reddit.com/r/GoldandBlack/comments/pk3vtk/hemingway_on_inflation_and_war/\" rel=\"ugc noopener noreferrer\">link to original reddit post</a> by <a href=\"http://reddit.com/user/mechatomb\" rel=\"ugc noopener noreferrer\">/u/mechatomb</a></p><p>“The first panacea for a mismanaged nation is inflation of the currency; the second is war. Both bring a temporary prosperity; both bring a permanent ruin. But both are the refuge of political and economic opportunists.”<br>Ernest Hemingway, “Notes on the Next War: A Serious Topical Letter” , 1935</p>"}
-          // value={post.content_html.replaceAll("<hr>", "").replaceAll("\n", "")}
-          renderNode={renderNode}
-          stylesheet={{p: {color: '#fff', borderColor: '#f00', borderWidth: 1}}}
-        />
-      </View> */}
-        <View style={styles.foot}>
-          <View>
-            <Text>{post.community.name}</Text>
-            <Text style={styles.by}>by {post.author.username}</Text>
-          </View>
-          <View>
-            <Text style={styles.footText}>
-              <FontAwesome
-                name="history"
-                size={12}
-                style={{ marginRight: 15 }}
-              />{" "}
-              {displayTime}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.footText}>
-              <FontAwesome
-                name="comment"
-                size={12}
-                style={{ marginRight: 15 }}
-              />{" "}
-              {post.replies_count_total}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.footText}>
-              <FontAwesome
-                name="chevron-up"
-                size={20}
-                style={{ marginRight: 15 }}
-              />
-              {"   "}
-              <Text style={styles.score}>{post.score}</Text>
-              {"   "}
-              <FontAwesome
-                name="chevron-down"
-                size={20}
-                style={{ marginRight: 15 }}
-              />
-            </Text>
-          </View>
-        </View>
+        <PostDisplay post={post} />
       </View>
     </Pressable>
   );
