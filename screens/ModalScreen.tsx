@@ -162,16 +162,6 @@ function RepliesDisplay({
 
 function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
   const [showChildren, setShowChildren] = React.useState(true);
-  const seconds = Math.round((Date.now() - Date.parse(reply.created)) / 1000);
-  const minutes = Math.round(seconds / 60);
-  const hours = Math.round(minutes / 60);
-  const days = Math.round(hours / 24);
-  const weeks = Math.round(days / 7);
-  const displayTime =
-    (minutes < 60 && `${minutes}m`) ||
-    (hours < 24 && `${hours}h`) ||
-    (days < 7 && `${days}d`) ||
-    `${weeks}w`;
   return (
     <View style={{ paddingLeft: 0 }}>
       <View
@@ -202,13 +192,7 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
                 />{" "}
                 {reply.score}
                 {"   "}
-                <FontAwesome
-                  name="history"
-                  size={14}
-                  style={{ marginRight: 15 }}
-                  color="#888a"
-                />{" "}
-                {displayTime}
+                <ElapsedTime time={reply.created} />
               </Text>
             </Text>
             {showChildren && (
