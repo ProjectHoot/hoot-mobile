@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import Icon from "@expo/vector-icons/Ionicons";
 import { openURL } from "expo-linking";
 import React, { useMemo, useState } from "react";
 import {
@@ -75,7 +75,7 @@ export default function PostDisplay(props: PostDisplayProps) {
         </View>
         <View>
           <Text style={styles.footText}>
-            <FontAwesome name="comment" size={12} style={{ marginRight: 15 }} />{" "}
+            <Icon name="chatbubble-outline" size={12} />{" "}
             {props.post.replies_count_total}
           </Text>
         </View>

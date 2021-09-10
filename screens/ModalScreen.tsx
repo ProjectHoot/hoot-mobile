@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import Icon from "@expo/vector-icons/Ionicons";
 import { openURL } from "expo-linking";
 import * as React from "react";
 import {
@@ -34,24 +34,9 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
       <View style={styles.item}>
         <PostDisplay post={post} showHtmlContent showCommunityHost />
         <View style={styles.actions}>
-          <FontAwesome
-            name="bookmark"
-            size={20}
-            style={{ marginRight: 15 }}
-            color="#ccc"
-          />
-          <FontAwesome
-            name="reply"
-            size={20}
-            style={{ marginRight: 15 }}
-            color="#ccc"
-          />
-          <FontAwesome
-            name="share-square"
-            size={20}
-            style={{ marginRight: 15 }}
-            color="#ccc"
-          />
+          <Icon name="bookmark-outline" color="#ccc" size={20} />
+          <Icon name="return-up-back-outline" color="#ccc" size={20} />
+          <Icon name="share-outline" color="#ccc" size={20} />
         </View>
         <RepliesDisplay replies={replies} />
       </View>
@@ -184,12 +169,7 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
               {reply.author.username}
               {"  "}
               <Text style={{ color: "#888", fontSize: 14 }}>
-                <FontAwesome
-                  name="arrow-up"
-                  size={14}
-                  style={{ marginRight: 15 }}
-                  color="#888a"
-                />{" "}
+                <Icon name="arrow-up" size={14} color="#888a" light />{" "}
                 {reply.score}
                 {"   "}
                 <ElapsedTime time={reply.created} />

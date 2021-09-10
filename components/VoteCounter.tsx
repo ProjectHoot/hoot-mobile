@@ -1,6 +1,6 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Post } from "../hooks/lotide";
 
 export interface VoteCounterProps {
@@ -17,19 +17,20 @@ export enum VoteState {
 
 export default function VoteCounter(props: VoteCounterProps) {
   return (
-    <Text style={styles.root}>
-      <FontAwesome name="chevron-up" size={20} style={{ marginRight: 15 }} />
-      {"   "}
-      <Text style={styles.score}>{props.post.score}</Text>
-      {"   "}
-      <FontAwesome name="chevron-down" size={20} style={{ marginRight: 15 }} />
-    </Text>
+    <View style={styles.root}>
+      <Icon name="arrow-up-outline" color="#ccc" size={25} />
+      <Text style={styles.score}>{`  ${props.post.score}  `}</Text>
+      <Icon name="arrow-down" color="#ccc" size={25} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     color: "#ccc",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
   score: {
     fontSize: 18,
