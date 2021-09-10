@@ -13,7 +13,10 @@ import {
 import HTMLView from "react-native-htmlview";
 
 import EditScreenInfo from "../components/EditScreenInfo";
+import ElapsedTime from "../components/ElapsedTime";
+import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
+import VoteCounter, { VoteState } from "../components/VoteCounter";
 import { Replies, Reply, Post, useReplies } from "../hooks/lotide";
 import { RootStackParamList, RootStackScreenProps } from "../types";
 
@@ -25,99 +28,11 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
   const replies = useReplies(post.id);
   const [imgAspect, setImgAspect] = React.useState(1);
   const isImage = isImageUrl(post.href);
-  const seconds = Math.round((Date.now() - Date.parse(post.created)) / 1000);
-  const minutes = Math.round(seconds / 60);
-  const hours = Math.round(minutes / 60);
-  const days = Math.round(hours / 24);
-  const weeks = Math.round(days / 7);
-  const displayTime =
-    (minutes < 60 && `${minutes}m`) ||
-    (hours < 24 && `${hours}h`) ||
-    (days < 7 && `${days}d`) ||
-    `${weeks}w`;
+
   return (
     <ScrollView>
       <View style={styles.item}>
-        <Text style={styles.title}>{post.title}</Text>
-        {isImage ? (
-          <Image
-            style={{ ...styles.image, aspectRatio: imgAspect }}
-            source={{
-              uri: post.href,
-            }}
-            onLoad={(event) =>
-              setImgAspect(
-                Math.max(
-                  event.nativeEvent.source.width /
-                    event.nativeEvent.source.height,
-                  0.25
-                )
-              )
-            }
-          />
-        ) : (
-          <TouchableHighlight
-            style={styles.link}
-            onPress={() => openURL(post.href)}
-          >
-            <Text>{post.href}</Text>
-          </TouchableHighlight>
-        )}
-        <View>
-          <HTMLView
-            value={post.content_html
-              .replaceAll("<hr>", "")
-              .replaceAll("\n", "")}
-            renderNode={renderNode}
-            stylesheet={{
-              p: { color: "#ddd" },
-            }}
-          />
-        </View>
-        <View style={styles.foot}>
-          <View>
-            <Text>{post.community.name}</Text>
-            <Text style={styles.by}>by {post.author.username}</Text>
-            <Text style={styles.by}>on {post.community.host}</Text>
-          </View>
-          <View>
-            <Text style={styles.footText}>
-              <FontAwesome
-                name="history"
-                size={12}
-                style={{ marginRight: 15 }}
-              />{" "}
-              {displayTime}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.footText}>
-              <FontAwesome
-                name="comment"
-                size={12}
-                style={{ marginRight: 15 }}
-              />{" "}
-              {post.replies_count_total}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.footText}>
-              <FontAwesome
-                name="chevron-up"
-                size={20}
-                style={{ marginRight: 15 }}
-              />
-              {"   "}
-              <Text style={styles.score}>{post.score}</Text>
-              {"   "}
-              <FontAwesome
-                name="chevron-down"
-                size={20}
-                style={{ marginRight: 15 }}
-              />
-            </Text>
-          </View>
-        </View>
+        <PostDisplay post={post} showHtmlContent showCommunityHost />
         <View style={styles.actions}>
           <FontAwesome
             name="bookmark"
