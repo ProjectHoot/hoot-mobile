@@ -12,14 +12,17 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
+import { useContext } from "react";
 import { ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
+import { attemptLogin } from "../hooks/lotide";
 import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import TabOneScreen from "../screens/TabOneScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
+import LoginContext from "../store/LoginContext";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -78,6 +81,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
+  const login = useContext(LoginContext);
 
   return (
     <BottomTab.Navigator
@@ -96,7 +100,12 @@ function BottomTabNavigator() {
           ),
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate("Web")}
+              onPress={() => {
+                attemptLogin().then((data) => {
+                  login.setLogin(data);
+                });
+                navigation.navigate("Web");
+              }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}

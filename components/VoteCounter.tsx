@@ -1,10 +1,11 @@
 import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { PlatformColor, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "./Themed";
 import { Post, applyVote, removeVote } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "expo-haptics";
+import LoginContext from "../store/LoginContext";
 
 export interface VoteCounterProps {
   post: Post;
@@ -15,12 +16,14 @@ export interface VoteCounterProps {
 export default function VoteCounter(props: VoteCounterProps) {
   const [isUpvoted, setIsUpvoted] = useState(false);
   const theme = useTheme();
+  const login = useContext(LoginContext);
+  if (login.login == undefined) return null;
 
   function toggleVote() {
     if (isUpvoted) {
       removeVote;
     } else {
-      applyVote(props.post.id)
+      applyVote(props.post.id, login.login!)
         .then((data) => data.text())
         .then((data) => console.log(data))
         .catch((e) => console.log(e));
