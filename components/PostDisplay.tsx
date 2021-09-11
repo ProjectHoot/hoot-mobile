@@ -1,17 +1,13 @@
 import Icon from "@expo/vector-icons/Ionicons";
 import { openURL } from "expo-linking";
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableHighlight,
-} from "react-native";
+import { StyleSheet, Image, TouchableHighlight } from "react-native";
 import HTMLView from "react-native-htmlview";
 import { Post } from "../hooks/lotide";
 import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
+import { Text, View } from "../components/Themed";
+import useTheme from "../hooks/useTheme";
 
 export interface PostDisplayProps {
   post: Post;
@@ -22,6 +18,7 @@ export interface PostDisplayProps {
 export default function PostDisplay(props: PostDisplayProps) {
   const [imgAspect, setImgAspect] = useState(1);
   const isImage = useMemo(() => isImageUrl(props.post.href), [props.post.href]);
+  const theme = useTheme();
   return (
     <View>
       <Text style={styles.title}>{props.post.title}</Text>
@@ -57,14 +54,14 @@ export default function PostDisplay(props: PostDisplayProps) {
               .replaceAll("\n", "")}
             renderNode={renderNode}
             stylesheet={{
-              p: { color: "#ddd" },
+              p: { color: theme.text },
             }}
           />
         </View>
       )}
       <View style={styles.foot}>
         <View>
-          <Text style={{ color: "#fff" }}>{props.post.community.name}</Text>
+          <Text>{props.post.community.name}</Text>
           <Text style={styles.by}>by {props.post.author.username}</Text>
           {props.showCommunityHost && (
             <Text style={styles.by}>on {props.post.community.host}</Text>
@@ -100,7 +97,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     padding: 15,
-    color: "#eee",
   },
   contentText: {
     fontSize: 12,
@@ -126,25 +122,19 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomColor: "#8884",
     borderBottomWidth: 2,
-    color: "#fff",
   },
-  footText: {
-    color: "#ccc",
-  },
+  footText: {},
   by: {
     fontSize: 11,
-    color: "#fff",
   },
   score: {
     fontSize: 18,
-    color: "#bbb",
   },
   actions: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    color: "#ccc",
     padding: 10,
   },
 });

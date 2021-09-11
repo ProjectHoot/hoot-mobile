@@ -17,7 +17,10 @@ import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
 import VoteCounter from "../components/VoteCounter";
+import Colors from "../constants/Colors";
 import { Replies, Reply, Post, useReplies } from "../hooks/lotide";
+import useColorScheme from "../hooks/useColorScheme";
+import useTheme from "../hooks/useTheme";
 import { RootStackParamList, RootStackScreenProps } from "../types";
 
 export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
@@ -26,17 +29,23 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
     return null;
   }
   const replies = useReplies(post.id);
+  const theme = useTheme();
   const [imgAspect, setImgAspect] = React.useState(1);
   const isImage = isImageUrl(post.href);
 
   return (
     <ScrollView>
-      <View style={styles.item}>
+      <View
+        style={{
+          ...styles.item,
+          backgroundColor: theme.background,
+        }}
+      >
         <PostDisplay post={post} showHtmlContent showCommunityHost />
         <View style={styles.actions}>
-          <Icon name="bookmark-outline" color="#ccc" size={20} />
-          <Icon name="return-up-back-outline" color="#ccc" size={20} />
-          <Icon name="share-outline" color="#ccc" size={20} />
+          <Icon name="bookmark-outline" size={20} color={theme.text} />
+          <Icon name="return-up-back-outline" size={20} color={theme.text} />
+          <Icon name="share-outline" size={20} color={theme.text} />
         </View>
         <RepliesDisplay replies={replies} />
       </View>
@@ -57,14 +66,12 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    backgroundColor: "#000000",
     marginVertical: 0,
     marginHorizontal: 0,
   },
   title: {
     fontSize: 20,
     padding: 15,
-    color: "#eee",
   },
   contentText: {
     fontSize: 12,
@@ -91,22 +98,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#8884",
     borderBottomWidth: 2,
   },
-  footText: {
-    color: "#ccc",
-  },
   by: {
     fontSize: 11,
-  },
-  score: {
-    fontSize: 18,
-    color: "#bbb",
   },
   actions: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    color: "#ccc",
     padding: 10,
   },
 });
