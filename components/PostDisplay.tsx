@@ -11,7 +11,7 @@ import {
 import HTMLView from "react-native-htmlview";
 import { Post } from "../hooks/lotide";
 import ElapsedTime from "./ElapsedTime";
-import VoteCounter, { VoteState } from "./VoteCounter";
+import VoteCounter from "./VoteCounter";
 
 export interface PostDisplayProps {
   post: Post;
@@ -82,7 +82,7 @@ export default function PostDisplay(props: PostDisplayProps) {
         <View>
           <VoteCounter
             post={props.post}
-            voteState={VoteState.NEUTRAL}
+            isUpvoted={false}
             onVote={(voteState) => console.log(voteState)}
           />
         </View>

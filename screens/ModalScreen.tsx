@@ -16,7 +16,7 @@ import EditScreenInfo from "../components/EditScreenInfo";
 import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
-import VoteCounter, { VoteState } from "../components/VoteCounter";
+import VoteCounter from "../components/VoteCounter";
 import { Replies, Reply, Post, useReplies } from "../hooks/lotide";
 import { RootStackParamList, RootStackScreenProps } from "../types";
 

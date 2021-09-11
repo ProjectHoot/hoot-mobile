@@ -88,3 +88,27 @@ export function useReplies(postId: number): Replies {
   }, []);
   return replies;
 }
+
+export async function applyVote(postId: number) {
+  return fetch(
+    `https://hoot.goldandblack.xyz/api/unstable/posts/${postId}/your_vote`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer ",
+      },
+    }
+  );
+}
+
+export async function removeVote(postId: number) {
+  return fetch(
+    `https://hoot.goldandblack.xyz/api/unstable/posts/${postId}/your_vote`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer ",
+      },
+    }
+  );
+}
