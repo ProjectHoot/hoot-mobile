@@ -16,6 +16,7 @@ import EditScreenInfo from "../components/EditScreenInfo";
 import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
+import * as Haptics from "expo-haptics";
 import Colors from "../constants/Colors";
 import { usePosts, Post } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
@@ -127,7 +128,7 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
   return (
     <Pressable
       onPress={() => navigation.navigate("Post", { post })}
-      onLongPress={() => console.log("long press")}
+      onLongPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
     >
       <View style={styles.item}>
         <PostDisplay post={post} />

@@ -4,6 +4,7 @@ import { PlatformColor, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "./Themed";
 import { Post, applyVote, removeVote } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
+import * as Haptics from "expo-haptics";
 
 export interface VoteCounterProps {
   post: Post;
@@ -34,7 +35,13 @@ export default function VoteCounter(props: VoteCounterProps) {
   }
 
   return (
-    <Pressable onPress={() => toggleVote()} hitSlop={7}>
+    <Pressable
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        toggleVote();
+      }}
+      hitSlop={7}
+    >
       <View style={styles.root}>
         <Icon
           name={isUpvoted ? "heart" : "heart-outline"}
