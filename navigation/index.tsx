@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from "@expo/vector-icons";
+import Icon from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -92,7 +92,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<"TabOne">) => ({
           title: "Hoot",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="list-alt" color={color} />
+            <TabBarIcon name="newspaper-outline" color={color} />
           ),
           headerRight: () => (
             <Pressable
@@ -101,8 +101,8 @@ function BottomTabNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <FontAwesome
-                name="fire"
+              <Icon
+                name="flame-outline"
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginRight: 15 }}
@@ -117,7 +117,7 @@ function BottomTabNavigator() {
         options={{
           title: "Inbox",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="envelope" color={color} />
+            <TabBarIcon name="mail-outline" color={color} />
           ),
         }}
       />
@@ -126,7 +126,9 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: "Search",
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="search-outline" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
@@ -134,7 +136,9 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: "User",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="person-circle-outline" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
@@ -142,7 +146,9 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: "Options",
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="cog-outline" color={color} />
+          ),
         }}
       />
     </BottomTab.Navigator>
@@ -153,8 +159,8 @@ function BottomTabNavigator() {
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof Icon>["name"];
   color: string;
 }) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  return <Icon size={30} style={{ marginBottom: -3 }} {...props} />;
 }
