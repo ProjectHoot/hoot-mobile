@@ -1,6 +1,7 @@
 import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
 import React, { useMemo } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
+import { Text } from "./Themed";
 import useElapsedTime from "../hooks/useElapsedTime";
 
 export interface ElapsedTimeProps {
@@ -11,13 +12,11 @@ export default function ElapsedTime(props: ElapsedTimeProps) {
   const elapsedTime = useElapsedTime(props.time);
   return (
     <Text style={styles.root}>
-      <Icon name="time-outline" color="#ccc" size={14} /> {elapsedTime}
+      <Icon name="time-outline" size={14} /> {elapsedTime}
     </Text>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    color: "#ccc",
-  },
+  root: {},
 });

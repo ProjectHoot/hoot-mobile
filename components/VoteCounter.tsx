@@ -1,7 +1,9 @@
 import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { PlatformColor, Pressable, StyleSheet } from "react-native";
+import { View, Text } from "./Themed";
 import { Post, applyVote, removeVote } from "../hooks/lotide";
+import useTheme from "../hooks/useTheme";
 
 export interface VoteCounterProps {
   post: Post;
@@ -11,6 +13,7 @@ export interface VoteCounterProps {
 
 export default function VoteCounter(props: VoteCounterProps) {
   const [isUpvoted, setIsUpvoted] = useState(false);
+  const theme = useTheme();
 
   function toggleVote() {
     if (isUpvoted) {
@@ -24,10 +27,10 @@ export default function VoteCounter(props: VoteCounterProps) {
     setIsUpvoted(!isUpvoted);
   }
 
-  let scoreColor = "#bbb";
+  let scoreColor = theme.text;
 
   if (isUpvoted) {
-    scoreColor = "#F23";
+    scoreColor = PlatformColor("systemRed");
   }
 
   return (
@@ -49,7 +52,6 @@ export default function VoteCounter(props: VoteCounterProps) {
 
 const styles = StyleSheet.create({
   root: {
-    color: "#ccc",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",

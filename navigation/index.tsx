@@ -83,7 +83,7 @@ function BottomTabNavigator() {
     <BottomTab.Navigator
       initialRouteName="TabOne"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarActiveTintColor: Colors[colorScheme].tint as unknown as string,
       }}
     >
       <BottomTab.Screen
@@ -104,7 +104,7 @@ function BottomTabNavigator() {
               <Icon
                 name="flame-outline"
                 size={25}
-                color={Colors[colorScheme].text}
+                color={Colors[colorScheme].tint}
                 style={{ marginRight: 15 }}
               />
             </Pressable>
