@@ -1,27 +1,49 @@
 import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Post } from "../hooks/lotide";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Post, applyVote, removeVote } from "../hooks/lotide";
 
 export interface VoteCounterProps {
   post: Post;
-  voteState: VoteState;
-  onVote: (voteState: VoteState) => void;
-}
-
-export enum VoteState {
-  UPVOTE,
-  NEUTRAL,
-  DOWNVOTE,
+  isUpvoted: boolean;
+  onVote: (isUpvote: boolean) => void;
 }
 
 export default function VoteCounter(props: VoteCounterProps) {
+  const [isUpvoted, setIsUpvoted] = useState(false);
+
+  function toggleVote() {
+    if (isUpvoted) {
+      removeVote;
+    } else {
+      applyVote(props.post.id)
+        .then((data) => data.text())
+        .then((data) => console.log(data))
+        .catch((e) => console.log(e));
+    }
+    setIsUpvoted(!isUpvoted);
+  }
+
+  let scoreColor = "#bbb";
+
+  if (isUpvoted) {
+    scoreColor = "#F23";
+  }
+
   return (
-    <View style={styles.root}>
-      <Icon name="arrow-up-outline" color="#ccc" size={25} />
-      <Text style={styles.score}>{`  ${props.post.score}  `}</Text>
-      <Icon name="arrow-down" color="#ccc" size={25} />
-    </View>
+    <Pressable onPress={() => toggleVote()} hitSlop={7}>
+      <View style={styles.root}>
+        <Icon
+          name={isUpvoted ? "heart" : "heart-outline"}
+          color={scoreColor}
+          size={25}
+        />
+
+        <Text style={{ ...styles.score, color: scoreColor }}>{`  ${
+          props.post.score + (isUpvoted ? 1 : 0)
+        }  `}</Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -34,6 +56,5 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 18,
-    color: "#bbb",
   },
 });

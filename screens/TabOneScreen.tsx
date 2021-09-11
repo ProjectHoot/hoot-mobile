@@ -16,7 +16,6 @@ import EditScreenInfo from "../components/EditScreenInfo";
 import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
-import VoteCounter, { VoteState } from "../components/VoteCounter";
 import Colors from "../constants/Colors";
 import { usePosts, Post } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
