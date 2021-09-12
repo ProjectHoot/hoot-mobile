@@ -1,5 +1,5 @@
-import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
-import React, { useMemo } from "react";
+import { Ionicons as Icon } from "@expo/vector-icons";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { Text } from "./Themed";
 import useElapsedTime from "../hooks/useElapsedTime";

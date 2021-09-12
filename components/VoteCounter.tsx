@@ -1,4 +1,4 @@
-import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
+import { Ionicons as Icon } from "@expo/vector-icons";
 import React, { useContext, useState } from "react";
 import { Alert, PlatformColor, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "./Themed";
