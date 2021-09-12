@@ -1,8 +1,14 @@
 import Icon from "@expo/vector-icons/Ionicons";
 import * as React from "react";
-import { StyleSheet, StatusBar, ScrollView, Pressable } from "react-native";
+import {
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  Pressable,
+  Share,
+} from "react-native";
 import HTMLView from "react-native-htmlview";
-
+import * as Haptics from "expo-haptics";
 import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
@@ -28,9 +34,21 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
       >
         <PostDisplay post={post} showHtmlContent showCommunityHost />
         <View style={styles.actions}>
-          <Icon name="bookmark-outline" size={20} color={theme.text} />
-          <Icon name="return-up-back-outline" size={20} color={theme.text} />
-          <Icon name="share-outline" size={20} color={theme.text} />
+          <Icon name="bookmark-outline" size={25} color={theme.text} />
+          <Icon name="return-up-back-outline" size={25} color={theme.text} />
+          <Pressable
+            hitSlop={5}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              Share.share({
+                message: post.title,
+                url: `https://dev.goldandblack.xyz/p/posts/${post.id}`,
+                title: "Hoot",
+              });
+            }}
+          >
+            <Icon name="share-outline" size={25} color={theme.text} />
+          </Pressable>
         </View>
         <RepliesDisplay replies={replies} />
       </View>
