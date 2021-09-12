@@ -5,23 +5,28 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
-import LoginContext, { defaultStore, Login } from "./store/LoginContext";
+import LotideContext, { defaultLotideContext } from "./store/LotideContext";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [login, setLogin] = useState<Login | undefined>(defaultStore);
+  const [ctx, setContext] = useState<LotideContext>(defaultLotideContext);
 
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
-      <LoginContext.Provider value={{ login, setLogin: (login: Login) => setLogin(login) }}>
+      <LotideContext.Provider
+        value={{
+          ctx,
+          setContext: (ctx: any) => setContext(ctx),
+        }}
+      >
         <SafeAreaProvider>
           <Navigation colorScheme={colorScheme} />
           <StatusBar />
         </SafeAreaProvider>
-      </LoginContext.Provider>
+      </LotideContext.Provider>
     );
   }
 }

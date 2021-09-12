@@ -13,7 +13,7 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { useContext } from "react";
-import { ColorSchemeName, Pressable } from "react-native";
+import { Alert, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
 import { attemptLogin } from "../hooks/lotide";
@@ -22,13 +22,14 @@ import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import TabOneScreen from "../screens/TabOneScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
-import LoginContext from "../store/LoginContext";
 import {
   RootStackParamList,
   RootTabParamList,
   RootTabScreenProps,
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
+import * as LotideService from "../services/LotideService";
+import LotideContext from "../store/LotideContext";
 
 export default function Navigation({
   colorScheme,
@@ -81,7 +82,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
-  const login = useContext(LoginContext);
+  const lotideContext = useContext(LotideContext);
 
   return (
     <BottomTab.Navigator
@@ -101,9 +102,25 @@ function BottomTabNavigator() {
           headerRight: () => (
             <Pressable
               onPress={() => {
-                attemptLogin().then((data) => {
-                  login.setLogin(data);
-                });
+                Alert.prompt(
+                  "Login",
+                  "Login to Hoot",
+                  (value: any) =>
+                    LotideService.login(
+                      { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
+                      value.login,
+                      value.password,
+                    )
+                      .then(data => {
+                        console.log("index.tsx", JSON.stringify(data, null, 2));
+                        lotideContext.setContext({
+                          ...lotideContext.ctx,
+                          login: data,
+                        });
+                      })
+                      .catch(console.error),
+                  "login-password",
+                );
                 navigation.navigate("Web");
               }}
               style={({ pressed }) => ({
