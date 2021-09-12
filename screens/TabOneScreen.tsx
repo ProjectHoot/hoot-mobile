@@ -18,15 +18,13 @@ import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
 import * as Haptics from "expo-haptics";
 import Colors from "../constants/Colors";
-import { usePosts, Post } from "../hooks/lotide";
+import { useFeedPosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 
 export default function TabOneScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
-  const [refreshCount, setRefreshCount] = React.useState(1);
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const posts = usePosts(refreshCount);
+  const [posts, isLoadingPosts, refreshPosts] = useFeedPosts();
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
   );
@@ -36,14 +34,8 @@ export default function TabOneScreen({
         data={posts}
         renderItem={renderItem}
         keyExtractor={(post, index) => `${post.id}-${index}`}
-        refreshing={posts.length === 0 || isRefreshing}
-        onRefresh={() => {
-          setIsRefreshing(true);
-          setTimeout(() => {
-            setRefreshCount((c) => c + 1);
-            setIsRefreshing(false);
-          }, 1000);
-        }}
+        refreshing={isLoadingPosts}
+        onRefresh={refreshPosts}
       />
     </View>
   );
@@ -105,7 +97,7 @@ function renderNode(
   index: any,
   siblings: any,
   parent: any,
-  defaultRenderer: any
+  defaultRenderer: any,
 ) {
   if (node.name == "iframe" || node.name == "img" || node.name == "hr") {
     return null;
@@ -138,7 +130,7 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
 };
 
 function isImageUrl(url: string): boolean {
-  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some((ext) =>
-    url.endsWith(ext)
+  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some(ext =>
+    url.endsWith(ext),
   );
 }

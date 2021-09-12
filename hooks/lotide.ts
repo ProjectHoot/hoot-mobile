@@ -1,77 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import LotideContext from "../store/LotideContext";
+import * as LotideService from "../services/LotideService";
+import { useRefreshableData } from "./useRefreshableData";
 
-export interface Post {
-  author: Author;
-  community: Community;
-  content_html: string;
-  content_text?: string;
-  created: string;
-  href: string;
-  id: number;
-  replies_count_total: number;
-  score: number;
-  sticky: boolean;
-  title: string;
-}
-
-export interface Author {
-  host: string;
-  id: number;
-  local: boolean;
-  remote_url?: string;
-  username: string;
-  avatar?: {
-    url: string;
-  };
-}
-
-export interface Community {
-  host: string;
-  id: number;
-  local: boolean;
-  name: string;
-  remote_url?: string;
-}
-
-export interface Replies {
-  items: Reply[];
-  next_page: string;
-}
-
-export interface Reply {
-  id: number;
-  content_text: string;
-  content_html: string;
-  attachments: [
-    {
-      url: string;
-    }
-  ];
-  author: Author;
-  created: string;
-  deleted: boolean;
-  local: boolean;
-  replies: Replies;
-  your_vote: {};
-  score: number;
-}
-
-export function usePosts(refreshCount: number): Post[] {
+export function useFeedPosts(): Refreshable<Post[]> {
   const [posts, setPosts] = useState([] as any[]);
-  useEffect(() => {
-    fetch("https://hoot.goldandblack.xyz/api/unstable/posts", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer ",
-      },
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        // console.log(data);
-        setPosts(data);
-      });
-  }, [refreshCount]);
-  return posts;
+  const ctx = useContext(LotideContext).ctx;
+
+  const [isLoading, refresh] = useRefreshableData(
+    stopLoading => {
+      LotideService.getFeedPosts(ctx)
+        .then(setPosts)
+        .then(() => stopLoading());
+    },
+    [ctx],
+  );
+
+  return [posts, isLoading, refresh];
 }
 
 export function useReplies(postId: number): Replies {
@@ -80,24 +25,24 @@ export function useReplies(postId: number): Replies {
   } as Replies);
   useEffect(() => {
     fetch(`https://hoot.goldandblack.xyz/api/unstable/posts/${postId}/replies`)
-      .then((data) => data.json())
-      .then((data) => {
-        console.log(JSON.stringify(data, null, 2));
+      .then(data => data.json())
+      .then(data => {
+        console.log("use replies", JSON.stringify(data, null, 2));
         setReplies(data);
       });
   }, []);
   return replies;
 }
 
-export async function applyVote(postId: number) {
+export async function applyVote(postId: number, login: Login) {
   return fetch(
     `https://hoot.goldandblack.xyz/api/unstable/posts/${postId}/your_vote`,
     {
       method: "PUT",
       headers: {
-        Authorization: "Bearer ",
+        Authorization: `Bearer ${login.token}`,
       },
-    }
+    },
   );
 }
 
@@ -109,6 +54,34 @@ export async function removeVote(postId: number) {
       headers: {
         Authorization: "Bearer ",
       },
-    }
+    },
+  );
+}
+
+export async function attemptLogin(username: string, password: string) {
+  return fetch(`https://hoot.goldandblack.xyz/api/unstable/logins`, {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  })
+    .then(data => data.json())
+    .then(data => {
+      console.log("attempt login", JSON.stringify(data, null, 2));
+      return data;
+    })
+    .catch(e => console.error(e));
+}
+
+export async function followCommunity(communityId: number, login: Login) {
+  return fetch(
+    `https://hoot.goldandblack.xyz/api/unstable/communities/${communityId}/follow`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        try_wait_for_accept: true,
+      }),
+      headers: {
+        Authorization: `Bearer ${login.token}`,
+      },
+    },
   );
 }

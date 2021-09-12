@@ -1,10 +1,11 @@
 import { FontAwesome, Ionicons as Icon } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { PlatformColor, Pressable, StyleSheet } from "react-native";
+import React, { useContext, useState } from "react";
+import { Alert, PlatformColor, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "./Themed";
-import { Post, applyVote, removeVote } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "expo-haptics";
+import LotideContext from "../store/LotideContext";
+import * as LotideService from "../services/LotideService";
 
 export interface VoteCounterProps {
   post: Post;
@@ -13,19 +14,30 @@ export interface VoteCounterProps {
 }
 
 export default function VoteCounter(props: VoteCounterProps) {
-  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [isUpvoted, setIsUpvoted] = useState(props.post.your_vote == {});
   const theme = useTheme();
+  const ctx = useContext(LotideContext).ctx;
 
   function toggleVote() {
-    if (isUpvoted) {
-      removeVote;
-    } else {
-      applyVote(props.post.id)
-        .then((data) => data.text())
-        .then((data) => console.log(data))
-        .catch((e) => console.log(e));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    if (ctx.login === undefined) {
+      Alert.alert(
+        "Login to like",
+        "Leave a like when you login to a community",
+      );
+      return;
     }
-    setIsUpvoted(!isUpvoted);
+
+    if (isUpvoted) {
+      LotideService.removeVote(ctx, props.post.id).then(() =>
+        setIsUpvoted(false),
+      );
+    } else {
+      LotideService.applyVote(ctx, props.post.id).then(() =>
+        setIsUpvoted(true),
+      );
+    }
   }
 
   let scoreColor = theme.text;
@@ -35,13 +47,7 @@ export default function VoteCounter(props: VoteCounterProps) {
   }
 
   return (
-    <Pressable
-      onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        toggleVote();
-      }}
-      hitSlop={7}
-    >
+    <Pressable onPress={() => toggleVote()} hitSlop={7}>
       <View style={styles.root}>
         <Icon
           name={isUpvoted ? "heart" : "heart-outline"}

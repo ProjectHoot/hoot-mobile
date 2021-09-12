@@ -12,9 +12,11 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { ColorSchemeName, Pressable } from "react-native";
+import { useContext } from "react";
+import { Alert, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
+import { attemptLogin } from "../hooks/lotide";
 import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
@@ -26,6 +28,8 @@ import {
   RootTabScreenProps,
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
+import * as LotideService from "../services/LotideService";
+import LotideContext from "../store/LotideContext";
 
 export default function Navigation({
   colorScheme,
@@ -78,6 +82,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
+  const lotideContext = useContext(LotideContext);
 
   return (
     <BottomTab.Navigator
@@ -96,7 +101,28 @@ function BottomTabNavigator() {
           ),
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate("Web")}
+              onPress={() => {
+                Alert.prompt(
+                  "Login",
+                  "Login to Hoot",
+                  (value: any) =>
+                    LotideService.login(
+                      { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
+                      value.login,
+                      value.password,
+                    )
+                      .then(data => {
+                        console.log("index.tsx", JSON.stringify(data, null, 2));
+                        lotideContext.setContext({
+                          ...lotideContext.ctx,
+                          login: data,
+                        });
+                      })
+                      .catch(console.error),
+                  "login-password",
+                );
+                navigation.navigate("Web");
+              }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}

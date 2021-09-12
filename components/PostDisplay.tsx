@@ -3,7 +3,6 @@ import { openURL } from "expo-linking";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, Image, TouchableHighlight } from "react-native";
 import HTMLView from "react-native-htmlview";
-import { Post } from "../hooks/lotide";
 import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
 import { Text, View } from "../components/Themed";
@@ -28,13 +27,13 @@ export default function PostDisplay(props: PostDisplayProps) {
           source={{
             uri: props.post.href,
           }}
-          onLoad={(event) =>
+          onLoad={event =>
             setImgAspect(
               Math.max(
                 event.nativeEvent.source.width /
                   event.nativeEvent.source.height,
-                0.25
-              )
+                0.25,
+              ),
             )
           }
         />
@@ -80,7 +79,7 @@ export default function PostDisplay(props: PostDisplayProps) {
           <VoteCounter
             post={props.post}
             isUpvoted={false}
-            onVote={(voteState) => console.log(voteState)}
+            onVote={voteState => console.log(voteState)}
           />
         </View>
       </View>
@@ -140,8 +139,8 @@ const styles = StyleSheet.create({
 });
 
 function isImageUrl(url: string): boolean {
-  return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"].some((ext) =>
-    url.endsWith(ext)
+  return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"].some(ext =>
+    url.endsWith(ext),
   );
 }
 
@@ -150,7 +149,7 @@ function renderNode(
   index: any,
   siblings: any,
   parent: any,
-  defaultRenderer: any
+  defaultRenderer: any,
 ) {
   if (
     node.name == "iframe" ||
