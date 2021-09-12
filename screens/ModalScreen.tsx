@@ -1,27 +1,14 @@
 import Icon from "@expo/vector-icons/Ionicons";
-import { openURL } from "expo-linking";
 import * as React from "react";
-import {
-  Platform,
-  StyleSheet,
-  StatusBar,
-  Image,
-  TouchableHighlight,
-  ScrollView,
-  Pressable,
-} from "react-native";
+import { StyleSheet, StatusBar, ScrollView, Pressable } from "react-native";
 import HTMLView from "react-native-htmlview";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
 import { Text, View } from "../components/Themed";
-import VoteCounter from "../components/VoteCounter";
-import Colors from "../constants/Colors";
-import { Replies, Reply, Post, useReplies } from "../hooks/lotide";
-import useColorScheme from "../hooks/useColorScheme";
+import { useReplies } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
-import { RootStackParamList, RootStackScreenProps } from "../types";
+import { RootStackScreenProps } from "../types";
 
 export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
   const post = (route.params as any | undefined)?.post as Post | undefined;
@@ -30,8 +17,6 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
   }
   const replies = useReplies(post.id);
   const theme = useTheme();
-  const [imgAspect, setImgAspect] = React.useState(1);
-  const isImage = isImageUrl(post.href);
 
   return (
     <ScrollView>
@@ -110,24 +95,6 @@ const styles = StyleSheet.create({
   },
 });
 
-function renderNode(
-  node: any,
-  index: any,
-  siblings: any,
-  parent: any,
-  defaultRenderer: any
-) {
-  if (node.name == "iframe" || node.name == "img" || node.name == "hr") {
-    return null;
-  }
-}
-
-function isImageUrl(url: string): boolean {
-  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some((ext) =>
-    url.endsWith(ext)
-  );
-}
-
 function RepliesDisplay({
   replies,
   layer = 0,
@@ -137,7 +104,7 @@ function RepliesDisplay({
 }) {
   return (
     <View>
-      {replies.items.map((reply) => (
+      {replies.items.map(reply => (
         <ReplyDisplay reply={reply} layer={layer} key={reply.id} />
       ))}
     </View>
@@ -155,7 +122,7 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
           borderTopColor: "#8884",
         }}
       >
-        <Pressable onPress={() => setShowChildren((s) => !s)}>
+        <Pressable onPress={() => setShowChildren(s => !s)}>
           <View
             style={{
               borderLeftWidth: 2,

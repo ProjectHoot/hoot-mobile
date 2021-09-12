@@ -16,7 +16,6 @@ import { useContext } from "react";
 import { Alert, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
-import { attemptLogin } from "../hooks/lotide";
 import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";

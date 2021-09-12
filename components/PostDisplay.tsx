@@ -158,5 +158,7 @@ function renderNode(
     node.name == "script"
   ) {
     return null;
+  } else {
+    return undefined;
   }
 }

@@ -1,23 +1,9 @@
-import { FontAwesome } from "@expo/vector-icons";
-import { openURL } from "expo-linking";
 import * as React from "react";
-import {
-  StyleSheet,
-  FlatList,
-  StatusBar,
-  Image,
-  TouchableHighlight,
-  Pressable,
-} from "react-native";
-import HTMLView from "react-native-htmlview";
-import { WebView } from "react-native-webview";
+import { StyleSheet, FlatList, StatusBar, Pressable } from "react-native";
 
-import EditScreenInfo from "../components/EditScreenInfo";
-import ElapsedTime from "../components/ElapsedTime";
 import PostDisplay from "../components/PostDisplay";
-import { Text, View } from "../components/Themed";
+import { View } from "../components/Themed";
 import * as Haptics from "expo-haptics";
-import Colors from "../constants/Colors";
 import { useFeedPosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 
@@ -92,31 +78,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function renderNode(
-  node: any,
-  index: any,
-  siblings: any,
-  parent: any,
-  defaultRenderer: any,
-) {
-  if (node.name == "iframe" || node.name == "img" || node.name == "hr") {
-    return null;
-  }
-}
-
 const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
-  const [imgAspect, setImgAspect] = React.useState(1);
-  const isImage = isImageUrl(post.href);
-  const seconds = Math.round((Date.now() - Date.parse(post.created)) / 1000);
-  const minutes = Math.round(seconds / 60);
-  const hours = Math.round(minutes / 60);
-  const days = Math.round(hours / 24);
-  const weeks = Math.round(days / 7);
-  const displayTime =
-    (minutes < 60 && `${minutes}m`) ||
-    (hours < 24 && `${hours}h`) ||
-    (days < 7 && `${days}d`) ||
-    `${weeks}w`;
   return (
     <Pressable
       onPress={() => navigation.navigate("Post", { post })}
@@ -128,9 +90,3 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
     </Pressable>
   );
 };
-
-function isImageUrl(url: string): boolean {
-  return [".jpg", ".jpeg", ".png", ".bmp", ".gif"].some(ext =>
-    url.endsWith(ext),
-  );
-}
