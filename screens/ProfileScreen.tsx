@@ -6,7 +6,9 @@ import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
 
-export default function Profile({ navigation }: RootTabScreenProps<"Profile">) {
+export default function ProfileScreen({
+  navigation,
+}: RootTabScreenProps<"ProfileScreen">) {
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const lotideContext = useContext(LotideContext);
   const ctx = lotideContext.ctx;

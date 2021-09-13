@@ -32,6 +32,13 @@ export async function getGlobablPosts(ctx: LotideContext): Promise<Post[]> {
     .catch(() => []);
 }
 
+export async function submitPost(
+  ctx: LotideContext,
+  post: NewPost,
+): Promise<{ id: PostId }> {
+  return lotideRequest(ctx, "POST", "posts", post).then(data => data.json());
+}
+
 export async function getPostReplies(
   ctx: LotideContext,
   postId: number,
@@ -83,10 +90,18 @@ export async function lotideRequest(
     method,
     headers: buildHeaders(ctx),
     body: body !== undefined ? JSON.stringify(body) : undefined,
-  }).catch(e => {
-    console.error("Lotide Service Error", path, e);
-    throw e;
-  });
+  })
+    .then(async res => {
+      if (res.ok) {
+        return res;
+      } else {
+        throw await res.text();
+      }
+    })
+    .catch(e => {
+      console.error(`Lotide Service Error: path\n${e}`);
+      throw e;
+    });
 }
 
 export function buildHeaders(ctx: LotideContext): HeadersInit {

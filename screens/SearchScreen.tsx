@@ -7,20 +7,9 @@ import LotideContext from "../store/LotideContext";
 import * as Haptics from "expo-haptics";
 import { RootTabScreenProps } from "../types";
 
-/*
-{
-  "id": 13,
-  "name": "Capitalism",
-  "local": true,
-  "host": "hoot.goldandblack.xyz",
-  "remote_url": null,
-  "description": "",
-  "description_html": null,
-  "description_text": ""
-}
-*/
-
-export default function Search({ navigation }: RootTabScreenProps<"Search">) {
+export default function SearchScreen({
+  navigation,
+}: RootTabScreenProps<"SearchScreen">) {
   const [text, onChangeText] = React.useState("");
   const [communities, setCommunities] = useState<Community[]>([]);
   const ctx = useContext(LotideContext).ctx;

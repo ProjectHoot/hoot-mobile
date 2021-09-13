@@ -18,7 +18,6 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
-import Feed from "../screens/Feed";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import {
   RootStackParamList,
@@ -26,8 +25,11 @@ import {
   RootTabScreenProps,
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
-import Search from "../screens/Search";
-import Profile from "../screens/Profile";
+
+import FeedScreen from "../screens/FeedScreen";
+import SearchScreen from "../screens/SearchScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import NewPostScreen from "../screens/NewPostScreen";
 
 export default function Navigation({
   colorScheme,
@@ -83,16 +85,16 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Feed"
+      initialRouteName="FeedScreen"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint as unknown as string,
         tabBarShowLabel: false,
       }}
     >
       <BottomTab.Screen
-        name="Feed"
-        component={Feed}
-        options={({ navigation }: RootTabScreenProps<"Feed">) => ({
+        name="FeedScreen"
+        component={FeedScreen}
+        options={({ navigation }: RootTabScreenProps<"FeedScreen">) => ({
           title: "Hoot",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="newspaper-outline" color={color} />
@@ -126,8 +128,8 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="Search"
-        component={Search}
+        name="SearchScreen"
+        component={SearchScreen}
         options={{
           title: "Search",
           tabBarIcon: ({ color }) => (
@@ -136,8 +138,8 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="NewPost"
-        component={TabTwoScreen}
+        name="NewPostScreen"
+        component={NewPostScreen}
         options={{
           title: "New Post",
           tabBarIcon: ({ color }) => (
@@ -146,7 +148,7 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Notifications"
+        name="NotificationsScreen"
         component={TabTwoScreen}
         options={{
           title: "Notifications",
@@ -156,8 +158,8 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Profile"
-        component={Profile}
+        name="ProfileScreen"
+        component={ProfileScreen}
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (

@@ -22,34 +22,40 @@ export default function PostDisplay(props: PostDisplayProps) {
   return (
     <View>
       <Text style={styles.title}>{props.post.title}</Text>
-      {isImage ? (
-        <Image
-          style={{ ...styles.image, aspectRatio: imgAspect }}
-          source={{
-            uri: props.post.href,
-          }}
-          onLoad={event =>
-            setImgAspect(
-              Math.max(
-                event.nativeEvent.source.width /
-                  event.nativeEvent.source.height,
-                0.25,
-              ),
-            )
-          }
-        />
-      ) : (
-        <Pressable
-          style={[styles.link, { backgroundColor: theme.secondaryBackground }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            openURL(props.post.href);
-          }}
-        >
-          <Text>{props.post.href}</Text>
-        </Pressable>
-      )}
-      {props.showHtmlContent && (
+      {props.post.href &&
+        (isImage ? (
+          <Image
+            style={{ ...styles.image, aspectRatio: imgAspect }}
+            source={{
+              uri: props.post.href,
+            }}
+            onLoad={event =>
+              setImgAspect(
+                Math.max(
+                  event.nativeEvent.source.width /
+                    event.nativeEvent.source.height,
+                  0.25,
+                ),
+              )
+            }
+          />
+        ) : (
+          <Pressable
+            style={[
+              styles.link,
+              { backgroundColor: theme.secondaryBackground },
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              if (props.post.href) {
+                openURL(props.post.href);
+              }
+            }}
+          >
+            <Text>{props.post.href}</Text>
+          </Pressable>
+        ))}
+      {props.showHtmlContent && !!props.post.content_html && (
         <View>
           <HTMLView
             value={props.post.content_html
@@ -138,7 +144,8 @@ const styles = StyleSheet.create({
   },
 });
 
-function isImageUrl(url: string): boolean {
+function isImageUrl(url?: string): boolean {
+  if (!url) return false;
   return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"].some(ext =>
     url.endsWith(ext),
   );
