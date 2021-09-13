@@ -5,7 +5,19 @@ const tintColorDark = PlatformColor("systemOrange");
 
 const both = {
   text: PlatformColor("label"),
+  secondaryText: PlatformColor("secondaryLabel"),
+  placeholderText: PlatformColor("placeholderText"),
   background: PlatformColor("systemBackground"),
+  secondaryBackground: PlatformColor("secondarySystemBackground"),
+
+  red: PlatformColor("systemRed"),
+  orange: PlatformColor("systemOrange"),
+  yellow: PlatformColor("systemYellow"),
+  green: PlatformColor("systemGreen"),
+  teal: PlatformColor("systemTeal"),
+  blue: PlatformColor("systemBlue"),
+  indigo: PlatformColor("systemIndigo"),
+  purple: PlatformColor("systemPurple"),
 };
 
 export default {

@@ -24,21 +24,19 @@ export type RootStackParamList = {
   Post: undefined;
 };
 
-export type RootStackScreenProps<
-  Screen extends keyof RootStackParamList
-> = NativeStackScreenProps<RootStackParamList, Screen>;
+export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  TabOne: undefined;
-  Inbox: undefined;
-  TabTwo: undefined;
-  TabThree: undefined;
-  TabFour: undefined;
+  Feed: undefined;
+  Search: undefined;
+  NewPost: undefined;
+  Notifications: undefined;
+  Profile: undefined;
 };
 
-export type RootTabScreenProps<
-  Screen extends keyof RootTabParamList
-> = CompositeScreenProps<
-  BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
->;
+export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
+  CompositeScreenProps<
+    BottomTabScreenProps<RootTabParamList, Screen>,
+    NativeStackScreenProps<RootStackParamList>
+  >;
