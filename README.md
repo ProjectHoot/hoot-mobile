@@ -14,21 +14,15 @@ Just much less prone to sensorship.
 A feed of posts from communities you subscribe to.
 Now you can see all of the fun, totally-not-politically-charged media the internet has to offer.
 
-![IMG_2792](https://user-images.githubusercontent.com/12021069/133159052-c68bd5eb-cbfc-4cce-ad44-da683e4bfe99.PNG)
-
 ### Comments
 
 Own the libs by commenting with your superior anarco-capitalist-libertarian-communist intelect.
-
-![IMG_2794](https://user-images.githubusercontent.com/12021069/133160249-cab927ac-bd81-44e6-8593-dcaabb11f475.PNG)
 
 ### Other stuff
 
 You can even do things like critique the communist manifesto by signing into your account, collect leftist tears by changing the feed view from hot to new, change my mind by submitting a new post, and also other things!
 
 The app's not done yet though. If you're complaints aren't helpful, get off my lawn!
-
-### Screenshots
 
 | Feed                                                                                                               | Post                                                                                                               |
 | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
