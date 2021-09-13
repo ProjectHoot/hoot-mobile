@@ -41,6 +41,12 @@ export async function getPostReplies(
   );
 }
 
+export async function getCommunities(ctx: LotideContext) {
+  return lotideRequest(ctx, "GET", "communities", undefined, true).then(data =>
+    data.json(),
+  );
+}
+
 export async function followCommunity(ctx: LotideContext, communityId: number) {
   return lotideRequest(ctx, "POST", `communities/${communityId}/follow`, {
     try_wait_for_accept: true,

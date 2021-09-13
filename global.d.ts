@@ -42,11 +42,14 @@ interface Author {
 }
 
 interface Community {
-  host: string;
   id: number;
-  local: boolean;
   name: string;
+  local: boolean;
+  host: string;
   remote_url?: string;
+  description?: string;
+  description_html?: string;
+  description_text?: string;
 }
 
 interface Replies {

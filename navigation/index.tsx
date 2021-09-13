@@ -19,7 +19,7 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
-import TabOneScreen from "../screens/TabOneScreen";
+import Feed from "../screens/Feed";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import {
   RootStackParamList,
@@ -29,6 +29,7 @@ import {
 import LinkingConfiguration from "./LinkingConfiguration";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
+import Search from "../screens/Search";
 
 export default function Navigation({
   colorScheme,
@@ -85,15 +86,16 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Feed"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint as unknown as string,
+        tabBarShowLabel: false,
       }}
     >
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<"TabOne">) => ({
+        name="Feed"
+        component={Feed}
+        options={({ navigation }: RootTabScreenProps<"Feed">) => ({
           title: "Hoot",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="newspaper-outline" color={color} />
@@ -137,18 +139,8 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="Inbox"
-        component={TabTwoScreen}
-        options={{
-          title: "Inbox",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="mail-outline" color={color} />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="TabThree"
-        component={TabTwoScreen}
+        name="Search"
+        component={Search}
         options={{
           title: "Search",
           tabBarIcon: ({ color }) => (
@@ -157,22 +149,32 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="TabTwo"
+        name="NewPost"
         component={TabTwoScreen}
         options={{
-          title: "User",
+          title: "New Post",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="person-circle-outline" color={color} />
+            <TabBarIcon name="add-outline" color={color} size={40} />
           ),
         }}
       />
       <BottomTab.Screen
-        name="TabFour"
+        name="Notifications"
         component={TabTwoScreen}
         options={{
-          title: "Options",
+          title: "Notifications",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="cog-outline" color={color} />
+            <TabBarIcon name="notifications-outline" color={color} />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Profile"
+        component={TabTwoScreen}
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="person-circle-outline" color={color} />
           ),
         }}
       />
@@ -186,6 +188,7 @@ function BottomTabNavigator() {
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof Icon>["name"];
   color: string;
+  size?: number;
 }) {
   return <Icon size={30} style={{ marginBottom: -3 }} {...props} />;
 }

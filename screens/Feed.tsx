@@ -7,9 +7,7 @@ import * as Haptics from "expo-haptics";
 import { useFeedPosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 
-export default function TabOneScreen({
-  navigation,
-}: RootTabScreenProps<"TabOne">) {
+export default function Feed({ navigation }: RootTabScreenProps<"Feed">) {
   const [posts, isLoadingPosts, refreshPosts] = useFeedPosts();
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
