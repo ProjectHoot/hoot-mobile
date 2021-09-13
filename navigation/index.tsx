@@ -30,6 +30,7 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import Search from "../screens/Search";
+import Profile from "../screens/Profile";
 
 export default function Navigation({
   colorScheme,
@@ -170,7 +171,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Profile"
-        component={TabTwoScreen}
+        component={Profile}
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (

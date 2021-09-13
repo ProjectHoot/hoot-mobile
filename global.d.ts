@@ -16,7 +16,7 @@ interface User {
 }
 
 interface Post {
-  author: Author;
+  author: Profile;
   community: Community;
   content_html: string;
   content_text?: string;
@@ -30,15 +30,17 @@ interface Post {
   your_vote?: null | {};
 }
 
-interface Author {
-  host: string;
+interface Profile {
   id: number;
-  local: boolean;
-  remote_url?: string;
   username: string;
+  local: boolean;
+  host: string;
+  remote_url?: string;
   avatar?: {
     url: string;
   };
+  description?: string;
+  your_note?: string;
 }
 
 interface Community {
