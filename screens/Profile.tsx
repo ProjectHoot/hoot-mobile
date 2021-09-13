@@ -1,26 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Alert,
-  Button,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  TextInput,
-} from "react-native";
+import { Alert, Button, StyleSheet } from "react-native";
 import { View, Text } from "../components/Themed";
-import useTheme from "../hooks/useTheme";
-import { getCommunities, getUserData } from "../services/LotideService";
+import { getUserData } from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
-import * as Haptics from "expo-haptics";
 import { RootTabScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
 
 export default function Profile({ navigation }: RootTabScreenProps<"Profile">) {
-  const [text, onChangeText] = React.useState("");
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const lotideContext = useContext(LotideContext);
   const ctx = lotideContext.ctx;
-  const theme = useTheme();
 
   useEffect(() => {
     if (ctx.login !== undefined) {

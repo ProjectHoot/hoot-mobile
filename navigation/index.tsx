@@ -12,8 +12,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { useContext } from "react";
-import { Alert, ColorSchemeName, Pressable } from "react-native";
+import { ActionSheetIOS, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -27,8 +26,6 @@ import {
   RootTabScreenProps,
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
-import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import Search from "../screens/Search";
 import Profile from "../screens/Profile";
 
@@ -83,7 +80,6 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
-  const lotideContext = useContext(LotideContext);
 
   return (
     <BottomTab.Navigator
@@ -104,26 +100,16 @@ function BottomTabNavigator() {
           headerRight: () => (
             <Pressable
               onPress={() => {
-                Alert.prompt(
-                  "Login",
-                  "Login to Hoot",
-                  (value: any) =>
-                    LotideService.login(
-                      { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
-                      value.login,
-                      value.password,
-                    )
-                      .then(data => {
-                        console.log("index.tsx", JSON.stringify(data, null, 2));
-                        lotideContext.setContext({
-                          ...lotideContext.ctx,
-                          login: data,
-                        });
-                      })
-                      .catch(console.error),
-                  "login-password",
+                ActionSheetIOS.showActionSheetWithOptions(
+                  {
+                    options: ["Cancel", "Hot", "New"],
+                    title: "Sort by:",
+                    cancelButtonIndex: 0,
+                  },
+                  buttonIndex => {
+                    console.log("Sort by", buttonIndex);
+                  },
                 );
-                navigation.navigate("Web");
               }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,

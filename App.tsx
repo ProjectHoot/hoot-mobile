@@ -1,5 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import useCachedResources from "./hooks/useCachedResources";
@@ -12,6 +13,22 @@ export default function App() {
   const colorScheme = useColorScheme();
   const [ctx, setContext] = useState<LotideContext>(defaultLotideContext);
 
+  useEffect(() => {
+    AsyncStorage.getItem("@lotide_ctx").then(ctxStr => {
+      if (ctxStr !== null) {
+        console.log("Loaded Lotide context", ctxStr);
+        setContext(JSON.parse(ctxStr));
+      }
+    });
+  }, []);
+
+  function applyNewContext(ctx: LotideContext) {
+    AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)).then(() =>
+      console.log("Saved Lotide context"),
+    );
+    setContext(ctx);
+  }
+
   if (!isLoadingComplete) {
     return null;
   } else {
@@ -19,7 +36,7 @@ export default function App() {
       <LotideContext.Provider
         value={{
           ctx,
-          setContext: (ctx: any) => setContext(ctx),
+          setContext: (ctx: any) => applyNewContext(ctx),
         }}
       >
         <SafeAreaProvider>
