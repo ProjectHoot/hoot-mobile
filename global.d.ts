@@ -1,3 +1,7 @@
+type CommunityId = number;
+type PostId = number;
+type UserId = number;
+
 interface LotideContext {
   apiUrl: string;
   login?: Login;
@@ -10,7 +14,7 @@ interface Login {
 
 interface User {
   has_unread_notifications: boolean;
-  id: number;
+  id: UserId;
   is_site_admin: false;
   username: string;
 }
@@ -21,13 +25,21 @@ interface Post {
   content_html: string;
   content_text?: string;
   created: string;
-  href: string;
-  id: number;
+  href?: string;
+  id: PostId;
   replies_count_total: number;
   score: number;
   sticky: boolean;
   title: string;
   your_vote?: null | {};
+}
+
+interface NewPost {
+  community: CommunityId;
+  title: string;
+  href?: string;
+  content_markdown?: string;
+  content_text?: string;
 }
 
 interface Profile {

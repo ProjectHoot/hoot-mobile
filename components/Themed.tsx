@@ -8,10 +8,12 @@ import {
   ColorValue,
   Text as DefaultText,
   View as DefaultView,
+  TextInput as DefaultTextInput,
 } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
+import useTheme from "../hooks/useTheme";
 
 export function useThemeColor(
   props: { light?: ColorValue; dark?: ColorValue },
@@ -50,4 +52,16 @@ export function View(props: ViewProps) {
   );
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function TextInput(props: DefaultTextInput["props"]) {
+  const { style, ...otherProps } = props;
+  const theme = useTheme();
+  const themeStyle = {
+    backgroundColor: theme.secondaryBackground,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  };
+  return <DefaultTextInput style={[themeStyle, style]} {...otherProps} />;
 }

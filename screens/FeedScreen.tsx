@@ -8,7 +8,9 @@ import { useFeedPosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 import useTheme from "../hooks/useTheme";
 
-export default function Feed({ navigation }: RootTabScreenProps<"Feed">) {
+export default function FeedScreen({
+  navigation,
+}: RootTabScreenProps<"FeedScreen">) {
   const [posts, isLoadingPosts, refreshPosts] = useFeedPosts();
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
@@ -81,7 +83,10 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
   return (
     <Pressable
       onPress={() => navigation.navigate("Post", { post })}
-      onLongPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
+      onLongPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        console.log(JSON.stringify(post, null, 2));
+      }}
     >
       <View
         style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
