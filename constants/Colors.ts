@@ -9,6 +9,7 @@ const both = {
   placeholderText: PlatformColor("placeholderText"),
   background: PlatformColor("systemBackground"),
   secondaryBackground: PlatformColor("secondarySystemBackground"),
+  tertiaryBackground: PlatformColor("tertiarySystemBackground"),
 
   red: PlatformColor("systemRed"),
   orange: PlatformColor("systemOrange"),

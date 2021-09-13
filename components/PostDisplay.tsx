@@ -1,12 +1,13 @@
 import Icon from "@expo/vector-icons/Ionicons";
 import { openURL } from "expo-linking";
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Image, TouchableHighlight } from "react-native";
+import { StyleSheet, Image, Pressable } from "react-native";
 import HTMLView from "react-native-htmlview";
 import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
 import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
+import * as Haptics from "expo-haptics";
 
 export interface PostDisplayProps {
   post: Post;
@@ -38,12 +39,15 @@ export default function PostDisplay(props: PostDisplayProps) {
           }
         />
       ) : (
-        <TouchableHighlight
-          style={styles.link}
-          onPress={() => openURL(props.post.href)}
+        <Pressable
+          style={[styles.link, { backgroundColor: theme.secondaryBackground }]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            openURL(props.post.href);
+          }}
         >
           <Text>{props.post.href}</Text>
-        </TouchableHighlight>
+        </Pressable>
       )}
       {props.showHtmlContent && (
         <View>
@@ -89,7 +93,6 @@ export default function PostDisplay(props: PostDisplayProps) {
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: "#000000",
     marginVertical: 0,
     marginHorizontal: 0,
   },
@@ -103,7 +106,6 @@ const styles = StyleSheet.create({
   link: {
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: "#8884",
     borderRadius: 5,
     marginHorizontal: 15,
   },
@@ -119,8 +121,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     padding: 15,
-    borderBottomColor: "#8884",
-    borderBottomWidth: 2,
   },
   footText: {},
   by: {

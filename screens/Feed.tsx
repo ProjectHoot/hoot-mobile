@@ -6,6 +6,7 @@ import { View } from "../components/Themed";
 import * as Haptics from "expo-haptics";
 import { useFeedPosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
+import useTheme from "../hooks/useTheme";
 
 export default function Feed({ navigation }: RootTabScreenProps<"Feed">) {
   const [posts, isLoadingPosts, refreshPosts] = useFeedPosts();
@@ -33,7 +34,6 @@ const styles = StyleSheet.create({
   item: {
     marginVertical: 0,
     marginHorizontal: 0,
-    borderBottomColor: "#5555",
     borderBottomWidth: 8,
   },
   title: {
@@ -77,12 +77,15 @@ const styles = StyleSheet.create({
 });
 
 const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
+  const theme = useTheme();
   return (
     <Pressable
       onPress={() => navigation.navigate("Post", { post })}
       onLongPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
     >
-      <View style={styles.item}>
+      <View
+        style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
+      >
         <PostDisplay post={post} />
       </View>
     </Pressable>
