@@ -28,6 +28,12 @@ You can even do things like critique the communist manifesto by signing into you
 
 The app's not done yet though. If you're complaints aren't helpful, get off my lawn!
 
+### Screenshots
+
+| Feed                                                                                                               | Post                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| ![IMG_2792](https://user-images.githubusercontent.com/12021069/133159052-c68bd5eb-cbfc-4cce-ad44-da683e4bfe99.PNG) | ![IMG_2794](https://user-images.githubusercontent.com/12021069/133160249-cab927ac-bd81-44e6-8593-dcaabb11f475.PNG) |
+
 ## Setting up a Development Environment
 
 ### NPM
