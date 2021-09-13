@@ -30,6 +30,7 @@ import FeedScreen from "../screens/FeedScreen";
 import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
+import { SettingsScreen } from "../screens/SettingsScreen";
 
 export default function Navigation({
   colorScheme,
@@ -62,6 +63,7 @@ function RootNavigator() {
       />
       <Stack.Screen name="Web" component={ModalScreen} />
       <Stack.Screen name="Post" component={ModalScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
@@ -80,7 +82,7 @@ function RootNavigator() {
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
-function BottomTabNavigator() {
+function BottomTabNavigator({ navigation }: any) {
   const colorScheme = useColorScheme();
 
   return (
@@ -164,6 +166,23 @@ function BottomTabNavigator() {
           title: "Profile",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="person-circle-outline" color={color} />
+          ),
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                navigation.navigate("Settings");
+              }}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon
+                name="cog-outline"
+                size={25}
+                color={Colors[colorScheme].secondaryText}
+                style={{ marginLeft: 15 }}
+              />
+            </Pressable>
           ),
         }}
       />
