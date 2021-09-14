@@ -24,8 +24,9 @@ export default function App() {
   }, []);
 
   function applyNewContext(ctx: LotideContext) {
+    StorageService.lotideContextKV.store(ctx);
     AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)).then(() =>
-      console.log("Saved Lotide context"),
+      console.log("Saved Lotide context", ctx),
     );
     setContext(ctx);
   }
