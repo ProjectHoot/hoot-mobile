@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, StyleSheet } from "react-native";
+import { Alert, Button, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "../components/Themed";
 import { getUserData } from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import SuggestLogin from "../components/SuggestLogin";
 import * as LotideService from "../services/LotideService";
+import * as StorageService from "../services/StorageService";
 
 export default function ProfileScreen({
   navigation,
 }: RootTabScreenProps<"ProfileScreen">) {
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [profileList, setProfileList] = useState<string[]>([]);
   const lotideContext = useContext(LotideContext);
   const ctx = lotideContext.ctx;
 
@@ -20,6 +22,12 @@ export default function ProfileScreen({
     }
   }, [ctx.login?.user?.id]);
 
+  useEffect(() => {
+    StorageService.lotideContextKV
+      .listKeys()
+      .then(keys => setProfileList(keys));
+  }, []);
+
   if (ctx.login === undefined) {
     return <SuggestLogin />;
   }
@@ -28,6 +36,33 @@ export default function ProfileScreen({
     LotideService.logout(ctx).then(() => {
       lotideContext.setContext({ apiUrl: ctx.apiUrl });
     });
+  }
+
+  function newLogin() {
+    Alert.prompt(
+      "Login",
+      "Login to Hoot",
+      (value: any) =>
+        LotideService.login(
+          { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
+          value.login,
+          value.password,
+        )
+          .then(data => {
+            console.log("ProfileScreen.tsx", JSON.stringify(data, null, 2));
+            const newCtx = {
+              ...lotideContext.ctx,
+              login: data,
+            };
+            lotideContext.setContext(newCtx);
+            setProfileList(l => [
+              `${newCtx.login.user.username}@${newCtx.apiUrl}`,
+              ...l,
+            ]);
+          })
+          .catch(console.error),
+      "login-password",
+    );
   }
 
   return (
@@ -41,6 +76,26 @@ export default function ProfileScreen({
         title="Log Out"
         color="#841584"
         accessibilityLabel="Log out of the Hoot network"
+      />
+      {profileList.map(p => (
+        <Pressable
+          key={p}
+          onPress={() => {
+            StorageService.lotideContextKV.query(p).then(ctx => {
+              if (ctx !== undefined) {
+                lotideContext.setContext(ctx);
+              }
+            });
+          }}
+        >
+          <Text style={styles.altProfileButton}>{p}</Text>
+        </Pressable>
+      ))}
+      <Button
+        onPress={newLogin}
+        title="Add Profile"
+        color="#841584"
+        accessibilityLabel="Add profile"
       />
     </View>
   );
@@ -78,5 +133,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginHorizontal: 20,
     marginBottom: 1,
+  },
+  altProfileButton: {
+    padding: 10,
   },
 });

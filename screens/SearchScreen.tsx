@@ -16,7 +16,7 @@ export default function SearchScreen({
   const theme = useTheme();
   useEffect(() => {
     getCommunities(ctx).then(setCommunities);
-  }, []);
+  }, [ctx]);
   const renderItem = ({ item }: { item: Community }) => (
     <Item community={item} navigation={navigation} />
   );
