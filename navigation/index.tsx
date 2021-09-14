@@ -31,6 +31,7 @@ import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
+import { useState } from "react";
 
 export default function Navigation({
   colorScheme,
@@ -83,6 +84,7 @@ function RootNavigator() {
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator({ navigation }: any) {
+  const [sort, setSort] = useState<SortOption>("hot");
   const colorScheme = useColorScheme();
 
   return (
@@ -96,6 +98,7 @@ function BottomTabNavigator({ navigation }: any) {
       <BottomTab.Screen
         name="FeedScreen"
         component={FeedScreen}
+        initialParams={{ sort }}
         options={({ navigation }: RootTabScreenProps<"FeedScreen">) => ({
           title: "Hoot",
           tabBarIcon: ({ color }) => (
@@ -111,7 +114,11 @@ function BottomTabNavigator({ navigation }: any) {
                     cancelButtonIndex: 0,
                   },
                   buttonIndex => {
-                    console.log("Sort by", buttonIndex);
+                    const newSort = [sort, "hot", "new"][
+                      buttonIndex
+                    ] as SortOption;
+                    setSort(newSort);
+                    navigation.navigate("FeedScreen", { sort: newSort });
                   },
                 );
               }}
@@ -120,7 +127,9 @@ function BottomTabNavigator({ navigation }: any) {
               })}
             >
               <Icon
-                name="flame-outline"
+                name={
+                  { hot: "flame-outline", new: "time-outline" }[sort] as any
+                }
                 size={25}
                 color={Colors[colorScheme].tint}
                 style={{ marginRight: 15 }}
