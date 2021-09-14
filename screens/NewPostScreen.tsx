@@ -8,11 +8,12 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from "react-native";
-import { View, Text } from "../components/Themed";
+import { View } from "../components/Themed";
 import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
 import useTheme from "../hooks/useTheme";
+import SuggestLogin from "../components/SuggestLogin";
 
 export default function NewPostScreen({
   navigation,
@@ -26,39 +27,7 @@ export default function NewPostScreen({
   const ctx = lotideContext.ctx;
 
   if (ctx.login === undefined) {
-    function login() {
-      Alert.prompt(
-        "Login",
-        "Login to Hoot",
-        (value: any) =>
-          LotideService.login(
-            { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
-            value.login,
-            value.password,
-          )
-            .then(data => {
-              console.log("index.tsx", JSON.stringify(data, null, 2));
-              lotideContext.setContext({
-                ...lotideContext.ctx,
-                login: data,
-              });
-            })
-            .catch(console.error),
-        "login-password",
-      );
-    }
-
-    return (
-      <View style={styles.container}>
-        <Text>You are not logged in</Text>
-        <Button
-          onPress={login}
-          title="Login"
-          color="#841584"
-          accessibilityLabel="Login to the Hoot network"
-        />
-      </View>
-    );
+    return <SuggestLogin />;
   }
 
   function submit() {

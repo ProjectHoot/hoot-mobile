@@ -16,6 +16,12 @@ export async function login(
   ).then(data => data.json());
 }
 
+export async function logout(ctx: LotideContext) {
+  if (ctx.login) {
+    return lotideRequest(ctx, "DELETE", "logins/~current");
+  }
+}
+
 export async function getFeedPosts(ctx: LotideContext): Promise<Post[]> {
   if (ctx.login !== undefined) {
     return lotideRequest(ctx, "GET", "users/~me/following:posts")
@@ -99,7 +105,7 @@ export async function lotideRequest(
       }
     })
     .catch(e => {
-      console.error(`Lotide Service Error: path\n${e}`);
+      console.error(`Lotide Service Error: ${path}\n${e}`);
       throw e;
     });
 }
