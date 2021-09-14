@@ -1,15 +1,18 @@
 import { PlatformColor } from "react-native";
 
-const tintColorLight = PlatformColor("systemOrange");
-const tintColorDark = PlatformColor("systemOrange");
+const tintColor = PlatformColor("systemOrange");
 
 const both = {
+  tint: tintColor,
+  secondaryTint: PlatformColor("systemPurple"),
   text: PlatformColor("label"),
   secondaryText: PlatformColor("secondaryLabel"),
   placeholderText: PlatformColor("placeholderText"),
   background: PlatformColor("systemBackground"),
   secondaryBackground: PlatformColor("secondarySystemBackground"),
   tertiaryBackground: PlatformColor("tertiarySystemBackground"),
+  tabIconDefault: PlatformColor("secondaryLabel"),
+  tabIconSelected: tintColor,
 
   red: PlatformColor("systemRed"),
   orange: PlatformColor("systemOrange"),
@@ -25,14 +28,8 @@ export default {
   global: both,
   light: {
     ...both,
-    tint: tintColorLight,
-    tabIconDefault: "#ccc",
-    tabIconSelected: tintColorLight,
   },
   dark: {
     ...both,
-    tint: tintColorDark,
-    tabIconDefault: "#ccc",
-    tabIconSelected: tintColorDark,
   },
 };
