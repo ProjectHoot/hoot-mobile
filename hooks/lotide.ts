@@ -3,17 +3,17 @@ import LotideContext from "../store/LotideContext";
 import * as LotideService from "../services/LotideService";
 import { useRefreshableData } from "./useRefreshableData";
 
-export function useFeedPosts(): Refreshable<Post[]> {
+export function useFeedPosts(sort?: SortOption): Refreshable<Post[]> {
   const [posts, setPosts] = useState([] as any[]);
   const ctx = useContext(LotideContext).ctx;
 
   const [isLoading, refresh] = useRefreshableData(
     stopLoading => {
-      LotideService.getFeedPosts(ctx)
+      LotideService.getFeedPosts(ctx, sort)
         .then(setPosts)
         .then(() => stopLoading());
     },
-    [ctx],
+    [ctx, sort],
   );
 
   return [posts, isLoading, refresh];

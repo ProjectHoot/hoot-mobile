@@ -22,9 +22,12 @@ export async function logout(ctx: LotideContext) {
   }
 }
 
-export async function getFeedPosts(ctx: LotideContext): Promise<Post[]> {
+export async function getFeedPosts(
+  ctx: LotideContext,
+  sort: SortOption = "hot",
+): Promise<Post[]> {
   if (ctx.login !== undefined) {
-    return lotideRequest(ctx, "GET", "users/~me/following:posts")
+    return lotideRequest(ctx, "GET", `users/~me/following:posts?sort=${sort}`)
       .then(data => data.json())
       .catch(() => []);
   } else {

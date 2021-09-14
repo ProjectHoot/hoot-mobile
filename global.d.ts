@@ -2,6 +2,8 @@ type CommunityId = number;
 type PostId = number;
 type UserId = number;
 
+type SortOption = "hot" | "new";
+
 interface LotideContext {
   apiUrl: string;
   login?: Login;

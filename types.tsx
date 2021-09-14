@@ -29,7 +29,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  FeedScreen: undefined;
+  FeedScreen: { sort: string };
   SearchScreen: undefined;
   NewPostScreen: undefined;
   NotificationsScreen: undefined;

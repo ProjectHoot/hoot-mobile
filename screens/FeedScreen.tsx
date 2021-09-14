@@ -10,8 +10,10 @@ import useTheme from "../hooks/useTheme";
 
 export default function FeedScreen({
   navigation,
+  route,
 }: RootTabScreenProps<"FeedScreen">) {
-  const [posts, isLoadingPosts, refreshPosts] = useFeedPosts();
+  const sort = route.params.sort;
+  const [posts, isLoadingPosts, refreshPosts] = useFeedPosts(sort);
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
   );
