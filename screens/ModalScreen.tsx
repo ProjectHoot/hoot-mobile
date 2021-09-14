@@ -147,13 +147,14 @@ function RepliesDisplay({
 function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
   const [showChildren, setShowChildren] = React.useState(true);
   const ctx = useContext(LotideContext).ctx;
+  const theme = useTheme();
   return (
     <View style={{ paddingLeft: 0 }}>
       <View
         style={{
           paddingVertical: 8,
           borderTopWidth: 0.5,
-          borderTopColor: "#8884",
+          borderTopColor: theme.secondaryBackground,
         }}
       >
         <Pressable
@@ -173,11 +174,18 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
               paddingVertical: 3,
             }}
           >
-            <Text style={{ color: "#fff", fontSize: 16, marginBottom: 5 }}>
+            <Text
+              style={{
+                color: theme.text,
+                fontSize: 16,
+                marginBottom: 5,
+                fontWeight: "500",
+              }}
+            >
               {reply.author.username}
               {"  "}
-              <Text style={{ color: "#888", fontSize: 14 }}>
-                <Icon name="arrow-up" size={14} color="#888a" light />{" "}
+              <Text style={{ color: theme.text, fontSize: 14 }}>
+                <Icon name="arrow-up" size={14} color={theme.text} light />{" "}
                 {reply.score}
                 {"   "}
                 <ElapsedTime time={reply.created} />
@@ -188,10 +196,11 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
                 value={reply.content_html.replaceAll("\n", "")}
                 // value="<h1>hello</h1>"
                 stylesheet={{
-                  p: { color: "#ddd", fontSize: 16 },
+                  p: { color: theme.text, fontSize: 16, fontWeight: "300" },
                   h1: {
-                    color: "#ddd",
+                    color: theme.text,
                     fontSize: 24,
+                    fontWeight: "300",
                   },
                 }}
               />
