@@ -5,6 +5,7 @@ import { getUserData } from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import SuggestLogin from "../components/SuggestLogin";
+import * as LotideService from "../services/LotideService";
 
 export default function ProfileScreen({
   navigation,
@@ -24,7 +25,9 @@ export default function ProfileScreen({
   }
 
   function logout() {
-    lotideContext.setContext({ apiUrl: ctx.apiUrl });
+    LotideService.logout(ctx).then(() => {
+      lotideContext.setContext({ apiUrl: ctx.apiUrl });
+    });
   }
 
   return (
