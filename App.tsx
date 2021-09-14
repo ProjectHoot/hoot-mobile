@@ -7,6 +7,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import LotideContext, { defaultLotideContext } from "./store/LotideContext";
+import * as StorageService from "./services/StorageService";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -14,10 +15,10 @@ export default function App() {
   const [ctx, setContext] = useState<LotideContext>(defaultLotideContext);
 
   useEffect(() => {
-    AsyncStorage.getItem("@lotide_ctx").then(ctxStr => {
-      if (ctxStr !== null) {
-        console.log("Loaded Lotide context", ctxStr);
-        setContext(JSON.parse(ctxStr));
+    StorageService.lotideContext.query().then(ctx => {
+      if (ctx !== undefined) {
+        console.log("Loaded Lotide context", ctx);
+        setContext(ctx);
       }
     });
   }, []);
@@ -36,7 +37,7 @@ export default function App() {
       <LotideContext.Provider
         value={{
           ctx,
-          setContext: (ctx: any) => applyNewContext(ctx),
+          setContext: (ctx: LotideContext) => applyNewContext(ctx),
         }}
       >
         <SafeAreaProvider>
