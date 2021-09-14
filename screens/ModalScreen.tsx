@@ -1,11 +1,12 @@
 import Icon from "@expo/vector-icons/Ionicons";
-import * as React from "react";
+import React, { useContext } from "react";
 import {
   StyleSheet,
   StatusBar,
   ScrollView,
   Pressable,
   Share,
+  Alert,
 } from "react-native";
 import HTMLView from "react-native-htmlview";
 import * as Haptics from "expo-haptics";
@@ -15,6 +16,9 @@ import { Text, View } from "../components/Themed";
 import { useReplies } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
+import * as LotideService from "../services/LotideService";
+import LotideContext from "../store/LotideContext";
+import Colors from "../constants/Colors";
 
 export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
   const post = (route.params as any | undefined)?.post as Post | undefined;
@@ -22,6 +26,7 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
     return null;
   }
   const replies = useReplies(post.id);
+  const ctx = useContext(LotideContext).ctx;
   const theme = useTheme();
 
   return (
@@ -35,7 +40,17 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
         <PostDisplay post={post} showHtmlContent showCommunityHost />
         <View style={styles.actions}>
           <Icon name="bookmark-outline" size={25} color={theme.text} />
-          <Icon name="return-up-back-outline" size={25} color={theme.text} />
+          <Pressable
+            hitSlop={5}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              Alert.prompt("Reply", "Leave a reply", reply =>
+                LotideService.replyToPost(ctx, post.id, reply),
+              );
+            }}
+          >
+            <Icon name="return-up-back-outline" size={25} color={theme.text} />
+          </Pressable>
           <Pressable
             hitSlop={5}
             onPress={() => {
@@ -131,6 +146,7 @@ function RepliesDisplay({
 
 function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
   const [showChildren, setShowChildren] = React.useState(true);
+  const ctx = useContext(LotideContext).ctx;
   return (
     <View style={{ paddingLeft: 0 }}>
       <View
@@ -140,7 +156,15 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
           borderTopColor: "#8884",
         }}
       >
-        <Pressable onPress={() => setShowChildren(s => !s)}>
+        <Pressable
+          onPress={() => setShowChildren(s => !s)}
+          onLongPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            Alert.prompt("Reply", "Leave a reply", newReply =>
+              LotideService.replyToReply(ctx, reply.id, newReply),
+            );
+          }}
+        >
           <View
             style={{
               borderLeftWidth: 2,
@@ -175,7 +199,7 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
           </View>
         </Pressable>
       </View>
-      {reply.replies.items.length > 0 && showChildren && (
+      {reply.replies && reply.replies.items.length > 0 && showChildren && (
         <View style={{ paddingLeft: 15 }}>
           <RepliesDisplay replies={reply.replies} layer={layer + 1} />
         </View>
@@ -184,4 +208,14 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
   );
 }
 
-const LAYER_COLORS = ["#AAA", "#A22", "#AA2", "#2A2", "#2AA", "#22A"];
+const LAYER_COLORS = [
+  Colors.global.text,
+  Colors.global.red,
+  Colors.global.orange,
+  Colors.global.yellow,
+  Colors.global.green,
+  Colors.global.teal,
+  Colors.global.blue,
+  Colors.global.indigo,
+  Colors.global.purple,
+];

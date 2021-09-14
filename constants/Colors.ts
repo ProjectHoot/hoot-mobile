@@ -22,6 +22,7 @@ const both = {
 };
 
 export default {
+  global: both,
   light: {
     ...both,
     tint: tintColorLight,

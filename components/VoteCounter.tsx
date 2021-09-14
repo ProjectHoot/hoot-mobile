@@ -1,11 +1,12 @@
 import { Ionicons as Icon } from "@expo/vector-icons";
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, PlatformColor, Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "expo-haptics";
 import LotideContext from "../store/LotideContext";
 import * as LotideService from "../services/LotideService";
+import Colors from "../constants/Colors";
 
 export interface VoteCounterProps {
   post: Post;
@@ -48,7 +49,7 @@ export default function VoteCounter(props: VoteCounterProps) {
   let scoreColor = theme.text;
 
   if (isUpvoted) {
-    scoreColor = PlatformColor("systemRed");
+    scoreColor = Colors.global.red;
   }
 
   const shouldAddOne = isUpvoted && !isUpvotedByAPI;
