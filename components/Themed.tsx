@@ -62,6 +62,7 @@ export function TextInput(props: DefaultTextInput["props"]) {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
+    color: theme.text,
   };
   return <DefaultTextInput style={[themeStyle, style]} {...otherProps} />;
 }
