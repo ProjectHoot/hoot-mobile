@@ -25,7 +25,11 @@ export default function PostDisplay(props: PostDisplayProps) {
       {props.post.href &&
         (isImage ? (
           <Image
-            style={{ ...styles.image, aspectRatio: imgAspect }}
+            style={{
+              ...styles.image,
+              aspectRatio: imgAspect,
+              backgroundColor: theme.secondaryBackground,
+            }}
             source={{
               uri: props.post.href,
             }}
@@ -34,7 +38,7 @@ export default function PostDisplay(props: PostDisplayProps) {
                 Math.max(
                   event.nativeEvent.source.width /
                     event.nativeEvent.source.height,
-                  0.25,
+                  0.5,
                 ),
               )
             }

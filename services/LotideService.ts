@@ -54,6 +54,26 @@ export async function getPostReplies(
   );
 }
 
+export async function replyToPost(
+  ctx: LotideContext,
+  postId: PostId,
+  content: string,
+): Promise<{ id: number }> {
+  return lotideRequest(ctx, "POST", `posts/${postId}/replies`, {
+    content_markdown: content,
+  }).then(data => data.json());
+}
+
+export async function replyToReply(
+  ctx: LotideContext,
+  replyId: number,
+  content: string,
+): Promise<{ id: number }> {
+  return lotideRequest(ctx, "POST", `comments/${replyId}/replies`, {
+    content_markdown: content,
+  }).then(data => data.json());
+}
+
 export async function getCommunities(ctx: LotideContext) {
   return lotideRequest(ctx, "GET", "communities", undefined, true).then(data =>
     data.json(),
