@@ -72,9 +72,13 @@ export async function getPostReplies(
   ctx: LotideContext,
   postId: number,
 ): Promise<Replies> {
-  return lotideRequest(ctx, "GET", `posts/${postId}/replies`).then(data =>
-    data.json(),
-  );
+  return lotideRequest(
+    ctx,
+    "GET",
+    `posts/${postId}/replies`,
+    undefined,
+    true,
+  ).then(data => data.json());
 }
 
 export async function replyToPost(
@@ -132,8 +136,9 @@ export async function lotideRequest(
   body?: any,
   noLogin: boolean = false,
 ): Promise<any | undefined> {
+  console.log(path);
   if (!noLogin && ctx.login == undefined) {
-    throw "Not logged in";
+    throw path;
   }
   return fetch(`${ctx.apiUrl}/${path}`, {
     method,
