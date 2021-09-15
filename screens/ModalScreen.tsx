@@ -49,7 +49,7 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
               );
             }}
           >
-            <Icon name="return-up-back-outline" size={25} color={theme.text} />
+            <Icon name="arrow-undo-outline" size={25} color={theme.text} />
           </Pressable>
           <Pressable
             hitSlop={5}
