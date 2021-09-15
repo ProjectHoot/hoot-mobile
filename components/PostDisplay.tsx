@@ -21,7 +21,12 @@ export default function PostDisplay(props: PostDisplayProps) {
   const theme = useTheme();
   return (
     <View>
-      <Text style={styles.title}>{props.post.title}</Text>
+      <Text style={styles.title}>
+        {props.post.sticky && (
+          <Icon name="pin" size={25} color={theme.secondaryTint} />
+        )}{" "}
+        {props.post.title}
+      </Text>
       {props.post.href &&
         (isImage ? (
           <Image
