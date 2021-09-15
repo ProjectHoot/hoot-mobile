@@ -3,15 +3,35 @@ export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 // ** API FUNCTIONS **
 
 export async function login(
-  ctx: LotideContext,
+  apiUrl: string,
   username: string,
   password: string,
 ): Promise<Login> {
   return lotideRequest(
-    ctx,
+    { apiUrl },
     "POST",
     "logins",
     { username, password },
+    true,
+  ).then(data => data.json());
+}
+
+export async function register(
+  apiUrl: string,
+  username: string,
+  password: string,
+  email?: string,
+): Promise<Login> {
+  return lotideRequest(
+    { apiUrl },
+    "POST",
+    "users",
+    {
+      username,
+      password,
+      email_address: email,
+      login: true,
+    },
     true,
   ).then(data => data.json());
 }
@@ -128,7 +148,7 @@ export async function lotideRequest(
       }
     })
     .catch(e => {
-      console.error(`Lotide Service Error: ${path}\n${e}`);
+      console.error(`Lotide Service Error: ${path}\n${e}`, ctx);
       throw e;
     });
 }

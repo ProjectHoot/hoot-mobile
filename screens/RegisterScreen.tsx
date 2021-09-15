@@ -11,58 +11,42 @@ import Icon from "@expo/vector-icons/Ionicons";
 import useTheme from "../hooks/useTheme";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
-import { View, Text, TextInput } from "./Themed";
+import { View, Text, TextInput } from "../components/Themed";
+import { RootTabScreenProps } from "../types";
 
-export interface SuggestLoginProps {
-  navigation: any;
-}
-
-export default function SuggestLogin({ navigation }: SuggestLoginProps) {
-  const [isSplitUsername, setIsSplitUsername] = useState(false);
+export default function RegisterScreen({
+  navigation,
+  route,
+}: RootTabScreenProps<"RegisterScreen">) {
   const [username, setUsername] = useState("");
   const [host, setHost] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConf, setPasswordConf] = useState("");
   const theme = useTheme();
   const lotideContext = useContext(LotideContext);
 
-  function login() {
-    const [fUsername, fHost] = isSplitUsername
-      ? [username, host]
-      : username.split("@");
-    LotideService.login(
-      fHost || "https://hoot.goldandblack.xyz/api/unstable",
-      fUsername,
-      password,
-    )
+  function submit() {
+    // if (password !== passwordConf) {
+    //   Alert.alert("Passwords don't match", "Make sure your passwords match");
+    //   return;
+    // }
+    const fHost = host || "https://hoot.goldandblack.xyz/api/unstable";
+    LotideService.register(fHost, username, password)
       .then(data => {
-        console.log("index.tsx", JSON.stringify(data, null, 2));
-        lotideContext.setContext({
-          apiUrl: fHost || "https://hoot.goldandblack.xyz/api/unstable",
-          login: data,
-        });
+        console.log("RegisterScreen.tsx", JSON.stringify(data, null, 2));
+        lotideContext.setContext({ apiUrl: fHost, login: data });
+        navigation.pop();
       })
       .catch(console.error);
-  }
-
-  function toggleSplitView() {
-    if (isSplitUsername) {
-      setUsername(`${username}@${host}`);
-      setHost("");
-    } else {
-      const [newUsername, newHost] = username.split("@");
-      setUsername(newUsername || "");
-      setHost(newHost || "");
-    }
-    setIsSplitUsername(x => !x);
   }
 
   return (
     <View style={styles.root}>
       <Pressable style={styles.container} onPress={Keyboard.dismiss}>
         <Text style={{ fontWeight: "300", fontSize: 18, marginBottom: 25 }}>
-          You are not logged in
+          Register a new account
         </Text>
-        <KeyboardAvoidingView style={{ width: "100%" }} behavior="height">
+        <KeyboardAvoidingView style={{ width: "100%" }} behavior="position">
           <View
             style={{
               display: "flex",
@@ -76,41 +60,27 @@ export default function SuggestLogin({ navigation }: SuggestLoginProps) {
                 styles.input,
                 { marginBottom: 0, width: "auto", flex: 1 },
               ]}
-              placeholder={
-                isSplitUsername ? "Host URL" : "username@http://host.url"
-              }
-              value={isSplitUsername ? host : username}
-              onChangeText={isSplitUsername ? setHost : setUsername}
+              placeholder="Host URL"
+              value={host}
+              onChangeText={setHost}
               textContentType="URL"
             />
-            {isSplitUsername && (
-              <Pressable onPress={() => Alert.alert("unimplemented")}>
-                <Icon
-                  name="search-outline"
-                  size={25}
-                  color={theme.secondaryText}
-                  style={{ marginLeft: 15 }}
-                />
-              </Pressable>
-            )}
-            <Pressable onPress={toggleSplitView}>
+            <Pressable onPress={() => Alert.alert("unimplemented")}>
               <Icon
-                name={isSplitUsername ? "chevron-down" : "chevron-forward"}
+                name="search-outline"
                 size={25}
                 color={theme.secondaryText}
                 style={{ marginLeft: 15 }}
               />
             </Pressable>
           </View>
-          {isSplitUsername && (
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              textContentType="username"
-              value={username}
-              onChangeText={setUsername}
-            />
-          )}
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            textContentType="username"
+            value={username}
+            onChangeText={setUsername}
+          />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -119,16 +89,18 @@ export default function SuggestLogin({ navigation }: SuggestLoginProps) {
             value={password}
             onChangeText={setPassword}
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            textContentType="password"
+            secureTextEntry={true}
+            value={passwordConf}
+            onChangeText={setPasswordConf}
+          />
           <View style={styles.actionButtons}>
             <Button
-              onPress={() => navigation.navigate("Register")}
+              onPress={submit}
               title="Register"
-              color={theme.secondaryTint}
-              accessibilityLabel="Login to the Hoot network"
-            />
-            <Button
-              onPress={login}
-              title="Login"
               color={theme.tint}
               accessibilityLabel="Login to the Hoot network"
             />

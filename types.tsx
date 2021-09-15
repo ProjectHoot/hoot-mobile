@@ -23,17 +23,19 @@ export type RootStackParamList = {
   Web: undefined;
   Post: undefined;
   Settings: undefined;
+  Register: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  FeedScreen: { sort: string };
+  FeedScreen: { sort: SortOption };
   SearchScreen: undefined;
   NewPostScreen: undefined;
   NotificationsScreen: undefined;
   ProfileScreen: undefined;
+  RegisterScreen: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
