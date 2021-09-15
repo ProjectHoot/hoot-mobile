@@ -25,8 +25,8 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
   if (!post) {
     return null;
   }
-  const replies = useReplies(post.id);
   const ctx = useContext(LotideContext).ctx;
+  const replies = useReplies(ctx, post.id);
   const theme = useTheme();
 
   return (

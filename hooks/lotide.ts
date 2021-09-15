@@ -19,17 +19,15 @@ export function useFeedPosts(sort?: SortOption): Refreshable<Post[]> {
   return [posts, isLoading, refresh];
 }
 
-export function useReplies(postId: number): Replies {
+export function useReplies(ctx: LotideContext, postId: number): Replies {
   const [replies, setReplies] = useState({
     items: [] as Reply[],
   } as Replies);
   useEffect(() => {
-    fetch(`https://hoot.goldandblack.xyz/api/unstable/posts/${postId}/replies`)
-      .then(data => data.json())
-      .then(data => {
-        console.log("use replies", JSON.stringify(data, null, 2));
-        setReplies(data);
-      });
+    LotideService.getPostReplies(ctx, postId).then(data => {
+      console.log("use replies", JSON.stringify(data, null, 2));
+      setReplies(data);
+    });
   }, []);
   return replies;
 }
