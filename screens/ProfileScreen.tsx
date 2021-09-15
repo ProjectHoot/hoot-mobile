@@ -29,7 +29,7 @@ export default function ProfileScreen({
   }, []);
 
   if (ctx.login === undefined) {
-    return <SuggestLogin />;
+    return <SuggestLogin navigation={navigation} />;
   }
 
   function logout() {
@@ -44,7 +44,7 @@ export default function ProfileScreen({
       "Login to Hoot",
       (value: any) =>
         LotideService.login(
-          { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
+          "https://hoot.goldandblack.xyz/api/unstable",
           value.login,
           value.password,
         )

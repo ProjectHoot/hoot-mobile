@@ -30,7 +30,8 @@ import FeedScreen from "../screens/FeedScreen";
 import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
-import { SettingsScreen } from "../screens/SettingsScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 import { useState } from "react";
 
 export default function Navigation({
@@ -65,6 +66,7 @@ function RootNavigator() {
       <Stack.Screen name="Web" component={ModalScreen} />
       <Stack.Screen name="Post" component={ModalScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
