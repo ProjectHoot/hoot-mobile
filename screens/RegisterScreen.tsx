@@ -12,12 +12,12 @@ import useTheme from "../hooks/useTheme";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import { View, Text, TextInput } from "../components/Themed";
-import { RootTabScreenProps } from "../types";
+import { RootStackScreenProps } from "../types";
 
 export default function RegisterScreen({
   navigation,
   route,
-}: RootTabScreenProps<"RegisterScreen">) {
+}: RootStackScreenProps<"Register">) {
   const [username, setUsername] = useState("");
   const [host, setHost] = useState("");
   const [password, setPassword] = useState("");

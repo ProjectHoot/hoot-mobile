@@ -26,6 +26,7 @@ export function usePosts(
       LotideService.getPosts(ctx, page, sort, inYourFollows, community)
         .then(data => {
           setPosts(p => [...p, ...data.items]);
+          console.log("Loaded. Next page:", data.next_page);
           setNextPage(data.next_page);
         })
         .then(() => stopLoading())
@@ -61,14 +62,14 @@ export function usePosts(
   );
 
   function loadNextPage() {
-    console.log("Loading next page");
+    console.log(`Loading next page. From ${page} to ${nextPage}`);
     setPage(nextPage);
   }
 
   return [posts, isLoading, refresh, loadNextPage];
 }
 
-export function useReplies(ctx: LotideContext, postId: number): Paged<Reply> {
+export function useReplies(ctx: LotideContext, postId: PostId): Paged<Reply> {
   const [replies, setReplies] = useState({
     items: [] as Reply[],
   } as Paged<Reply>);

@@ -3,6 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
+import React, { useState } from "react";
 import Icon from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -11,7 +12,6 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
 import { ActionSheetIOS, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -32,7 +32,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import { useState } from "react";
+import CommunityScreen from "../screens/CommunityScreen";
 
 export default function Navigation({
   colorScheme,
@@ -65,6 +65,7 @@ function RootNavigator() {
       />
       <Stack.Screen name="Web" component={ModalScreen} />
       <Stack.Screen name="Post" component={ModalScreen} />
+      <Stack.Screen name="Community" component={CommunityScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen

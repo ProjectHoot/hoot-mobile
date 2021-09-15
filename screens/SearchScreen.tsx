@@ -90,7 +90,7 @@ const Item = ({
   const theme = useTheme();
   return (
     <Pressable
-      onPress={() => console.log("lol")}
+      onPress={() => navigation.navigate("Community", { community })}
       onLongPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
     >
       <View

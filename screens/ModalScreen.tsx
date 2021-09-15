@@ -21,10 +21,7 @@ import LotideContext from "../store/LotideContext";
 import Colors from "../constants/Colors";
 
 export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
-  const post = (route.params as any | undefined)?.post as Post | undefined;
-  if (!post) {
-    return null;
-  }
+  const post = route.params.post;
   const ctx = useContext(LotideContext).ctx;
   const replies = useReplies(ctx, post.id);
   const theme = useTheme();
