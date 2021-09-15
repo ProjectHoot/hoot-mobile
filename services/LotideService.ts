@@ -42,23 +42,22 @@ export async function logout(ctx: LotideContext) {
   }
 }
 
-export async function getFeedPosts(
+export async function getPosts(
   ctx: LotideContext,
+  page: string | null,
   sort: SortOption = "hot",
-): Promise<Post[]> {
-  if (ctx.login !== undefined) {
-    return lotideRequest(ctx, "GET", `users/~me/following:posts?sort=${sort}`)
-      .then(data => data.json())
-      .catch(() => []);
-  } else {
-    return getGlobablPosts(ctx);
-  }
-}
-
-export async function getGlobablPosts(ctx: LotideContext): Promise<Post[]> {
-  return lotideRequest(ctx, "GET", "posts", undefined, true)
-    .then(data => data.json())
-    .catch(() => []);
+  inYourFollows: boolean = false,
+  communityId?: CommunityId,
+): Promise<Paged<Post>> {
+  const url = [
+    page === null ? `posts?sort=${sort}` : `posts?page=${page}&sort=${sort}`,
+    `include_your=true`,
+    `in_your_follows=${inYourFollows}`,
+    communityId && `community=${communityId}`,
+  ]
+    .filter(x => x)
+    .join("&");
+  return lotideRequest(ctx, "GET", url).then(data => data.json());
 }
 
 export async function submitPost(
@@ -71,7 +70,7 @@ export async function submitPost(
 export async function getPostReplies(
   ctx: LotideContext,
   postId: number,
-): Promise<Replies> {
+): Promise<Paged<Reply>> {
   return lotideRequest(
     ctx,
     "GET",
@@ -101,10 +100,14 @@ export async function replyToReply(
   }).then(data => data.json());
 }
 
-export async function getCommunities(ctx: LotideContext) {
-  return lotideRequest(ctx, "GET", "communities", undefined, true).then(data =>
-    data.json(),
-  );
+export async function getCommunities(
+  ctx: LotideContext,
+): Promise<Paged<Community>> {
+  return lotideRequest(ctx, "GET", "communities", undefined, true)
+    .then(data => data.json())
+    .then(data => {
+      return data;
+    });
 }
 
 export async function getUserData(ctx: LotideContext, userId: number) {

@@ -132,7 +132,7 @@ function RepliesDisplay({
   replies,
   layer = 0,
 }: {
-  replies: Replies;
+  replies: Paged<Reply>;
   layer?: number;
 }) {
   return (

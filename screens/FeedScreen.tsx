@@ -4,7 +4,7 @@ import { StyleSheet, FlatList, StatusBar, Pressable } from "react-native";
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
 import * as Haptics from "expo-haptics";
-import { useFeedPosts } from "../hooks/lotide";
+import { usePosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 import useTheme from "../hooks/useTheme";
 
@@ -13,7 +13,10 @@ export default function FeedScreen({
   route,
 }: RootTabScreenProps<"FeedScreen">) {
   const sort = route.params.sort;
-  const [posts, isLoadingPosts, refreshPosts] = useFeedPosts(sort);
+  const [posts, isLoadingPosts, refreshPosts, loadNextPage] = usePosts(
+    sort,
+    false,
+  );
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
   );
@@ -25,6 +28,8 @@ export default function FeedScreen({
         keyExtractor={(post, index) => `${post.id}-${index}`}
         refreshing={isLoadingPosts}
         onRefresh={refreshPosts}
+        onEndReachedThreshold={2}
+        onEndReached={loadNextPage}
       />
     </View>
   );

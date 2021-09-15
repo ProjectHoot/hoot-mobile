@@ -15,7 +15,8 @@ export default function SearchScreen({
   const ctx = useContext(LotideContext).ctx;
   const theme = useTheme();
   useEffect(() => {
-    getCommunities(ctx).then(setCommunities);
+    // TODO: Use the pagination feature
+    getCommunities(ctx).then(communities => setCommunities(communities.items));
   }, [ctx]);
   const renderItem = ({ item }: { item: Community }) => (
     <Item community={item} navigation={navigation} />
