@@ -26,18 +26,16 @@ export default function RegisterScreen({
   const lotideContext = useContext(LotideContext);
 
   function submit() {
-    if (password !== passwordConf) {
-      Alert.alert("Passwords don't match", "Make sure your passwords match");
-      return;
-    }
-    LotideService.register(
-      host || "https://hoot.goldandblack.xyz/api/unstable",
-      username,
-      password,
-    )
+    // if (password !== passwordConf) {
+    //   Alert.alert("Passwords don't match", "Make sure your passwords match");
+    //   return;
+    // }
+    const fHost = host || "https://hoot.goldandblack.xyz/api/unstable";
+    LotideService.register(fHost, username, password)
       .then(data => {
         console.log("RegisterScreen.tsx", JSON.stringify(data, null, 2));
-        lotideContext.setContext(data);
+        lotideContext.setContext({ apiUrl: fHost, login: data });
+        navigation.pop();
       })
       .catch(console.error);
   }

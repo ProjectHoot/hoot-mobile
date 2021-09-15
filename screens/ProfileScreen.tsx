@@ -17,7 +17,7 @@ export default function ProfileScreen({
   const ctx = lotideContext.ctx;
 
   useEffect(() => {
-    if (ctx.login !== undefined) {
+    if (ctx.login !== undefined && ctx.login.user !== undefined) {
       getUserData(ctx, ctx.login?.user.id || 0).then(setProfile);
     }
   }, [ctx.login?.user?.id]);
@@ -26,15 +26,18 @@ export default function ProfileScreen({
     StorageService.lotideContextKV
       .listKeys()
       .then(keys => setProfileList(keys));
-  }, []);
+  }, [ctx]);
 
   if (ctx.login === undefined) {
     return <SuggestLogin navigation={navigation} />;
   }
 
   function logout() {
-    LotideService.logout(ctx).then(() => {
+    LotideService.logout(ctx).finally(() => {
       lotideContext.setContext({ apiUrl: ctx.apiUrl });
+      StorageService.lotideContextKV
+        .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
+        .then(data => console.log("removed login", data));
     });
   }
 

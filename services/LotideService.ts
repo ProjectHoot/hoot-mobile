@@ -21,7 +21,7 @@ export async function register(
   username: string,
   password: string,
   email?: string,
-): Promise<LotideContext> {
+): Promise<Login> {
   return lotideRequest(
     { apiUrl },
     "POST",
@@ -33,7 +33,7 @@ export async function register(
       login: true,
     },
     true,
-  );
+  ).then(data => data.json());
 }
 
 export async function logout(ctx: LotideContext) {
@@ -148,7 +148,7 @@ export async function lotideRequest(
       }
     })
     .catch(e => {
-      console.error(`Lotide Service Error: ${path}\n${e}`);
+      console.error(`Lotide Service Error: ${path}\n${e}`, ctx);
       throw e;
     });
 }
