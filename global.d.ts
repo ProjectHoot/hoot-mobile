@@ -21,6 +21,11 @@ interface User {
   username: string;
 }
 
+interface Paged<T> {
+  items: T[];
+  next_page: string;
+}
+
 interface Post {
   author: Profile;
   community: Community;
@@ -66,11 +71,6 @@ interface Community {
   description?: string;
   description_html?: string;
   description_text?: string;
-}
-
-interface Replies {
-  items: Reply[];
-  next_page: string;
 }
 
 interface Reply {
