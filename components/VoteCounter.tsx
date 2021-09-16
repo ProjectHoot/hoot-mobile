@@ -6,7 +6,6 @@ import useTheme from "../hooks/useTheme";
 import * as Haptics from "expo-haptics";
 import LotideContext from "../store/LotideContext";
 import * as LotideService from "../services/LotideService";
-import Colors from "../constants/Colors";
 
 export interface VoteCounterProps {
   post: Post;
@@ -49,7 +48,7 @@ export default function VoteCounter(props: VoteCounterProps) {
   let scoreColor = theme.text;
 
   if (isUpvoted) {
-    scoreColor = Colors.global.red;
+    scoreColor = theme.red;
   }
 
   const shouldAddOne = isUpvoted && !isUpvotedByAPI;
