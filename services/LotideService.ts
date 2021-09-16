@@ -191,10 +191,11 @@ export async function lotideRequest(
     });
 }
 
-export function buildHeaders(ctx: LotideContext): HeadersInit {
+export function buildHeaders(ctx: LotideContext): HeadersInit | undefined {
   return ctx.login !== undefined
     ? {
         Authorization: `Bearer ${ctx.login.token}`,
+        "Content-Type": "application/json",
       }
-    : {};
+    : undefined;
 }

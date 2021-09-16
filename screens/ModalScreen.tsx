@@ -1,5 +1,5 @@
 import Icon from "@expo/vector-icons/Ionicons";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import {
   StyleSheet,
   StatusBar,
@@ -18,7 +18,6 @@ import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
-import Colors from "../constants/Colors";
 
 export default function ModalScreen({
   navigation,
@@ -153,6 +152,20 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
   const [showChildren, setShowChildren] = React.useState(true);
   const ctx = useContext(LotideContext).ctx;
   const theme = useTheme();
+  const layerColors = useMemo(
+    () => [
+      theme.text,
+      theme.red,
+      theme.orange,
+      theme.yellow,
+      theme.green,
+      theme.teal,
+      theme.blue,
+      theme.indigo,
+      theme.purple,
+    ],
+    [],
+  );
   return (
     <View style={{ paddingLeft: 0 }}>
       <View
@@ -174,7 +187,7 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
           <View
             style={{
               borderLeftWidth: 2,
-              borderColor: LAYER_COLORS[layer % LAYER_COLORS.length],
+              borderColor: layerColors[layer % layerColors.length],
               paddingLeft: 15,
               paddingVertical: 3,
             }}
@@ -221,15 +234,3 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
     </View>
   );
 }
-
-const LAYER_COLORS = [
-  Colors.global.text,
-  Colors.global.red,
-  Colors.global.orange,
-  Colors.global.yellow,
-  Colors.global.green,
-  Colors.global.teal,
-  Colors.global.blue,
-  Colors.global.indigo,
-  Colors.global.purple,
-];

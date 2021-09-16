@@ -1,35 +1,80 @@
-import { PlatformColor } from "react-native";
+import { ColorValue, Platform, PlatformColor } from "react-native";
 
-const tintColor = PlatformColor("systemOrange");
+export interface ColorsObject {
+  tint: ColorValue;
+  secondaryTint: ColorValue;
+  text: ColorValue;
+  secondaryText: ColorValue;
+  placeholderText: ColorValue;
+  background: ColorValue;
+  secondaryBackground: ColorValue;
+  tertiaryBackground: ColorValue;
+  tabIconDefault: ColorValue;
+  tabIconSelected: ColorValue;
 
-const both = {
-  tint: tintColor,
-  secondaryTint: PlatformColor("systemPurple"),
-  text: PlatformColor("label"),
-  secondaryText: PlatformColor("secondaryLabel"),
-  placeholderText: PlatformColor("placeholderText"),
-  background: PlatformColor("systemBackground"),
-  secondaryBackground: PlatformColor("secondarySystemBackground"),
-  tertiaryBackground: PlatformColor("tertiarySystemBackground"),
-  tabIconDefault: PlatformColor("secondaryLabel"),
-  tabIconSelected: tintColor,
-
-  red: PlatformColor("systemRed"),
-  orange: PlatformColor("systemOrange"),
-  yellow: PlatformColor("systemYellow"),
-  green: PlatformColor("systemGreen"),
-  teal: PlatformColor("systemTeal"),
-  blue: PlatformColor("systemBlue"),
-  indigo: PlatformColor("systemIndigo"),
-  purple: PlatformColor("systemPurple"),
-};
+  red: ColorValue;
+  orange: ColorValue;
+  yellow: ColorValue;
+  green: ColorValue;
+  teal: ColorValue;
+  blue: ColorValue;
+  indigo: ColorValue;
+  purple: ColorValue;
+}
 
 export default {
-  global: both,
-  light: {
-    ...both,
-  },
-  dark: {
-    ...both,
-  },
+  light: Platform.OS === "ios" ? buildIOS() : buildAltLight(),
+  dark: Platform.OS === "ios" ? buildIOS() : buildAltDark(),
 };
+
+function buildIOS(): ColorsObject {
+  return {
+    tint: PlatformColor("systemOrange"),
+    secondaryTint: PlatformColor("systemPurple"),
+    text: PlatformColor("label"),
+    secondaryText: PlatformColor("secondaryLabel"),
+    placeholderText: PlatformColor("placeholderText"),
+    background: PlatformColor("systemBackground"),
+    secondaryBackground: PlatformColor("secondarySystemBackground"),
+    tertiaryBackground: PlatformColor("tertiarySystemBackground"),
+    tabIconDefault: PlatformColor("secondaryLabel"),
+    tabIconSelected: PlatformColor("systemOrange"),
+
+    red: PlatformColor("systemRed"),
+    orange: PlatformColor("systemOrange"),
+    yellow: PlatformColor("systemYellow"),
+    green: PlatformColor("systemGreen"),
+    teal: PlatformColor("systemTeal"),
+    blue: PlatformColor("systemBlue"),
+    indigo: PlatformColor("systemIndigo"),
+    purple: PlatformColor("systemPurple"),
+  };
+}
+
+function buildAltLight(): ColorsObject {
+  return {
+    tint: "orange",
+    secondaryTint: "purple",
+    text: "#111",
+    secondaryText: "#333",
+    placeholderText: "#444",
+    background: "#fff",
+    secondaryBackground: "#eee",
+    tertiaryBackground: "#ccc",
+    tabIconDefault: "#ccc",
+    tabIconSelected: "orange",
+
+    red: "red",
+    orange: "orange",
+    yellow: "yellow",
+    green: "green",
+    teal: "eeal",
+    blue: "blue",
+    indigo: "indigo",
+    purple: "purple",
+  };
+}
+
+function buildAltDark(): ColorsObject {
+  return buildAltLight();
+}

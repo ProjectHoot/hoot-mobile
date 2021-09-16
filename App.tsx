@@ -8,6 +8,7 @@ import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import LotideContext, { defaultLotideContext } from "./store/LotideContext";
 import * as StorageService from "./services/StorageService";
+import { lotideRequest } from "./services/LotideService";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -15,6 +16,24 @@ export default function App() {
   const [ctx, setContext] = useState<LotideContext>(defaultLotideContext);
 
   useEffect(() => {
+    fetch("https://hoot.goldandblack.xyz/api/unstable/logins", {
+      method: "POST",
+      body: JSON.stringify({ username: "bradnon", password: "asdf" }),
+    })
+      .then(data => data.json())
+      .then(() => console.log("got it"))
+      .catch(e => {
+        console.error("don't got it", e);
+      });
+    lotideRequest(
+      { apiUrl: "https://hoot.goldandblack.xyz/api/unstable" },
+      "POST",
+      "logins",
+      { username: "bradnon", password: "asdf" },
+      true,
+    )
+      .then(data => data.json())
+      .then(data => console.log("got the other", data));
     StorageService.lotideContext.query().then(ctx => {
       if (ctx !== undefined) {
         setContext(ctx);
