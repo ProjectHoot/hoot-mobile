@@ -35,7 +35,6 @@ export default function SuggestLogin({ navigation }: SuggestLoginProps) {
       password,
     )
       .then(data => {
-        console.log("index.tsx", JSON.stringify(data, null, 2));
         lotideContext.setContext({
           apiUrl: fHost || "https://hoot.goldandblack.xyz/api/unstable",
           login: data,

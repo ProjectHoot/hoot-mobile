@@ -11,6 +11,7 @@ import * as Haptics from "expo-haptics";
 
 export interface PostDisplayProps {
   post: Post;
+  navigation: any;
   showHtmlContent?: boolean;
   showCommunityHost?: boolean;
 }
@@ -79,7 +80,16 @@ export default function PostDisplay(props: PostDisplayProps) {
       )}
       <View style={styles.foot}>
         <View>
-          <Text>{props.post.community.name}</Text>
+          <Pressable
+            hitSlop={8}
+            onPress={() =>
+              props.navigation.navigate("Community", {
+                community: props.post.community,
+              })
+            }
+          >
+            <Text>{props.post.community.name}</Text>
+          </Pressable>
           <Text style={styles.by}>by {props.post.author.username}</Text>
           {props.showCommunityHost && (
             <Text style={styles.by}>on {props.post.community.host}</Text>
@@ -95,11 +105,7 @@ export default function PostDisplay(props: PostDisplayProps) {
           </Text>
         </View>
         <View>
-          <VoteCounter
-            post={props.post}
-            isUpvoted={false}
-            onVote={voteState => console.log(voteState)}
-          />
+          <VoteCounter post={props.post} isUpvoted={false} />
         </View>
       </View>
     </View>

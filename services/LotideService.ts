@@ -46,13 +46,13 @@ export async function getPosts(
   ctx: LotideContext,
   page: string | null,
   sort: SortOption = "hot",
-  inYourFollows: boolean = false,
+  inYourFollows?: boolean,
   communityId?: CommunityId,
 ): Promise<Paged<Post>> {
   const url = [
     page === null ? `posts?sort=${sort}` : `posts?page=${page}&sort=${sort}`,
     `include_your=true`,
-    `in_your_follows=${inYourFollows}`,
+    inYourFollows !== undefined && `in_your_follows=${inYourFollows}`,
     communityId && `community=${communityId}`,
   ]
     .filter(x => x)
@@ -103,11 +103,22 @@ export async function replyToReply(
 export async function getCommunities(
   ctx: LotideContext,
 ): Promise<Paged<Community>> {
-  return lotideRequest(ctx, "GET", "communities", undefined, true)
+  return lotideRequest(ctx, "GET", "communities?include_your=true")
     .then(data => data.json())
     .then(data => {
       return data;
     });
+}
+
+export async function getCommunity(
+  ctx: LotideContext,
+  communityId: CommunityId,
+): Promise<Community> {
+  return lotideRequest(
+    ctx,
+    "GET",
+    `communities/${communityId}?include_your=true`,
+  ).then(data => data.json());
 }
 
 export async function getUserData(ctx: LotideContext, userId: number) {
@@ -116,10 +127,20 @@ export async function getUserData(ctx: LotideContext, userId: number) {
   );
 }
 
-export async function followCommunity(ctx: LotideContext, communityId: number) {
+export async function followCommunity(
+  ctx: LotideContext,
+  communityId: number,
+): Promise<{ accepted: boolean }> {
   return lotideRequest(ctx, "POST", `communities/${communityId}/follow`, {
     try_wait_for_accept: true,
-  });
+  }).then(data => data.json());
+}
+
+export async function unfollowCommunity(
+  ctx: LotideContext,
+  communityId: number,
+) {
+  return lotideRequest(ctx, "POST", `communities/${communityId}/unfollow`);
 }
 
 export async function applyVote(ctx: LotideContext, postId: number) {
@@ -139,7 +160,6 @@ export async function lotideRequest(
   body?: any,
   noLogin: boolean = false,
 ): Promise<any | undefined> {
-  console.log(path);
   if (!noLogin && ctx.login == undefined) {
     throw path;
   }
@@ -156,7 +176,10 @@ export async function lotideRequest(
       }
     })
     .catch(e => {
-      console.error(`Lotide Service Error: ${path}\n${e}`, ctx);
+      console.error(
+        `Lotide Service Error: ${method} ${ctx.apiUrl}/${path}\n${e}`,
+        ctx,
+      );
       throw e;
     });
 }

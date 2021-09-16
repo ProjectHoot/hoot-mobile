@@ -37,8 +37,7 @@ export default function NewPostScreen({
       href: link || undefined,
       content_markdown: content || undefined,
     })
-      .then(data => {
-        console.log(data.id);
+      .then(() => {
         Alert.alert("Success");
       })
       .catch(e => Alert.alert("Could not submit post", e));

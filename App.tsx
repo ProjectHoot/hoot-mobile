@@ -17,7 +17,6 @@ export default function App() {
   useEffect(() => {
     StorageService.lotideContext.query().then(ctx => {
       if (ctx !== undefined) {
-        console.log("Loaded Lotide context", ctx);
         setContext(ctx);
       }
     });
@@ -25,9 +24,7 @@ export default function App() {
 
   function applyNewContext(ctx: LotideContext) {
     StorageService.lotideContextKV.store(ctx);
-    AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)).then(() =>
-      console.log("Saved Lotide context", ctx),
-    );
+    AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)).then();
     setContext(ctx);
   }
 

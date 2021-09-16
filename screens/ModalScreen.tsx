@@ -20,11 +20,11 @@ import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import Colors from "../constants/Colors";
 
-export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
-  const post = (route.params as any | undefined)?.post as Post | undefined;
-  if (!post) {
-    return null;
-  }
+export default function ModalScreen({
+  navigation,
+  route,
+}: RootStackScreenProps<"Modal">) {
+  const post = route.params.post;
   const ctx = useContext(LotideContext).ctx;
   const replies = useReplies(ctx, post.id);
   const theme = useTheme();
@@ -37,7 +37,12 @@ export default function ModalScreen({ route }: RootStackScreenProps<"Modal">) {
           backgroundColor: theme.background,
         }}
       >
-        <PostDisplay post={post} showHtmlContent showCommunityHost />
+        <PostDisplay
+          post={post}
+          navigation={navigation}
+          showHtmlContent
+          showCommunityHost
+        />
         <View style={styles.actions}>
           <Icon name="bookmark-outline" size={25} color={theme.text} />
           <Pressable

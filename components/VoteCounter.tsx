@@ -11,7 +11,7 @@ import Colors from "../constants/Colors";
 export interface VoteCounterProps {
   post: Post;
   isUpvoted: boolean;
-  onVote: (isUpvote: boolean) => void;
+  onVote?: (isUpvote: boolean) => void;
 }
 
 export default function VoteCounter(props: VoteCounterProps) {
