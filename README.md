@@ -7,7 +7,7 @@ A mobile frontend for the Hoot + Lotide federated network of virtual communities
 Hoot connects to the federation of Lotide servers and communities.
 From there, it's kind of like Reddit, just much less prone to censorship.
 
-The app's not done yet though. If you're complaints aren't helpful, get off my lawn!
+The app's not done yet though. If your complaints aren't helpful, get off my lawn!
 
 ## Setting up a Development Environment
 

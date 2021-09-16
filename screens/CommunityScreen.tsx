@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, FlatList, Pressable, StyleSheet } from "react-native";
+import { Alert, Button, FlatList, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
@@ -35,6 +35,12 @@ export default function CommunityScreen({
 
   function follow() {
     LotideService.followCommunity(ctx, community.id).then(data => {
+      if (data.accepted === false) {
+        Alert.alert(
+          "Follow request rejected.",
+          "This could be an issue with the node you are connected to.",
+        );
+      }
       setReloadId(x => x + 1);
     });
   }

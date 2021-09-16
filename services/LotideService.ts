@@ -102,8 +102,15 @@ export async function replyToReply(
 
 export async function getCommunities(
   ctx: LotideContext,
+  onlyFollowing: boolean = false,
 ): Promise<Paged<Community>> {
-  return lotideRequest(ctx, "GET", "communities?include_your=true")
+  return lotideRequest(
+    ctx,
+    "GET",
+    `communities?include_your=true${
+      onlyFollowing ? "&your_follow.accepted=true" : ""
+    }`,
+  )
     .then(data => data.json())
     .then(data => {
       return data;
