@@ -11,6 +11,8 @@ export function usePosts(
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState<string | null>(null);
   const [nextPage, setNextPage] = useState<string | null>(null);
+  const [loadingPage, setLoadingPage] =
+    useState<string | null | undefined>(undefined);
   const [reloadId, setReloadId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
 
@@ -23,11 +25,13 @@ export function usePosts(
 
   const [isLoading, refresh] = useRefreshableData(
     stopLoading => {
+      if (loadingPage !== undefined) return;
+      setLoadingPage(page);
       LotideService.getPosts(ctx, page, sort, inYourFollows, community)
         .then(data => {
           setPosts(p => [...p, ...data.items]);
-          console.log("Loaded. Next page:", data.next_page);
           setNextPage(data.next_page);
+          setLoadingPage(undefined);
         })
         .then(() => stopLoading())
         .catch(e => {
@@ -62,11 +66,20 @@ export function usePosts(
   );
 
   function loadNextPage() {
-    console.log(`Loading next page. From ${page} to ${nextPage}`);
-    setPage(nextPage);
+    if (nextPage !== null) {
+      setPage(nextPage);
+    }
   }
 
-  return [posts, isLoading, refresh, loadNextPage];
+  function refreshData() {
+    setPosts([]);
+    setPage(null);
+    setNextPage(null);
+    setReloadId(id => id + 1);
+    refresh();
+  }
+
+  return [posts, isLoading, refreshData, loadNextPage];
 }
 
 export function useReplies(ctx: LotideContext, postId: PostId): Paged<Reply> {
@@ -75,7 +88,6 @@ export function useReplies(ctx: LotideContext, postId: PostId): Paged<Reply> {
   } as Paged<Reply>);
   useEffect(() => {
     LotideService.getPostReplies(ctx, postId).then(data => {
-      console.log("use replies", JSON.stringify(data, null, 2));
       setReplies(data);
     });
   }, []);

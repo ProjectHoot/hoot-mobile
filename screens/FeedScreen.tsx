@@ -15,7 +15,7 @@ export default function FeedScreen({
   const sort = route.params.sort;
   const [posts, isLoadingPosts, refreshPosts, loadNextPage] = usePosts(
     sort,
-    false,
+    true,
   );
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
@@ -92,13 +92,12 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
       onPress={() => navigation.navigate("Post", { post })}
       onLongPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        console.log(JSON.stringify(post, null, 2));
       }}
     >
       <View
         style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
       >
-        <PostDisplay post={post} />
+        <PostDisplay post={post} navigation={navigation} />
       </View>
     </Pressable>
   );

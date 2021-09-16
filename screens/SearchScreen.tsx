@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, TextInput } from "react-native";
+import Icon from "@expo/vector-icons/Ionicons";
 import { View, Text } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { getCommunities } from "../services/LotideService";
@@ -12,12 +13,16 @@ export default function SearchScreen({
 }: RootTabScreenProps<"SearchScreen">) {
   const [text, onChangeText] = React.useState("");
   const [communities, setCommunities] = useState<Community[]>([]);
+  const [focusId, setFocusId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
   const theme = useTheme();
   useEffect(() => {
     // TODO: Use the pagination feature
     getCommunities(ctx).then(communities => setCommunities(communities.items));
-  }, [ctx]);
+  }, [ctx, focusId]);
+  navigation.addListener("focus", () => {
+    setFocusId(x => x + 1);
+  });
   const renderItem = ({ item }: { item: Community }) => (
     <Item community={item} navigation={navigation} />
   );
@@ -35,6 +40,7 @@ export default function SearchScreen({
           value={text}
         />
       </View>
+      <Text>Popular communities:</Text>
       <FlatList
         data={communities}
         renderItem={renderItem}
@@ -73,10 +79,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   item: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    height: 50,
     marginHorizontal: 20,
     marginBottom: 1,
+    borderBottomWidth: 1,
   },
 });
 
@@ -94,7 +105,7 @@ const Item = ({
       onLongPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
     >
       <View
-        style={[styles.item, { backgroundColor: theme.secondaryBackground }]}
+        style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
       >
         <Text
           style={{
@@ -109,6 +120,9 @@ const Item = ({
             </Text>
           )}
         </Text>
+        {community.your_follow?.accepted && (
+          <Icon name="checkmark" size={20} color={theme.secondaryTint} />
+        )}
       </View>
     </Pressable>
   );

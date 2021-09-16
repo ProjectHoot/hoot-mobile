@@ -71,6 +71,9 @@ interface Community {
   description?: string;
   description_html?: string;
   description_text?: string;
+  your_follow?: {
+    accepted: boolean;
+  };
 }
 
 interface Reply {

@@ -37,7 +37,7 @@ export default function ProfileScreen({
       lotideContext.setContext({ apiUrl: ctx.apiUrl });
       StorageService.lotideContextKV
         .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
-        .then(data => console.log("removed login", data));
+        .then();
     });
   }
 
@@ -52,7 +52,6 @@ export default function ProfileScreen({
           value.password,
         )
           .then(data => {
-            console.log("ProfileScreen.tsx", JSON.stringify(data, null, 2));
             const newCtx = {
               ...lotideContext.ctx,
               login: data,
