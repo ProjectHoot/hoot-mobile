@@ -22,6 +22,7 @@ export type RootStackParamList = {
   NotFound: undefined;
   Web: undefined;
   Post: undefined;
+  Reply: { id: number; title?: string; html: string; type: "post" | "reply" };
   Settings: undefined;
   Register: undefined;
   Community: { community: Community };

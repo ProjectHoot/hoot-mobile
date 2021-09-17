@@ -82,7 +82,11 @@ export function usePosts(
   return [posts, isLoading, refreshData, loadNextPage];
 }
 
-export function useReplies(ctx: LotideContext, postId: PostId): Paged<Reply> {
+export function useReplies(
+  ctx: LotideContext,
+  postId: PostId,
+  deps: any[],
+): Paged<Reply> {
   const [replies, setReplies] = useState({
     items: [] as Reply[],
   } as Paged<Reply>);
@@ -90,6 +94,6 @@ export function useReplies(ctx: LotideContext, postId: PostId): Paged<Reply> {
     LotideService.getPostReplies(ctx, postId).then(data => {
       setReplies(data);
     });
-  }, []);
+  }, deps);
   return replies;
 }

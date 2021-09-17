@@ -55,8 +55,9 @@ export function View(props: ViewProps) {
 }
 
 export function TextInput(props: DefaultTextInput["props"]) {
-  const { style, ...otherProps } = props;
+  const { style, placeholderTextColor, ...otherProps } = props;
   const theme = useTheme();
+
   const themeStyle = {
     backgroundColor: theme.secondaryBackground,
     paddingHorizontal: 10,
@@ -64,5 +65,11 @@ export function TextInput(props: DefaultTextInput["props"]) {
     borderRadius: 8,
     color: theme.text,
   };
-  return <DefaultTextInput style={[themeStyle, style]} {...otherProps} />;
+  return (
+    <DefaultTextInput
+      style={[themeStyle, style]}
+      placeholderTextColor={placeholderTextColor || theme.placeholderText}
+      {...otherProps}
+    />
+  );
 }

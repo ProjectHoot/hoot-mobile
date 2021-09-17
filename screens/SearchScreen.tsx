@@ -16,16 +16,22 @@ export default function SearchScreen({
   const [focusId, setFocusId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
   const theme = useTheme();
+
   useEffect(() => {
     // TODO: Use the pagination feature
     getCommunities(ctx).then(communities => setCommunities(communities.items));
   }, [ctx, focusId]);
-  navigation.addListener("focus", () => {
-    setFocusId(x => x + 1);
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      setFocusId(x => x + 1);
+    });
   });
+
   const renderItem = ({ item }: { item: Community }) => (
     <Item community={item} navigation={navigation} />
   );
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
