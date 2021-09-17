@@ -16,6 +16,7 @@ import { useReplies } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import LotideContext from "../store/LotideContext";
+import { savedContentIds } from "../services/StorageService";
 
 export default function ModalScreen({
   navigation,
@@ -48,7 +49,18 @@ export default function ModalScreen({
           showCommunityHost
         />
         <View style={styles.actions}>
-          <Icon name="bookmark-outline" size={25} color={theme.text} />
+          <Pressable
+            hitSlop={5}
+            onPress={() => {
+              savedContentIds
+                .store(ctx, post.id, "post")
+                .then(async () =>
+                  console.log(await savedContentIds.query(ctx)),
+                );
+            }}
+          >
+            <Icon name="bookmark-outline" size={25} color={theme.text} />
+          </Pressable>
           <Pressable
             hitSlop={5}
             onPress={() => {

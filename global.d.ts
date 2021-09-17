@@ -23,7 +23,7 @@ interface User {
 
 interface Paged<T> {
   items: T[];
-  next_page: string;
+  next_page: string | null;
 }
 
 interface Post {
@@ -92,6 +92,11 @@ interface Reply {
   replies: Replies;
   your_vote: {};
   score: number;
+}
+
+interface SavedContentId {
+  id: number;
+  type: "post" | "reply";
 }
 
 type Refreshable<T> = [T, boolean, () => void];
