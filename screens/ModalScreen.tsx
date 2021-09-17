@@ -209,10 +209,11 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
                 <ElapsedTime time={reply.created} />
               </Text>
             </Text>
-            {showChildren && (
+            {showChildren && !!reply.content_html && (
               <HTMLView
-                value={reply.content_html.replaceAll("\n", "")}
-                // value="<h1>hello</h1>"
+                value={reply.content_html
+                  .replace(/<hr>/g, "")
+                  .replace(/\n/g, "")}
                 stylesheet={{
                   p: { color: theme.text, fontSize: 16, fontWeight: "300" },
                   h1: {
