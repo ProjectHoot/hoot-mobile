@@ -76,5 +76,25 @@ function buildAltLight(): ColorsObject {
 }
 
 function buildAltDark(): ColorsObject {
-  return buildAltLight();
+  return {
+    tint: "orange",
+    secondaryTint: "purple",
+    text: "#fff",
+    secondaryText: "#666",
+    placeholderText: "#aaa",
+    background: "#111",
+    secondaryBackground: "#222",
+    tertiaryBackground: "#222",
+    tabIconDefault: "#ccc",
+    tabIconSelected: "orange",
+
+    red: "red",
+    orange: "orange",
+    yellow: "yellow",
+    green: "green",
+    teal: "eeal",
+    blue: "#68f",
+    indigo: "indigo",
+    purple: "purple",
+  };
 }
