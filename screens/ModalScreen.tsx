@@ -228,7 +228,7 @@ function ReplyDisplay({
               {reply.author.username}
               {"  "}
               <Text style={{ color: theme.text, fontSize: 14 }}>
-                <Icon name="arrow-up" size={14} color={theme.text} light />{" "}
+                <Icon name="heart-outline" size={14} color={theme.text} light />{" "}
                 {reply.score}
                 {"   "}
                 <ElapsedTime time={reply.created} />
