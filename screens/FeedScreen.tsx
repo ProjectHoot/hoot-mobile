@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, FlatList, StatusBar, Pressable } from "react-native";
+import { StyleSheet, FlatList, Pressable } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
@@ -38,7 +38,6 @@ export default function FeedScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
   item: {
     marginVertical: 0,
