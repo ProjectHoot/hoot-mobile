@@ -1,12 +1,11 @@
 import Icon from "@expo/vector-icons/Ionicons";
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   StyleSheet,
   StatusBar,
   ScrollView,
   Pressable,
   Share,
-  Alert,
 } from "react-native";
 import HTMLView from "react-native-htmlview";
 import * as Haptics from "expo-haptics";
@@ -16,7 +15,6 @@ import { Text, View } from "../components/Themed";
 import { useReplies } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
-import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 
 export default function ModalScreen({
@@ -24,9 +22,16 @@ export default function ModalScreen({
   route,
 }: RootStackScreenProps<"Modal">) {
   const post = route.params.post;
+  const [focusId, setFocusId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
-  const replies = useReplies(ctx, post.id);
+  const replies = useReplies(ctx, post.id, [focusId]);
   const theme = useTheme();
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      setFocusId(x => x + 1);
+    });
+  });
 
   return (
     <ScrollView>
@@ -48,9 +53,12 @@ export default function ModalScreen({
             hitSlop={5}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              Alert.prompt("Reply", "Leave a reply", reply =>
-                LotideService.replyToPost(ctx, post.id, reply),
-              );
+              navigation.navigate("Reply", {
+                id: post.id,
+                title: post.title,
+                html: post.content_html,
+                type: "post",
+              });
             }}
           >
             <Icon name="arrow-undo-outline" size={25} color={theme.text} />
@@ -69,7 +77,7 @@ export default function ModalScreen({
             <Icon name="share-outline" size={25} color={theme.text} />
           </Pressable>
         </View>
-        <RepliesDisplay replies={replies} />
+        <RepliesDisplay replies={replies} navigation={navigation} />
       </View>
       <View>
         <Text style={{ textAlign: "center" }}>
@@ -135,22 +143,36 @@ const styles = StyleSheet.create({
 function RepliesDisplay({
   replies,
   layer = 0,
+  navigation,
 }: {
   replies: Paged<Reply>;
   layer?: number;
+  navigation: any;
 }) {
   return (
     <View>
       {replies.items.map(reply => (
-        <ReplyDisplay reply={reply} layer={layer} key={reply.id} />
+        <ReplyDisplay
+          reply={reply}
+          layer={layer}
+          key={reply.id}
+          navigation={navigation}
+        />
       ))}
     </View>
   );
 }
 
-function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
+function ReplyDisplay({
+  reply,
+  layer = 0,
+  navigation,
+}: {
+  reply: Reply;
+  layer: number;
+  navigation: any;
+}) {
   const [showChildren, setShowChildren] = React.useState(true);
-  const ctx = useContext(LotideContext).ctx;
   const theme = useTheme();
   const layerColors = useMemo(
     () => [
@@ -179,9 +201,12 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
           onPress={() => setShowChildren(s => !s)}
           onLongPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            Alert.prompt("Reply", "Leave a reply", newReply =>
-              LotideService.replyToReply(ctx, reply.id, newReply),
-            );
+            navigation.navigate("Reply", {
+              id: reply.id,
+              title: reply.author.username,
+              html: reply.content_html,
+              type: "reply",
+            });
           }}
         >
           <View
@@ -229,7 +254,11 @@ function ReplyDisplay({ reply, layer = 0 }: { reply: Reply; layer: number }) {
       </View>
       {reply.replies && reply.replies.items.length > 0 && showChildren && (
         <View style={{ paddingLeft: 15 }}>
-          <RepliesDisplay replies={reply.replies} layer={layer + 1} />
+          <RepliesDisplay
+            replies={reply.replies}
+            layer={layer + 1}
+            navigation={navigation}
+          />
         </View>
       )}
     </View>

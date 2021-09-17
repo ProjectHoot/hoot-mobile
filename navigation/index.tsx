@@ -33,6 +33,7 @@ import NewPostScreen from "../screens/NewPostScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import CommunityScreen from "../screens/CommunityScreen";
+import ReplyScreen from "../screens/ReplyScreen";
 
 export default function Navigation({
   colorScheme,
@@ -65,6 +66,7 @@ function RootNavigator() {
       />
       <Stack.Screen name="Web" component={ModalScreen} />
       <Stack.Screen name="Post" component={ModalScreen} />
+      <Stack.Screen name="Reply" component={ReplyScreen} />
       <Stack.Screen name="Community" component={CommunityScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
