@@ -32,6 +32,38 @@ export const lotideContextKV = {
   },
 };
 
+export const savedContentIds = {
+  async store(ctx: LotideContext, id: number, type: "post" | "reply") {
+    const [pageId, store] = await this.query(ctx);
+    store.items = [{ id, type }, ...store.items];
+    if (store.items.length > 3) {
+      store.next_page = Math.random().toString(16).substr(2, 16);
+      serviceKV.store("@content_id_current_pages", ctx.apiUrl, store.next_page);
+    }
+    AsyncStorage.setItem(`@content_id_page[${pageId}]`, JSON.stringify(store));
+  },
+
+  async query(
+    ctx: LotideContext,
+    page?: string,
+  ): Promise<[string, Paged<SavedContentId>]> {
+    const pageId = page || (await this.getCurrentPage(ctx));
+    const storeStr = await AsyncStorage.getItem(`@content_id_page[${pageId}]`);
+    const store = storeStr
+      ? JSON.parse(storeStr)
+      : { items: [], next_page: null };
+    return [pageId, store];
+  },
+
+  async getCurrentPage(ctx: LotideContext): Promise<string> {
+    return await serviceKV.queryOrStore(
+      "@content_id_current_pages",
+      ctx.apiUrl,
+      () => Math.random().toString(16).substr(2, 16),
+    );
+  },
+};
+
 const serviceKV = {
   async store<T>(path: string, k: string, v: T) {
     const storeStr = await AsyncStorage.getItem(path);
@@ -43,6 +75,16 @@ const serviceKV = {
   async query<T>(path: string, k: string): Promise<T | undefined> {
     const storeStr = await AsyncStorage.getItem(path);
     return storeStr ? JSON.parse(storeStr)[k] : undefined;
+  },
+
+  async queryOrStore<T>(path: string, k: string, v: () => T): Promise<T> {
+    const value = await this.query<T>(path, k);
+    if (value === undefined) {
+      this.store(path, k, v());
+      return v();
+    } else {
+      return value;
+    }
   },
 
   async listKeys(path: string): Promise<string[]> {
