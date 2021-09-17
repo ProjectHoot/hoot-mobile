@@ -24,8 +24,10 @@ export default function PostDisplay(props: PostDisplayProps) {
     <View>
       <Text style={styles.title}>
         {props.post.sticky && (
-          <Icon name="pin" size={25} color={theme.secondaryTint} />
-        )}{" "}
+          <>
+            <Icon name="pin" size={25} color={theme.secondaryTint} />{" "}
+          </>
+        )}
         {props.post.title}
       </Text>
       {props.post.href &&
@@ -66,11 +68,11 @@ export default function PostDisplay(props: PostDisplayProps) {
           </Pressable>
         ))}
       {props.showHtmlContent && !!props.post.content_html && (
-        <View>
+        <View style={{ paddingHorizontal: 15 }}>
           <HTMLView
             value={props.post.content_html
-              .replaceAll("<hr>", "")
-              .replaceAll("\n", "")}
+              .replace(/<hr>/g, "")
+              .replace(/\n/g, "")}
             renderNode={renderNode}
             stylesheet={{
               p: { color: theme.text },
