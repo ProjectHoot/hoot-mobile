@@ -5,7 +5,7 @@ import { View, Text } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { getCommunities } from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import { RootTabScreenProps } from "../types";
 
 export default function SearchScreen({

@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import LotideContext from "../store/LotideContext";
 import * as LotideService from "../services/LotideService";
 
