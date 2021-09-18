@@ -1,5 +1,6 @@
 type CommunityId = number;
 type PostId = number;
+type ReplyId = number;
 type UserId = number;
 
 type SortOption = "hot" | "new";
@@ -89,7 +90,7 @@ interface Reply {
   created: string;
   deleted: boolean;
   local: boolean;
-  replies: Replies;
+  replies: Replies | null;
   your_vote: {};
   score: number;
 }

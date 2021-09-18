@@ -69,15 +69,40 @@ export async function submitPost(
 
 export async function getPostReplies(
   ctx: LotideContext,
-  postId: number,
+  postId: PostId,
+  page?: string,
 ): Promise<Paged<Reply>> {
   return lotideRequest(
     ctx,
     "GET",
-    `posts/${postId}/replies`,
+    `posts/${postId}/replies?limit=10` + (page ? `&page=${page}` : ""),
     undefined,
     true,
-  ).then(data => data.json());
+  )
+    .then(data => data.json())
+    .then(data => {
+      console.log(data);
+      return data;
+    });
+}
+
+export async function getReplyReplies(
+  ctx: LotideContext,
+  replyId: ReplyId,
+  page?: string,
+): Promise<Paged<Reply>> {
+  return lotideRequest(
+    ctx,
+    "GET",
+    `comments/${replyId}/replies?limit=10` + (page ? `&page=${page}` : ""),
+    undefined,
+    true,
+  )
+    .then(data => data.json())
+    .then(data => {
+      console.log(data);
+      return data;
+    });
 }
 
 export async function replyToPost(
