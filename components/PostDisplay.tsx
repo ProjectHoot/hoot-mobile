@@ -162,22 +162,3 @@ function isImageUrl(url?: string): boolean {
     url.endsWith(ext),
   );
 }
-
-function renderNode(
-  node: any,
-  index: any,
-  siblings: any,
-  parent: any,
-  defaultRenderer: any,
-) {
-  if (
-    node.name == "iframe" ||
-    node.name == "img" ||
-    node.name == "hr" ||
-    node.name == "script"
-  ) {
-    return null;
-  } else {
-    return undefined;
-  }
-}
