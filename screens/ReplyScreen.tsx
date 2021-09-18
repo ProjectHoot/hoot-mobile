@@ -47,7 +47,10 @@ export default function ReplyScreen({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView ref={scrollRef}>
-        <Pressable style={styles.root} onPress={Keyboard.dismiss}>
+        <Pressable
+          style={styles.root}
+          onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
+        >
           <Text>Reply to {type}</Text>
           {!!title && <Text style={styles.title}>From: {title}</Text>}
           {html && <ContentDisplay contentHtml={html} />}

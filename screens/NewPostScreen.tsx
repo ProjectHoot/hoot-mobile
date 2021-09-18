@@ -4,6 +4,7 @@ import {
   Button,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
@@ -45,7 +46,9 @@ export default function NewPostScreen({
 
   return (
     <KeyboardAvoidingView style={{ width: "100%", height: "100%" }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback
+        onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
+      >
         <View style={styles.container}>
           <TextInput
             style={[styles.input, { color: theme.text }]}

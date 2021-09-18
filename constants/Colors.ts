@@ -1,4 +1,6 @@
-import { ColorValue, Platform, PlatformColor } from "react-native";
+import { ColorValue, Platform } from "react-native";
+const PlatformColor =
+  Platform.OS === "web" ? () => {} : require("react-native").PlatformColor;
 
 export interface ColorsObject {
   tint: ColorValue;
