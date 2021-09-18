@@ -91,6 +91,7 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
       onPress={() => navigation.navigate("Post", { post })}
       onLongPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        console.log(post);
       }}
     >
       <View

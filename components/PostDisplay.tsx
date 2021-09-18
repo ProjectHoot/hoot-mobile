@@ -2,12 +2,12 @@ import Icon from "@expo/vector-icons/Ionicons";
 import { openURL } from "expo-linking";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, Image, Pressable } from "react-native";
-import HTMLView from "react-native-htmlview";
 import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
 import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "expo-haptics";
+import ContentDisplay from "./ContentDisplay";
 
 export interface PostDisplayProps {
   post: Post;
@@ -69,14 +69,9 @@ export default function PostDisplay(props: PostDisplayProps) {
         ))}
       {props.showHtmlContent && !!props.post.content_html && (
         <View style={{ paddingHorizontal: 15 }}>
-          <HTMLView
-            value={props.post.content_html
-              .replace(/<hr>/g, "")
-              .replace(/\n/g, "")}
-            renderNode={renderNode}
-            stylesheet={{
-              p: { color: theme.text },
-            }}
+          <ContentDisplay
+            contentHtml={props.post.content_html}
+            contentText={props.post.content_text}
           />
         </View>
       )}
@@ -166,23 +161,4 @@ function isImageUrl(url?: string): boolean {
   return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"].some(ext =>
     url.endsWith(ext),
   );
-}
-
-function renderNode(
-  node: any,
-  index: any,
-  siblings: any,
-  parent: any,
-  defaultRenderer: any,
-) {
-  if (
-    node.name == "iframe" ||
-    node.name == "img" ||
-    node.name == "hr" ||
-    node.name == "script"
-  ) {
-    return null;
-  } else {
-    return undefined;
-  }
 }
