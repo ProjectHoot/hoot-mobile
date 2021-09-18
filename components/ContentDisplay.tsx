@@ -1,6 +1,8 @@
 import React, { ReactNode, useMemo } from "react";
+import { Text } from "./Themed";
 import HTMLView, { HTMLViewNode } from "react-native-htmlview";
 import useTheme from "../hooks/useTheme";
+import { Alert } from "react-native";
 
 export interface ContentDisplayProps {
   contentHtml?: string;
@@ -27,6 +29,7 @@ export default function ContentDisplay(props: ContentDisplayProps) {
         }}
         textComponentProps={{ style: { color: theme.text } }}
         addLineBreaks={false}
+        onLinkLongPress={url => Alert.alert("Link", url)}
       />
     ),
     [html],
@@ -40,16 +43,19 @@ function renderNode(
   parent: HTMLViewNode,
   defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode,
 ) {
-  if (
-    node.name == "iframe" ||
-    node.name == "img" ||
-    node.name == "hr" ||
-    node.name == "script"
-  ) {
+  if (["iframe", "img", "hr", "script"].includes(node.name || "")) {
     return null;
-  } else {
-    return undefined;
   }
+  if (node.name === "li") {
+    return (
+      <Text key={index}>
+        {"\u2022 "}
+        {defaultRenderer((node as any).children, parent)}
+        {"\n"}
+      </Text>
+    );
+  }
+  return undefined;
 }
 
 function parseMarkdown(markdown?: string): string | undefined {
