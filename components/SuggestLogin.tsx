@@ -4,6 +4,7 @@ import {
   Button,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   StyleSheet,
 } from "react-native";
@@ -57,7 +58,10 @@ export default function SuggestLogin({ navigation }: SuggestLoginProps) {
 
   return (
     <View style={styles.root}>
-      <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+      <Pressable
+        style={styles.container}
+        onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
+      >
         <Text style={{ fontWeight: "300", fontSize: 18, marginBottom: 25 }}>
           You are not logged in
         </Text>
