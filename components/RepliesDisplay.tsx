@@ -5,9 +5,9 @@ import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "expo-haptics";
 import ElapsedTime from "./ElapsedTime";
-import HTMLView from "react-native-htmlview";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
+import ContentDisplay from "./ContentDisplay";
 
 export interface RepliesDisplayProps {
   replies: Paged<Reply>;
@@ -163,18 +163,9 @@ function ReplyDisplay({
               </Text>
             </Text>
             {showChildren && !!reply.content_html && (
-              <HTMLView
-                value={reply.content_html
-                  .replace(/<hr>/g, "")
-                  .replace(/\n/g, "")}
-                stylesheet={{
-                  p: { color: theme.text, fontSize: 16, fontWeight: "300" },
-                  h1: {
-                    color: theme.text,
-                    fontSize: 24,
-                    fontWeight: "300",
-                  },
-                }}
+              <ContentDisplay
+                contentHtml={reply.content_html}
+                contentText={reply.content_text}
               />
             )}
           </View>
