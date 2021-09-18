@@ -6,7 +6,7 @@ import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
 import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import ContentDisplay from "./ContentDisplay";
 
 export interface PostDisplayProps {

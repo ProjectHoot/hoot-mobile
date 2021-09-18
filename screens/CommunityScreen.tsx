@@ -3,7 +3,7 @@ import { Alert, Button, FlatList, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import { usePosts } from "../hooks/lotide";

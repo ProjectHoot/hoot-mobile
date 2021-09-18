@@ -3,7 +3,7 @@ import { ColorValue, Pressable } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import ElapsedTime from "./ElapsedTime";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";

@@ -7,7 +7,7 @@ import {
   Pressable,
   Share,
 } from "react-native";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
 import { useReplies } from "../hooks/lotide";

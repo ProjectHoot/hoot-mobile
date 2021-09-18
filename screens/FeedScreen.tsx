@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, Pressable } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "../services/HapticService";
 import { usePosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 import useTheme from "../hooks/useTheme";
