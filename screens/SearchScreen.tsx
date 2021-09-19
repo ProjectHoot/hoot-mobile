@@ -7,6 +7,7 @@ import { getCommunities } from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import * as Haptics from "../services/HapticService";
 import { RootTabScreenProps } from "../types";
+import ActorDisplay from "../components/ActorDisplay";
 
 export default function SearchScreen({
   navigation,
@@ -112,19 +113,14 @@ const Item = ({
       <View
         style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
       >
-        <Text
-          style={{
-            color: community.local ? theme.blue : theme.green,
-            fontWeight: "bold",
-          }}
-        >
-          {community.name}{" "}
-          {!community.local && (
-            <Text style={{ color: theme.secondaryText, fontWeight: "300" }}>
-              | {community.host}
-            </Text>
-          )}
-        </Text>
+        <ActorDisplay
+          name={community.name}
+          host={community.host}
+          local={community.local}
+          showHost={"only_foreign"}
+          colorize={"always"}
+          newLine={true}
+        />
         {community.your_follow?.accepted && (
           <Icon name="checkmark" size={20} color={theme.secondaryTint} />
         )}

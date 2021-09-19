@@ -9,6 +9,7 @@ import SuggestLogin from "../components/SuggestLogin";
 import * as LotideService from "../services/LotideService";
 import * as StorageService from "../services/StorageService";
 import useTheme from "../hooks/useTheme";
+import ActorDisplay from "../components/ActorDisplay";
 
 export default function ProfileScreen({
   navigation,
@@ -144,6 +145,11 @@ export default function ProfileScreen({
       />
       {profileList
         .map(p => [p, ...p.split("@")] as string[])
+        .map(p => [
+          p[0],
+          p[1],
+          p[2].replace("http://", "").replace("https://", "").split(/[/?#]/)[0],
+        ])
         .map(p => (
           <Pressable
             key={p[0]}
@@ -160,12 +166,14 @@ export default function ProfileScreen({
               });
             }}
           >
-            <Text style={{ fontWeight: "500" }}>
-              {p[1]}
-              <Text style={{ fontWeight: "300", color: theme.secondaryText }}>
-                @{p[2]}
-              </Text>
-            </Text>
+            <ActorDisplay
+              name={p[1]}
+              host={p[2]}
+              local={true}
+              showHost={"always"}
+              colorize={"never"}
+              newLine={true}
+            />
           </Pressable>
         ))}
       <Text style={styles.followingTitle}>Communities You Follow:</Text>
@@ -177,18 +185,14 @@ export default function ProfileScreen({
             { borderColor: theme.secondaryBackground },
           ]}
         >
-          <Text
-            style={{
-              fontWeight: "bold",
-              color: community.local ? theme.blue : theme.green,
-            }}
-          >
-            {community.name}
-            <Text style={{ fontWeight: "300", color: theme.secondaryText }}>
-              {" "}
-              @{community.host}
-            </Text>
-          </Text>
+          <ActorDisplay
+            name={community.name}
+            host={community.host}
+            local={community.local}
+            showHost={"always"}
+            colorize={"always"}
+            newLine={true}
+          />
         </View>
       ))}
     </ScrollView>

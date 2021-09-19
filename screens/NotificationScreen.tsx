@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
+import ActorDisplay from "../components/ActorDisplay";
 import ContentDisplay from "../components/ContentDisplay";
 
 import { Text, View } from "../components/Themed";
@@ -40,10 +41,14 @@ export default function NotificationScreen({
         <Text style={styles.name}>{item.post.author.username}</Text>
         <Text style={styles.title}>{item.post.title}</Text>
         <Text>
-          In <Text style={styles.name}>{item.post.community.name}</Text>
-          <Text style={[styles.thin, { color: theme.secondaryText }]}>
-            @{item.post.community.host}
-          </Text>
+          In{" "}
+          <ActorDisplay
+            name={item.post.community.name}
+            host={item.post.community.host}
+            local={item.post.community.local}
+            showHost={"always"}
+            colorize={"never"}
+          />
         </Text>
         {item.origin.type === "comment" ? (
           <>
