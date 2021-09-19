@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TextStyle } from "react-native";
 import { Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 
@@ -10,6 +10,9 @@ export interface ActorDisplayProps {
   colorize?: "always" | "never" | "only_foreign";
   showHost?: "always" | "never" | "only_foreign";
   newLine?: boolean;
+  style?: TextStyle;
+  styleName?: TextStyle;
+  styleHost?: TextStyle;
 }
 
 export default function ActorDisplay(props: ActorDisplayProps) {
@@ -34,11 +37,17 @@ export default function ActorDisplay(props: ActorDisplayProps) {
     : {};
 
   return (
-    <Text style={styles.root}>
-      <Text style={[styles.name, nameStyle]}>{props.name}</Text>
+    <Text style={[styles.root, props.style]}>
+      <Text style={[styles.name, nameStyle, props.styleName]}>
+        {props.name}
+      </Text>
       {shouldShowHost && (
-        <Text style={[styles.host, { color: theme.secondaryText }]}>
-          {props.newLine && "\n"}@{props.host}
+        <Text
+          style={[styles.host, { color: theme.secondaryText }, props.styleHost]}
+        >
+          {props.newLine && "\n"}
+          {!props.newLine && "@"}
+          {props.host}
         </Text>
       )}
     </Text>

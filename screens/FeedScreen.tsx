@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, FlatList, Pressable } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
@@ -7,16 +7,20 @@ import * as Haptics from "../services/HapticService";
 import { usePosts } from "../hooks/lotide";
 import { RootTabScreenProps } from "../types";
 import useTheme from "../hooks/useTheme";
+import LotideContext from "../store/LotideContext";
+import SuggestLogin from "../components/SuggestLogin";
 
 export default function FeedScreen({
   navigation,
   route,
 }: RootTabScreenProps<"FeedScreen">) {
   const sort = route.params.sort;
+  const ctx = useContext(LotideContext).ctx;
   const [posts, isLoadingPosts, refreshPosts, loadNextPage] = usePosts(
     sort,
     true,
   );
+  if (!ctx.login) return <SuggestLogin />;
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
   );

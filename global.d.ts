@@ -15,6 +15,14 @@ interface Login {
   user: User;
 }
 
+interface InstanceInfo {
+  description?: string;
+  software: {
+    name: string;
+    version: string;
+  };
+}
+
 interface UserNotification {
   unseen: boolean;
   type: "post_reply" | "comment_reply";

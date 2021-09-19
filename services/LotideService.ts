@@ -197,6 +197,14 @@ export async function removeVote(ctx: LotideContext, postId: number) {
   return lotideRequest(ctx, "DELETE", `posts/${postId}/your_vote`);
 }
 
+export async function getInstanceInfo(
+  ctx: LotideContext,
+): Promise<InstanceInfo> {
+  return lotideRequest(ctx, "GET", "instance", undefined, true).then(data =>
+    data.json(),
+  );
+}
+
 // ** UTIL **
 
 export async function lotideRequest(
@@ -222,7 +230,7 @@ export async function lotideRequest(
       }
     })
     .catch(e => {
-      console.error(
+      console.log(
         `Lotide Service Error: ${method} ${ctx.apiUrl}/${path}\n${e}`,
         ctx,
       );

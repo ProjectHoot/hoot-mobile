@@ -23,6 +23,7 @@ export default function ProfileScreen({
   const ctx = lotideContext.ctx;
 
   useEffect(() => {
+    if (!ctx.login) return;
     // TODO: Use the pagination feature
     LotideService.getCommunities(ctx, true).then(communities =>
       setCommunities(communities.items),
@@ -42,7 +43,7 @@ export default function ProfileScreen({
   }, [ctx]);
 
   if (ctx.login === undefined) {
-    return <SuggestLogin navigation={navigation} />;
+    return <SuggestLogin />;
   }
 
   function logout() {

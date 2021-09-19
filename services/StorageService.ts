@@ -4,6 +4,9 @@ export const lotideContext = {
   async store(ctx: LotideContext) {
     return AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx));
   },
+  async remove() {
+    return AsyncStorage.removeItem("@lotide_ctx");
+  },
   async query(): Promise<LotideContext | undefined> {
     return AsyncStorage.getItem("@lotide_ctx").then(ctxStr => {
       if (ctxStr !== null) {
