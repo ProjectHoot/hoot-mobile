@@ -16,9 +16,6 @@ import { ActionSheetIOS, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import ModalScreen from "../screens/ModalScreen";
-import NotFoundScreen from "../screens/NotFoundScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -34,6 +31,9 @@ import SettingsScreen from "../screens/SettingsScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import CommunityScreen from "../screens/CommunityScreen";
 import ReplyScreen from "../screens/ReplyScreen";
+import ModalScreen from "../screens/ModalScreen";
+import NotFoundScreen from "../screens/NotFoundScreen";
+import NotificationScreen from "../screens/NotificationScreen";
 
 export default function Navigation({
   colorScheme,
@@ -164,8 +164,8 @@ function BottomTabNavigator({ navigation }: any) {
         }}
       />
       <BottomTab.Screen
-        name="NotificationsScreen"
-        component={TabTwoScreen}
+        name="NotificationScreen"
+        component={NotificationScreen}
         options={{
           title: "Notifications",
           tabBarIcon: ({ color }) => (

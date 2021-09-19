@@ -15,6 +15,41 @@ interface Login {
   user: User;
 }
 
+interface UserNotification {
+  unseen: boolean;
+  type: "post_reply" | "comment_reply";
+  reply: {
+    id: number;
+    remote_url: string;
+    content_text?: string;
+    content_html?: string;
+  };
+  post: {
+    id: number;
+    title: string;
+    remote_url: string;
+  };
+  comment?: number;
+}
+
+interface FullNotification {
+  unseen: boolean;
+  reply: {
+    id: ReplyId;
+    content_text?: string;
+    content_html?: string;
+    author: Profile;
+  };
+  origin: {
+    type: "post" | "comment";
+    id: number;
+    content_text?: string;
+    content_html?: string;
+    author: Profile;
+  };
+  post: Post;
+}
+
 interface User {
   has_unread_notifications: boolean;
   id: UserId;
