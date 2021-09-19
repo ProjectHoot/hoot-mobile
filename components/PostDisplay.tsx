@@ -8,6 +8,7 @@ import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "../services/HapticService";
 import ContentDisplay from "./ContentDisplay";
+import ActorDisplay from "./ActorDisplay";
 
 export interface PostDisplayProps {
   post: Post;
@@ -20,6 +21,9 @@ export default function PostDisplay(props: PostDisplayProps) {
   const [imgAspect, setImgAspect] = useState(1);
   const isImage = useMemo(() => isImageUrl(props.post.href), [props.post.href]);
   const theme = useTheme();
+
+  const post = props.post;
+
   return (
     <View>
       <Text style={styles.title}>
@@ -85,7 +89,14 @@ export default function PostDisplay(props: PostDisplayProps) {
               })
             }
           >
-            <Text>{props.post.community.name}</Text>
+            <ActorDisplay
+              name={post.community.name}
+              host={post.community.host}
+              local={post.community.local}
+              showHost={"only_foreign"}
+              colorize={"never"}
+              newLine={true}
+            />
           </Pressable>
           <Text style={styles.by}>by {props.post.author.username}</Text>
           {props.showCommunityHost && (
