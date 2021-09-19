@@ -35,7 +35,7 @@ export type RootTabParamList = {
   FeedScreen: { sort: SortOption };
   SearchScreen: undefined;
   NewPostScreen: undefined;
-  NotificationsScreen: undefined;
+  NotificationScreen: undefined;
   ProfileScreen: undefined;
   RegisterScreen: undefined;
 };

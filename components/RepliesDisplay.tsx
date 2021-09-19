@@ -57,7 +57,6 @@ export default function RepliesDisplay({
           <Pressable
             hitSlop={5}
             onPress={() => {
-              console.log(replies.next_page);
               if (replyId) {
                 LotideService.getReplyReplies(
                   ctx,

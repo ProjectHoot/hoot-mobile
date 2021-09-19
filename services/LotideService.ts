@@ -37,9 +37,24 @@ export async function register(
 }
 
 export async function logout(ctx: LotideContext) {
-  if (ctx.login) {
-    return lotideRequest(ctx, "DELETE", "logins/~current");
-  }
+  return lotideRequest(ctx, "DELETE", "logins/~current");
+}
+
+export async function getNotifications(
+  ctx: LotideContext,
+): Promise<UserNotification[]> {
+  return lotideRequest(ctx, "GET", "users/~me/notifications").then(data =>
+    data.json(),
+  );
+}
+
+export async function getPost(
+  ctx: LotideContext,
+  postId: PostId,
+): Promise<Post> {
+  return lotideRequest(ctx, "GET", `posts/${postId}`, undefined, true).then(
+    data => data.json(),
+  );
 }
 
 export async function getPosts(
@@ -67,6 +82,15 @@ export async function submitPost(
   return lotideRequest(ctx, "POST", "posts", post).then(data => data.json());
 }
 
+export async function getReply(
+  ctx: LotideContext,
+  replyId: ReplyId,
+): Promise<Reply> {
+  return lotideRequest(ctx, "GET", `comments/${replyId}`, undefined, true).then(
+    data => data.json(),
+  );
+}
+
 export async function getPostReplies(
   ctx: LotideContext,
   postId: PostId,
@@ -78,12 +102,7 @@ export async function getPostReplies(
     `posts/${postId}/replies?limit=10` + (page ? `&page=${page}` : ""),
     undefined,
     true,
-  )
-    .then(data => data.json())
-    .then(data => {
-      console.log(data);
-      return data;
-    });
+  ).then(data => data.json());
 }
 
 export async function getReplyReplies(
@@ -97,12 +116,7 @@ export async function getReplyReplies(
     `comments/${replyId}/replies?limit=10` + (page ? `&page=${page}` : ""),
     undefined,
     true,
-  )
-    .then(data => data.json())
-    .then(data => {
-      console.log(data);
-      return data;
-    });
+  ).then(data => data.json());
 }
 
 export async function replyToPost(
