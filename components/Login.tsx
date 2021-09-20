@@ -146,9 +146,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    padding: 35,
   },
   name: {
     fontSize: 50,
+    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
   },
   domain: {
     fontWeight: "300",
