@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, Pressable, StyleSheet } from "react-native";
-import KnownHosts, { KnownHost } from "../constants/KnownHosts";
+import React, { useContext, useEffect, useState } from "react";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
+import KnownHosts from "../constants/KnownHosts";
 import ActorDisplay from "./ActorDisplay";
 import { Text, TextInput, View } from "./Themed";
 import * as LotideService from "../services/LotideService";
-import { ThemeProvider } from "@react-navigation/native";
 import useTheme from "../hooks/useTheme";
+import { lotideContextKV } from "../services/StorageService";
+import LotideContext from "../store/LotideContext";
 
 export interface HostListProps {
   onSelect: (domain: string, name?: string) => void;
@@ -20,7 +21,11 @@ interface HostData {
 export default function HostList(props: HostListProps) {
   const [hostText, setHostText] = useState("");
   const [knownHosts, setKnowHosts] = useState<HostData[]>(KnownHosts);
+  const [existingProfiles, setExistingProfiles] = useState<
+    [string, LotideContext][]
+  >([]);
   const theme = useTheme();
+  const lotideContext = useContext(LotideContext);
 
   useEffect(() => {
     KnownHosts.map((h, i) => {
@@ -46,6 +51,13 @@ export default function HostList(props: HostListProps) {
           );
         });
     });
+  }, []);
+
+  useEffect(() => {
+    lotideContextKV
+      .getStore()
+      .then(object => Object.entries(object))
+      .then(setExistingProfiles);
   }, []);
 
   const renderItem = ({ item }: { item: HostData }) => {
@@ -97,9 +109,36 @@ export default function HostList(props: HostListProps) {
     );
   };
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root}>
       <Text style={styles.title}>Login to continue</Text>
-      <Text style={styles.subtitle}>Enter a host or select one below</Text>
+      {existingProfiles.length > 0 && (
+        <Text style={styles.subtitle}>Select an existing profile</Text>
+      )}
+      {existingProfiles.map(p => {
+        const [username, url] = p[0].split("@");
+        return (
+          <Pressable
+            key={p[0]}
+            onPress={() => {
+              lotideContext.setContext(p[1]);
+            }}
+          >
+            <ActorDisplay
+              name={username}
+              host={url}
+              local={true}
+              showHost={"always"}
+              newLine={true}
+              style={{ paddingVertical: 5, paddingBottom: 10 }}
+            />
+          </Pressable>
+        );
+      })}
+      <Text style={styles.subtitle}>
+        {existingProfiles.length > 0
+          ? "Or sign into a new acount"
+          : "Enter a host or select one below"}
+      </Text>
       <TextInput
         placeholder="Host domain"
         style={{ paddingVertical: 10, paddingHorizontal: 10 }}
@@ -109,17 +148,17 @@ export default function HostList(props: HostListProps) {
         keyboardType="url"
         returnKeyType="next"
       />
-      <FlatList
-        data={knownHosts.filter(
+      {knownHosts
+        .filter(
           x =>
             hostText === "" ||
             x.domain.includes(hostText.toLowerCase()) ||
             x.name.toLowerCase().includes(hostText.toLowerCase()),
-        )}
-        renderItem={renderItem}
-        keyExtractor={item => item.domain}
-      />
-    </View>
+        )
+        .map(item => (
+          <View key={item.domain}>{renderItem({ item })}</View>
+        ))}
+    </ScrollView>
   );
 }
 

@@ -9,6 +9,7 @@ import { RootTabScreenProps } from "../types";
 import useTheme from "../hooks/useTheme";
 import LotideContext from "../store/LotideContext";
 import SuggestLogin from "../components/SuggestLogin";
+import { hasLogin } from "../services/LotideService";
 
 export default function FeedScreen({
   navigation,
@@ -20,7 +21,8 @@ export default function FeedScreen({
     sort,
     true,
   );
-  if (!ctx.login) return <SuggestLogin />;
+  if (!hasLogin(ctx)) return <SuggestLogin />;
+  console.log(ctx);
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
   );

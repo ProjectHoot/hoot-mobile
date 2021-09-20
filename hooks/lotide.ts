@@ -11,9 +11,8 @@ export function usePosts(
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState<string | null>(null);
   const [nextPage, setNextPage] = useState<string | null>(null);
-  const [loadingPage, setLoadingPage] = useState<string | null | undefined>(
-    undefined,
-  );
+  const [loadingPage, setLoadingPage] =
+    useState<string | null | undefined>(undefined);
   const [reloadId, setReloadId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
 
@@ -30,7 +29,7 @@ export function usePosts(
         })
         .then(() => stopLoading())
         .catch(e => {
-          console.error("hey im getpost", e);
+          stopLoading();
           setPosts(p => [
             ...p,
             {

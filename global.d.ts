@@ -6,7 +6,7 @@ type UserId = number;
 type SortOption = "hot" | "new";
 
 interface LotideContext {
-  apiUrl: string;
+  apiUrl?: string;
   login?: Login;
 }
 

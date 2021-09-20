@@ -33,6 +33,10 @@ export const lotideContextKV = {
   async remove(k: string): Promise<LotideContext | undefined> {
     return serviceKV.remove("@lotide_ctx_arr", k);
   },
+  async getStore(): Promise<{ [key: string]: LotideContext }> {
+    const storeStr = await AsyncStorage.getItem("@lotide_ctx_arr");
+    return storeStr ? JSON.parse(storeStr) : {};
+  },
 };
 
 const serviceKV = {
