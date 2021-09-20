@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import * as Haptics from "../services/HapticService";
 import PostDisplay from "../components/PostDisplay";
-import { View } from "../components/Themed";
+import { View, Text } from "../components/Themed";
 import { useReplies } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
@@ -19,11 +19,19 @@ import RepliesDisplay from "../components/RepliesDisplay";
 export default function ModalScreen({
   navigation,
   route,
-}: RootStackScreenProps<"Modal">) {
+}: RootStackScreenProps<"Post">) {
   const post = route.params.post;
+  const [highlightedReplies, setHighlightedReplies] = useState(
+    route.params.highlightedReplies,
+  );
   const [focusId, setFocusId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
-  const replies = useReplies(ctx, post.id, [focusId]);
+  const replies = useReplies(
+    ctx,
+    post.id,
+    [focusId, highlightedReplies?.join(",")],
+    highlightedReplies?.[0],
+  );
   const theme = useTheme();
 
   useEffect(() => {
@@ -76,10 +84,18 @@ export default function ModalScreen({
             <Icon name="share-outline" size={25} color={theme.text} />
           </Pressable>
         </View>
+        {highlightedReplies && (
+          <Pressable onPress={() => setHighlightedReplies(undefined)}>
+            <Text style={{ color: theme.tint, paddingVertical: 10 }}>
+              Show all replies
+            </Text>
+          </Pressable>
+        )}
         <RepliesDisplay
           replies={replies}
           navigation={navigation}
           postId={post.id}
+          highlightedReplies={highlightedReplies}
         />
         <View style={{ height: 300 }} />
       </View>

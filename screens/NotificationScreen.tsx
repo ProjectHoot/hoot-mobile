@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, Pressable, StyleSheet } from "react-native";
 import ActorDisplay from "../components/ActorDisplay";
 import ContentDisplay from "../components/ContentDisplay";
 import SuggestLogin from "../components/SuggestLogin";
@@ -41,7 +41,19 @@ export default function NotificationScreen({
 
   const renderItem = ({ item }: { item: FullNotification }) => {
     return (
-      <View style={[styles.item, { borderColor: theme.secondaryBackground }]}>
+      <Pressable
+        style={[styles.item, { borderColor: theme.secondaryBackground }]}
+        onPress={() => {
+          const highlightedReplies =
+            item.origin.type === "comment"
+              ? [item.origin.id, item.reply.id]
+              : [item.reply.id];
+          navigation.navigate("Post", {
+            post: item.post,
+            highlightedReplies,
+          });
+        }}
+      >
         <Text style={styles.name}>{item.post.author.username}</Text>
         <Text style={styles.title}>{item.post.title}</Text>
         <Text>
@@ -82,7 +94,7 @@ export default function NotificationScreen({
             </View>
           </>
         )}
-      </View>
+      </Pressable>
     );
   };
 

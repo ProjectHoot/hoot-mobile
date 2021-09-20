@@ -15,6 +15,7 @@ export interface RepliesDisplayProps {
   layer?: number;
   postId?: PostId;
   replyId?: ReplyId;
+  highlightedReplies?: ReplyId[];
 }
 
 export default function RepliesDisplay({
@@ -23,6 +24,7 @@ export default function RepliesDisplay({
   layer = 0,
   postId,
   replyId,
+  highlightedReplies = [],
 }: RepliesDisplayProps) {
   const [nextPageData, setNextPageData] = useState<Paged<Reply>>();
   const theme = useTheme();
@@ -49,6 +51,7 @@ export default function RepliesDisplay({
           navigation={navigation}
           layerColors={layerColors}
           postId={postId}
+          highlightedReplies={highlightedReplies}
         />
       ))}
       {replies.next_page !== null &&
@@ -61,13 +64,13 @@ export default function RepliesDisplay({
                 LotideService.getReplyReplies(
                   ctx,
                   replyId,
-                  replies.next_page,
+                  replies.next_page || undefined,
                 ).then(setNextPageData);
               } else if (postId) {
                 LotideService.getPostReplies(
                   ctx,
                   postId,
-                  replies.next_page,
+                  replies.next_page || undefined,
                 ).then(setNextPageData);
               }
             }}
@@ -86,6 +89,7 @@ export default function RepliesDisplay({
           layer={layer}
           postId={postId}
           replyId={replyId}
+          highlightedReplies={highlightedReplies}
         />
       )}
       {replies.next_page === null && layer === 0 && (
@@ -103,12 +107,14 @@ function ReplyDisplay({
   navigation,
   layerColors,
   postId,
+  highlightedReplies = [],
 }: {
   reply: Reply;
   layer: number;
   navigation: any;
   layerColors: ColorValue[];
   postId?: PostId;
+  highlightedReplies?: ReplyId[];
 }) {
   const [nextPageData, setNextPageData] = useState<Paged<Reply>>();
   const [showChildren, setShowChildren] = React.useState(true);
@@ -142,6 +148,9 @@ function ReplyDisplay({
               borderColor: layerColors[layer % layerColors.length],
               paddingLeft: 15,
               paddingVertical: 3,
+              backgroundColor: highlightedReplies.includes(reply.id)
+                ? theme.secondaryBackground
+                : theme.background,
             }}
           >
             <Text
@@ -180,6 +189,7 @@ function ReplyDisplay({
                 navigation={navigation}
                 postId={postId}
                 replyId={reply.id}
+                highlightedReplies={highlightedReplies}
               />
             </View>
           )
