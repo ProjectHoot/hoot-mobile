@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { Platform, Pressable, ScrollView, StyleSheet } from "react-native";
 import KnownHosts from "../constants/KnownHosts";
 import ActorDisplay from "./ActorDisplay";
 import { Text, TextInput, View } from "./Themed";
@@ -86,6 +86,7 @@ export default function HostList(props: HostListProps) {
             styleName={{
               fontSize: 24,
               fontWeight: "300",
+              fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
               color,
             }}
           />
@@ -125,7 +126,12 @@ export default function HostList(props: HostListProps) {
           >
             <ActorDisplay
               name={username}
-              host={url}
+              host={
+                url
+                  .replace("http://", "")
+                  .replace("https://", "")
+                  .split(/[/?#]/)[0]
+              }
               local={true}
               showHost={"always"}
               newLine={true}
@@ -165,6 +171,7 @@ export default function HostList(props: HostListProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    padding: 20,
   },
   title: {
     fontSize: 24,

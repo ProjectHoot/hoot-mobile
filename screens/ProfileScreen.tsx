@@ -47,29 +47,28 @@ export default function ProfileScreen({
   }
 
   function logout() {
-    LotideService.logout(ctx).finally(() => {
-      Alert.alert(
-        "Log out",
-        "Would you like to keep the login profile handy for later?",
-        [
-          {
-            text: "Remove",
-            onPress: () => {
-              StorageService.lotideContextKV
-                .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
-                .then(() => lotideContext.setContext({}));
-            },
+    Alert.alert(
+      "Log out",
+      "Would you like to keep the login profile handy for later?",
+      [
+        {
+          text: "Remove",
+          onPress: () => {
+            StorageService.lotideContextKV
+              .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
+              .then(() => LotideService.logout(ctx))
+              .then(() => lotideContext.setContext({}));
           },
-          {
-            text: "Keep",
-            style: "default",
-            onPress: () => {
-              lotideContext.setContext({});
-            },
+        },
+        {
+          text: "Keep",
+          style: "default",
+          onPress: () => {
+            lotideContext.setContext({});
           },
-        ],
-      );
-    });
+        },
+      ],
+    );
   }
 
   return (
