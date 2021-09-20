@@ -87,14 +87,22 @@ export function useReplies(
   ctx: LotideContext,
   postId: PostId,
   deps: any[],
+  replyId?: ReplyId,
 ): Paged<Reply> {
   const [replies, setReplies] = useState({
     items: [] as Reply[],
   } as Paged<Reply>);
   useEffect(() => {
-    LotideService.getPostReplies(ctx, postId).then(data => {
-      setReplies(data);
-    });
+    if (replyId) {
+      LotideService.getReply(ctx, replyId).then(async reply => {
+        reply.replies = await LotideService.getReplyReplies(ctx, reply.id);
+        setReplies({ items: [reply], next_page: null });
+      });
+    } else {
+      LotideService.getPostReplies(ctx, postId).then(data => {
+        setReplies(data);
+      });
+    }
   }, deps);
   return replies;
 }

@@ -67,7 +67,7 @@ interface User {
 
 interface Paged<T> {
   items: T[];
-  next_page: string;
+  next_page: string | null;
 }
 
 interface Post {
@@ -133,7 +133,7 @@ interface Reply {
   created: string;
   deleted: boolean;
   local: boolean;
-  replies: Replies | null;
+  replies: Paged<Reply> | null;
   your_vote: {};
   score: number;
 }
