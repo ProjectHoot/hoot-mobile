@@ -4,6 +4,9 @@ export const lotideContext = {
   async store(ctx: LotideContext) {
     return AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx));
   },
+  async remove() {
+    return AsyncStorage.removeItem("@lotide_ctx");
+  },
   async query(): Promise<LotideContext | undefined> {
     return AsyncStorage.getItem("@lotide_ctx").then(ctxStr => {
       if (ctxStr !== null) {
@@ -29,6 +32,10 @@ export const lotideContextKV = {
   },
   async remove(k: string): Promise<LotideContext | undefined> {
     return serviceKV.remove("@lotide_ctx_arr", k);
+  },
+  async getStore(): Promise<{ [key: string]: LotideContext }> {
+    const storeStr = await AsyncStorage.getItem("@lotide_ctx_arr");
+    return storeStr ? JSON.parse(storeStr) : {};
   },
 };
 

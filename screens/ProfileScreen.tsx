@@ -23,6 +23,7 @@ export default function ProfileScreen({
   const ctx = lotideContext.ctx;
 
   useEffect(() => {
+    if (!ctx.login) return;
     // TODO: Use the pagination feature
     LotideService.getCommunities(ctx, true).then(communities =>
       setCommunities(communities.items),
@@ -42,42 +43,33 @@ export default function ProfileScreen({
   }, [ctx]);
 
   if (ctx.login === undefined) {
-    return <SuggestLogin navigation={navigation} />;
+    return <SuggestLogin />;
   }
 
   function logout() {
     LotideService.logout(ctx).finally(() => {
-      lotideContext.setContext({ apiUrl: ctx.apiUrl });
-      StorageService.lotideContextKV
-        .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
-        .then();
+      Alert.alert(
+        "Log out",
+        "Would you like to keep the login profile handy for later?",
+        [
+          {
+            text: "Remove",
+            onPress: () => {
+              StorageService.lotideContextKV
+                .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
+                .then(() => lotideContext.setContext({}));
+            },
+          },
+          {
+            text: "Keep",
+            style: "default",
+            onPress: () => {
+              lotideContext.setContext({});
+            },
+          },
+        ],
+      );
     });
-  }
-
-  function newLogin() {
-    Alert.prompt(
-      "Login",
-      "Login to Hoot",
-      (value: any) =>
-        LotideService.login(
-          "https://hoot.goldandblack.xyz/api/unstable",
-          value.login,
-          value.password,
-        )
-          .then(data => {
-            const newCtx = {
-              ...lotideContext.ctx,
-              login: data,
-            };
-            lotideContext.setContext(newCtx);
-            setProfileList(l => [
-              `${newCtx.login.user.username}@${newCtx.apiUrl}`,
-              ...l,
-            ]);
-          })
-          .catch(console.error),
-      "login-password",
-    );
   }
 
   return (
@@ -138,7 +130,7 @@ export default function ProfileScreen({
         </View>
       )}
       <Button
-        onPress={newLogin}
+        onPress={() => lotideContext.setContext({})}
         title="Add Profile"
         color={theme.tint}
         accessibilityLabel="Add profile"

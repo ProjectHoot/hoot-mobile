@@ -8,6 +8,7 @@ import LotideContext from "../store/LotideContext";
 import * as Haptics from "../services/HapticService";
 import { RootTabScreenProps } from "../types";
 import ActorDisplay from "../components/ActorDisplay";
+import SuggestLogin from "../components/SuggestLogin";
 
 export default function SearchScreen({
   navigation,
@@ -19,6 +20,7 @@ export default function SearchScreen({
   const theme = useTheme();
 
   useEffect(() => {
+    if (!ctx.login) return;
     // TODO: Use the pagination feature
     getCommunities(ctx).then(communities => setCommunities(communities.items));
   }, [ctx, focusId]);
@@ -28,6 +30,8 @@ export default function SearchScreen({
       setFocusId(x => x + 1);
     });
   });
+
+  if (!ctx.login) return <SuggestLogin />;
 
   const renderItem = ({ item }: { item: Community }) => (
     <Item community={item} navigation={navigation} />

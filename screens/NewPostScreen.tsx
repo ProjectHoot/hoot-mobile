@@ -28,7 +28,7 @@ export default function NewPostScreen({
   const ctx = lotideContext.ctx;
 
   if (ctx.login === undefined) {
-    return <SuggestLogin navigation={navigation} />;
+    return <SuggestLogin />;
   }
 
   function submit() {

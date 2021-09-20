@@ -16,15 +16,9 @@ export function usePosts(
   const [reloadId, setReloadId] = useState(0);
   const ctx = useContext(LotideContext).ctx;
 
-  useEffect(() => {
-    setPosts([]);
-    setPage(null);
-    setNextPage(null);
-    setReloadId(id => id + 1);
-  }, [ctx, sort]);
-
   const [isLoading, refresh] = useRefreshableData(
     stopLoading => {
+      if (!ctx.login) return;
       if (loadingPage !== undefined) return;
       setLoadingPage(page);
       LotideService.getPosts(ctx, page, sort, inYourFollows, community)
@@ -35,7 +29,7 @@ export function usePosts(
         })
         .then(() => stopLoading())
         .catch(e => {
-          console.error("hey im getpost", e);
+          stopLoading();
           setPosts(p => [
             ...p,
             {
@@ -64,6 +58,13 @@ export function usePosts(
     },
     [reloadId, page],
   );
+
+  useEffect(() => {
+    setPosts([]);
+    setPage(null);
+    setNextPage(null);
+    refresh();
+  }, [ctx, sort]);
 
   function loadNextPage() {
     if (nextPage !== null) {

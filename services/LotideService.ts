@@ -1,5 +1,11 @@
 export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
+// ** UTILS **
+
+export function hasLogin(ctx: LotideContext): boolean {
+  return !!ctx.apiUrl && !!ctx.login;
+}
+
 // ** API FUNCTIONS **
 
 export async function login(
@@ -197,6 +203,14 @@ export async function removeVote(ctx: LotideContext, postId: number) {
   return lotideRequest(ctx, "DELETE", `posts/${postId}/your_vote`);
 }
 
+export async function getInstanceInfo(
+  ctx: LotideContext,
+): Promise<InstanceInfo> {
+  return lotideRequest(ctx, "GET", "instance", undefined, true).then(data =>
+    data.json(),
+  );
+}
+
 // ** UTIL **
 
 export async function lotideRequest(
@@ -206,9 +220,8 @@ export async function lotideRequest(
   body?: any,
   noLogin: boolean = false,
 ): Promise<any | undefined> {
-  if (!noLogin && ctx.login == undefined) {
-    throw path;
-  }
+  if (!ctx.apiUrl) throw "No API url";
+  if (!noLogin && ctx.login == undefined) throw "Not logged in";
   return fetch(`${ctx.apiUrl}/${path}`, {
     method,
     headers: buildHeaders(ctx),

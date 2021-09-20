@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import ActorDisplay from "../components/ActorDisplay";
 import ContentDisplay from "../components/ContentDisplay";
+import SuggestLogin from "../components/SuggestLogin";
 
 import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
@@ -20,6 +21,7 @@ export default function NotificationScreen({
   const ctx = useContext(LotideContext).ctx;
 
   useEffect(() => {
+    if (!ctx.login) return;
     LotideService.getNotifications(ctx).then(notifications => {
       const promises = notifications.map(n =>
         transformToFullNotification(ctx, n),
@@ -34,6 +36,8 @@ export default function NotificationScreen({
     () => navigation.addListener("focus", () => setFocusId(i => i + 1)),
     [],
   );
+
+  if (!ctx.login) return <SuggestLogin />;
 
   const renderItem = ({ item }: { item: FullNotification }) => {
     return (

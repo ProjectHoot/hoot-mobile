@@ -6,13 +6,21 @@ type UserId = number;
 type SortOption = "hot" | "new";
 
 interface LotideContext {
-  apiUrl: string;
+  apiUrl?: string;
   login?: Login;
 }
 
 interface Login {
   token: string;
   user: User;
+}
+
+interface InstanceInfo {
+  description?: string;
+  software: {
+    name: string;
+    version: string;
+  };
 }
 
 interface UserNotification {

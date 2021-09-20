@@ -8,6 +8,7 @@ import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import LotideContext, { defaultLotideContext } from "./store/LotideContext";
 import * as StorageService from "./services/StorageService";
+import * as LotideService from "./services/LotideService";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -22,10 +23,33 @@ export default function App() {
     });
   }, []);
 
+  useEffect(() => {
+    if (!ctx.apiUrl) return;
+    LotideService.getInstanceInfo(ctx)
+      .then(data => {
+        console.log(data);
+        if (data.software.version !== "0.9.0-pre") {
+          throw "Bad version";
+        }
+      })
+      .catch(() => {
+        StorageService.lotideContextKV
+          .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
+          .then(() => applyNewContext({}));
+      });
+    if (!ctx.login) return;
+    LotideService.getUserData(ctx, ctx.login.user.id).catch(() => {
+      StorageService.lotideContextKV
+        .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
+        .then(() => applyNewContext({}));
+    });
+  }, [ctx]);
+
   function applyNewContext(ctx: LotideContext) {
-    StorageService.lotideContextKV.store(ctx);
-    AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)).then();
-    setContext(ctx);
+    StorageService.lotideContextKV
+      .store(ctx)
+      .then(() => AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)))
+      .then(() => setContext(ctx));
   }
 
   if (!isLoadingComplete) {
