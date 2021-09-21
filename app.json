@@ -15,10 +15,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "userInterfaceStyle": "automatic",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "xyz.goldandblack.hootmobile"
     },
     "android": {
       "userInterfaceStyle": "automatic",
