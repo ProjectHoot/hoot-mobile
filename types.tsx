@@ -26,6 +26,7 @@ export type RootStackParamList = {
   Settings: undefined;
   Register: undefined;
   Community: { community: Community };
+  NewCommunity: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

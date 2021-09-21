@@ -34,7 +34,7 @@ export default function ProfileScreen({
     if (ctx.login !== undefined && ctx.login.user !== undefined) {
       getUserData(ctx, ctx.login?.user.id || 0).then(setProfile);
     }
-  }, [ctx.login?.user?.id]);
+  }, [ctx.login?.token]);
 
   useEffect(() => {
     StorageService.lotideContextKV
@@ -167,6 +167,14 @@ export default function ProfileScreen({
             />
           </Pressable>
         ))}
+      <View style={{ paddingTop: 10 }}>
+        <Button
+          onPress={() => navigation.navigate("NewCommunity")}
+          title="Create Community"
+          color={theme.tint}
+          accessibilityLabel="Create a new community"
+        />
+      </View>
       <Text style={styles.followingTitle}>Communities You Follow:</Text>
       {communities.map(community => (
         <View

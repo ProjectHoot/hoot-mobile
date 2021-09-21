@@ -115,6 +115,7 @@ interface Community {
   description?: string;
   description_html?: string;
   description_text?: string;
+  you_are_moderator?: boolean;
   your_follow?: {
     accepted: boolean;
   };
