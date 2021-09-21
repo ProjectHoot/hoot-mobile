@@ -18,4 +18,13 @@ jobs:
           expo-cache: true
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
-      - run: expo publish
+      - name: Publish to Expo
+        run: expo publish
+      - name: Build Web
+        run: expo build:web
+      - name: GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: web-build
