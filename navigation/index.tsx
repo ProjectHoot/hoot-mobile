@@ -147,7 +147,7 @@ function BottomTabNavigator({ navigation }: any) {
         name="SearchScreen"
         component={SearchScreen}
         options={{
-          title: "Search",
+          title: "Communities",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="search-outline" color={color} />
           ),

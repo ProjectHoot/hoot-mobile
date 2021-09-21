@@ -1,25 +1,28 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   Button,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
 } from "react-native";
-import { View } from "../components/Themed";
+import { View, Text } from "../components/Themed";
 import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
 import useTheme from "../hooks/useTheme";
 import SuggestLogin from "../components/SuggestLogin";
+import CommunityFinder from "../components/CommunityFinder";
+import ActorDisplay from "../components/ActorDisplay";
 
 export default function NewPostScreen({
   navigation,
 }: RootTabScreenProps<"NewPostScreen">) {
-  const [communityId, setCommunityId] = useState("");
+  const [community, setCommunity] = useState<Community | null>();
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [content, setContent] = useState("");
@@ -27,21 +30,44 @@ export default function NewPostScreen({
   const lotideContext = useContext(LotideContext);
   const ctx = lotideContext.ctx;
 
+  useEffect(() => {
+    return navigation.addListener("focus", () => {
+      console.log(community);
+      if (community === null) {
+        setCommunity(undefined);
+      }
+    });
+  }, [community, community?.id]);
+
   if (ctx.login === undefined) {
     return <SuggestLogin />;
   }
 
+  if (community === null)
+    return <CommunityFinder onSelect={setCommunity} onlyWhenTyping />;
+
   function submit() {
+    if (!community) return;
     LotideService.submitPost(ctx, {
-      community: parseInt(communityId),
+      community: community.id,
       title,
       href: link || undefined,
       content_markdown: content || undefined,
     })
-      .then(() => {
-        Alert.alert("Success");
+      .then(data => {
+        LotideService.getPost(ctx, data.id).then(post => {
+          reset();
+          navigation.navigate("Post", { post });
+        });
       })
       .catch(e => Alert.alert("Could not submit post", e));
+  }
+
+  function reset() {
+    setCommunity(undefined);
+    setTitle("");
+    setLink("");
+    setContent("");
   }
 
   return (
@@ -50,13 +76,23 @@ export default function NewPostScreen({
         onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
       >
         <View style={styles.container}>
-          <TextInput
-            style={[styles.input, { color: theme.text }]}
-            placeholder="Community ID"
-            placeholderTextColor={theme.placeholderText}
-            value={communityId}
-            onChangeText={setCommunityId}
-          />
+          <Pressable onPress={() => setCommunity(null)}>
+            {community ? (
+              <ActorDisplay
+                name={community.name}
+                host={community.host}
+                local={community.local}
+                colorize={"always"}
+                showHost={"always"}
+                newLine
+                style={styles.input}
+              />
+            ) : (
+              <Text style={[styles.input, { color: theme.secondaryText }]}>
+                Select a Community
+              </Text>
+            )}
+          </Pressable>
           <TextInput
             style={[styles.input, styles.title, { color: theme.text }]}
             placeholder="Add a Title"
@@ -64,26 +100,43 @@ export default function NewPostScreen({
             value={title}
             onChangeText={setTitle}
           />
-          <TextInput
-            style={[styles.input, { color: theme.text }]}
-            placeholder="Link"
-            placeholderTextColor={theme.placeholderText}
-            value={link}
-            onChangeText={setLink}
-          />
-          <TextInput
-            style={[styles.input, { color: theme.text }]}
-            placeholder="Add post content"
-            placeholderTextColor={theme.placeholderText}
-            value={content}
-            onChangeText={setContent}
-          />
-          <Button
-            onPress={submit}
-            title="Submit"
-            color="#841584"
-            accessibilityLabel="Login to the Hoot network"
-          />
+          {title.length >= 4 ? (
+            <>
+              <TextInput
+                style={[styles.input, { color: theme.text }]}
+                placeholder="Link"
+                placeholderTextColor={theme.placeholderText}
+                value={link}
+                onChangeText={setLink}
+                keyboardType="url"
+                textContentType="URL"
+              />
+              <TextInput
+                style={[styles.input, { color: theme.text }]}
+                placeholder="Add post content"
+                placeholderTextColor={theme.placeholderText}
+                value={content}
+                onChangeText={setContent}
+              />
+            </>
+          ) : (
+            <Text style={{ color: theme.secondaryText }}>
+              {title.length > 0 && 4 - title.length}
+            </Text>
+          )}
+          {!!community && (!!link || content.length > 10) && (
+            <Button
+              onPress={submit}
+              title="Submit"
+              color={theme.tint}
+              accessibilityLabel="Submit new post"
+            />
+          )}
+          {content.length < 11 && content.length > 0 && (
+            <Text style={{ color: theme.secondaryText }}>
+              {11 - content.length}
+            </Text>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
