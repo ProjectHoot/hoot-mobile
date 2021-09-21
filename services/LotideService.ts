@@ -148,13 +148,14 @@ export async function replyToReply(
 export async function getCommunities(
   ctx: LotideContext,
   onlyFollowing: boolean = false,
+  page?: string,
 ): Promise<Paged<Community>> {
   return lotideRequest(
     ctx,
     "GET",
-    `communities?include_your=true${
+    `communities?include_your=true&limit=100${
       onlyFollowing ? "&your_follow.accepted=true" : ""
-    }`,
+    }${page ? `&page=${page}` : ""}`,
   )
     .then(data => data.json())
     .then(data => {
