@@ -52,9 +52,19 @@ export default function CommunityFinder(props: CommunityFinderProps) {
           colorize={"always"}
           newLine
         />
-        {item.your_follow?.accepted && (
-          <Icon name="checkmark" size={20} color={theme.secondaryTint} />
-        )}
+        <View style={{ display: "flex", flexDirection: "row" }}>
+          {item.you_are_moderator && (
+            <Icon name="shield-outline" size={20} color={theme.secondaryTint} />
+          )}
+          {item.your_follow?.accepted && (
+            <Icon
+              name="checkmark"
+              size={20}
+              color={theme.secondaryTint}
+              style={{ marginLeft: 5 }}
+            />
+          )}
+        </View>
       </Pressable>
     );
   };

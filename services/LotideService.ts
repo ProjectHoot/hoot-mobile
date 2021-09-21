@@ -1,4 +1,4 @@
-export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
+export type RequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 // ** UTILS **
 
@@ -194,6 +194,23 @@ export async function unfollowCommunity(
   communityId: number,
 ) {
   return lotideRequest(ctx, "POST", `communities/${communityId}/unfollow`);
+}
+
+export async function newCommunity(
+  ctx: LotideContext,
+  name: string,
+): Promise<{ community: { id: CommunityId } }> {
+  return lotideRequest(ctx, "POST", "communities", { name }).then(data =>
+    data.json(),
+  );
+}
+
+export async function editCommunity(
+  ctx: LotideContext,
+  id: CommunityId,
+  description: string,
+) {
+  return lotideRequest(ctx, "PATCH", `communities/${id}`, { description });
 }
 
 export async function applyVote(ctx: LotideContext, postId: number) {

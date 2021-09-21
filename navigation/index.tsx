@@ -34,6 +34,7 @@ import ReplyScreen from "../screens/ReplyScreen";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import NotificationScreen from "../screens/NotificationScreen";
+import NewCommunityScreen from "../screens/NewCommunity";
 
 export default function Navigation({
   colorScheme,
@@ -68,6 +69,7 @@ function RootNavigator() {
       <Stack.Screen name="Post" component={ModalScreen} />
       <Stack.Screen name="Reply" component={ReplyScreen} />
       <Stack.Screen name="Community" component={CommunityScreen} />
+      <Stack.Screen name="NewCommunity" component={NewCommunityScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen
