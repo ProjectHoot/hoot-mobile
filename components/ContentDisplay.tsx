@@ -1,8 +1,11 @@
 import React, { ReactNode, useMemo } from "react";
-import { Text } from "./Themed";
+import { Text, View } from "./Themed";
+import { Platform, Pressable, StyleSheet } from "react-native";
 import HTMLView, { HTMLViewNode } from "react-native-htmlview";
 import useTheme from "../hooks/useTheme";
 import { Alert } from "react-native";
+import { ColorsObject } from "../constants/Colors";
+import { Link } from "@react-navigation/native";
 
 export interface ContentDisplayProps {
   contentHtml?: string;
@@ -19,44 +22,143 @@ export default function ContentDisplay(props: ContentDisplayProps) {
       `<p>${props.contentText}</p>`,
     [props.contentHtml, props.contentMarkdown, props.contentText],
   );
-  return useMemo(
-    () => (
+  return (
+    <>
       <HTMLView
+        RootComponent={Text}
         value={html.replace(/\n/g, "")}
-        renderNode={renderNode}
+        renderNode={renderNode(theme)}
         stylesheet={{
           a: { color: theme.secondaryTint },
+          cite: { fontStyle: "italic" },
+          del: {
+            textDecorationLine: "line-through",
+            textDecorationStyle: "solid",
+          },
+          dfn: { fontStyle: "italic" },
+          ins: { textDecorationLine: "underline" },
+          samp: { fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace" },
+          small: { fontSize: 10 },
         }}
         textComponentProps={{ style: { color: theme.text } }}
-        addLineBreaks={false}
         onLinkLongPress={url => Alert.alert("Link", url)}
       />
-    ),
-    [html],
+      <Text>{props.contentHtml}</Text>
+    </>
   );
 }
 
-function renderNode(
-  node: HTMLViewNode,
-  index: number,
-  siblings: HTMLViewNode,
-  parent: HTMLViewNode,
-  defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode,
-) {
-  if (["iframe", "img", "hr", "script"].includes(node.name || "")) {
-    return null;
-  }
-  if (node.name === "li") {
-    return (
-      <Text key={index}>
-        {"\u2022 "}
-        {defaultRenderer((node as any).children, parent)}
-        {"\n"}
-      </Text>
-    );
-  }
-  return undefined;
-}
+const renderNode =
+  (theme: ColorsObject) =>
+  (
+    node: HTMLViewNode,
+    index: number,
+    siblings: HTMLViewNode,
+    parent: HTMLViewNode,
+    defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode,
+  ) => {
+    if (["iframe", "script"].includes(node.name || "")) {
+      return null;
+    }
+
+    function children() {
+      return defaultRenderer((node as any).children, parent);
+    }
+
+    switch (node.name) {
+      case "abbr":
+        return (
+          <Pressable
+            key={index}
+            onPress={() => Alert.alert("Abbr.", node.attribs.title)}
+          >
+            <Text
+              style={{
+                textDecorationLine: "underline",
+                textDecorationStyle: "dotted",
+              }}
+            >
+              {children()}
+            </Text>
+          </Pressable>
+        );
+      case "blockquote":
+        return (
+          <Text key={index}>
+            <View style={{ padding: 10 }}>
+              <View
+                style={{
+                  borderLeftWidth: 2,
+                  borderColor: theme.secondaryText,
+                  paddingLeft: 10,
+                  paddingVertical: 5,
+                }}
+              >
+                {children()}
+              </View>
+            </View>
+            {"\n"}
+          </Text>
+        );
+      case "dl":
+      case "dt":
+      case "dd":
+        return (
+          <Text key={index}>
+            {children()}
+            {"\n"}
+          </Text>
+        );
+      case "figure":
+        return <View key={index}>{children()}</View>;
+      case "hr":
+        return (
+          <View
+            key={index}
+            style={{
+              width: 200,
+              alignSelf: "stretch",
+              borderBottomWidth: StyleSheet.hairlineWidth || 1,
+              borderColor: theme.secondaryText,
+            }}
+          />
+        );
+      case "kbd":
+        return (
+          <Text
+            key={index}
+            style={{ backgroundColor: theme.tertiaryBackground }}
+          >
+            {" "}
+            {children()}{" "}
+          </Text>
+        );
+      case "img":
+        return <Text key={index}>[Image not displayed]</Text>;
+      case "li":
+        return (
+          <Text key={index}>
+            {"\u2022 "}
+            {children()}
+            {"\n"}
+          </Text>
+        );
+      case "sub":
+        return (
+          <Text key={index} style={{ fontSize: 10 }}>
+            {children()}
+          </Text>
+        );
+      case "sup":
+        return (
+          <View key={index}>
+            <Text style={{ fontSize: 10 }}>{children()}</Text>
+          </View>
+        );
+      default:
+        return undefined;
+    }
+  };
 
 function parseMarkdown(markdown?: string): string | undefined {
   if (markdown === "" || markdown === undefined) return undefined;
