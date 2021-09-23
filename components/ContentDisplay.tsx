@@ -1,11 +1,11 @@
-import React, { ReactNode, useMemo } from "react";
-import { Text, View } from "./Themed";
+import React, { ReactNode, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 import { Platform, Pressable, StyleSheet } from "react-native";
 import HTMLView, { HTMLViewNode } from "react-native-htmlview";
+import Icon from "@expo/vector-icons/Ionicons";
 import useTheme from "../hooks/useTheme";
 import { Alert } from "react-native";
 import { ColorsObject } from "../constants/Colors";
-import { Link } from "@react-navigation/native";
 
 export interface ContentDisplayProps {
   contentHtml?: string;
@@ -23,28 +23,25 @@ export default function ContentDisplay(props: ContentDisplayProps) {
     [props.contentHtml, props.contentMarkdown, props.contentText],
   );
   return (
-    <>
-      <HTMLView
-        RootComponent={Text}
-        value={html.replace(/\n/g, "")}
-        renderNode={renderNode(theme)}
-        stylesheet={{
-          a: { color: theme.secondaryTint },
-          cite: { fontStyle: "italic" },
-          del: {
-            textDecorationLine: "line-through",
-            textDecorationStyle: "solid",
-          },
-          dfn: { fontStyle: "italic" },
-          ins: { textDecorationLine: "underline" },
-          samp: { fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace" },
-          small: { fontSize: 10 },
-        }}
-        textComponentProps={{ style: { color: theme.text } }}
-        onLinkLongPress={url => Alert.alert("Link", url)}
-      />
-      <Text>{props.contentHtml}</Text>
-    </>
+    <HTMLView
+      RootComponent={Text}
+      value={html.replace(/\n/g, "")}
+      renderNode={renderNode(theme)}
+      stylesheet={{
+        a: { color: theme.secondaryTint },
+        cite: { fontStyle: "italic" },
+        del: {
+          textDecorationLine: "line-through",
+          textDecorationStyle: "solid",
+        },
+        dfn: { fontStyle: "italic" },
+        ins: { textDecorationLine: "underline" },
+        samp: { fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace" },
+        small: { fontSize: 10 },
+      }}
+      textComponentProps={{ style: { color: theme.text } }}
+      onLinkLongPress={url => Alert.alert("Link", url)}
+    />
   );
 }
 
@@ -100,6 +97,10 @@ const renderNode =
             {"\n"}
           </Text>
         );
+      case "details":
+        return (
+          <Details key={index}>{children() as React.ReactChild[]}</Details>
+        );
       case "dl":
       case "dt":
       case "dd":
@@ -149,6 +150,8 @@ const renderNode =
             {children()}
           </Text>
         );
+      case "summary":
+        return <Text key={index}>{children()}</Text>;
       case "sup":
         return (
           <View key={index}>
@@ -173,4 +176,29 @@ function parseMarkdown(markdown?: string): string | undefined {
     .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2'>$1</a>")
     .replace(/\n$/gim, "<br />")
     .trim();
+}
+
+function Details({ children }: { children: React.ReactChild[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const theme = useTheme();
+
+  const [summary, ...realChildren] = children.filter(
+    (x: any) => x.props.children.toString().trim() !== "",
+  );
+
+  return (
+    <View>
+      <Pressable hitSlop={5} onPress={() => setIsOpen(x => !x)}>
+        <Text style={{ color: theme.secondaryTint }}>
+          {isOpen ? (
+            <Icon name="chevron-down-outline" />
+          ) : (
+            <Icon name="chevron-forward-outline" />
+          )}
+          {summary}
+        </Text>
+      </Pressable>
+      {isOpen && realChildren}
+    </View>
+  );
 }
