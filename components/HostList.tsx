@@ -61,7 +61,7 @@ export default function HostList(props: HostListProps) {
   }, []);
 
   const renderItem = ({ item }: { item: HostData }) => {
-    const enabled = item.instanceInfo?.software.version === "0.9.0-pre";
+    const enabled = item.instanceInfo?.software.version.startsWith("0.9.");
     const color = enabled ? theme.text : theme.secondaryText;
     return (
       <View
