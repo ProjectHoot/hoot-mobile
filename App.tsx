@@ -28,7 +28,7 @@ export default function App() {
     LotideService.getInstanceInfo(ctx)
       .then(data => {
         console.log(data);
-        if (data.software.version !== "0.9.0-pre") {
+        if (!data.software.version.startsWith("0.9.")) {
           throw "Bad version";
         }
       })

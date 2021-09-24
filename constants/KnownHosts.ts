@@ -9,16 +9,20 @@ export const KnownHosts: KnownHost[] = [
     domain: "hoot.goldandblack.xyz",
   },
   {
+    name: "Narwhal.City",
+    domain: "narwhal.city",
+  },
+  {
     name: "Tide C",
     domain: "c.tide.tk",
   },
   {
-    name: "Narwhal City",
-    domain: "dev.narwhal.city",
-  },
-  {
     name: "Exopla",
     domain: "lotide.exopla.net.eu.org",
+  },
+  {
+    name: "Narwhal.City (Dev)",
+    domain: "dev.narwhal.city",
   },
   {
     name: "Tide B",
