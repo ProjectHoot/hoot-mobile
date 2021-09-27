@@ -9,12 +9,12 @@
   "related_applications": [
     {
       "platform": "itunes",
-      "id": "xyz.goldandblack.hootmobile"
+      "id": "co.brokenlampcandle.hoot"
     },
     {
       "platform": "play",
-      "url": "http://play.google.com/store/apps/details?id=xyz.goldandblack.hootmobile",
-      "id": "xyz.goldandblack.hootmobile"
+      "url": "http://play.google.com/store/apps/details?id=co.brokenlampcandle.hoot",
+      "id": "co.brokenlampcandle.hoot"
     }
   ],
   "prefer_related_applications": true,
