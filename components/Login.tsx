@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -7,6 +7,7 @@ import {
   Platform,
   Pressable,
   StyleSheet,
+  TextInput as DefaultTextInput,
 } from "react-native";
 import { Text, TextInput, View } from "./Themed";
 import * as LotideService from "../services/LotideService";
@@ -23,14 +24,26 @@ export default function Login(props: LoginProps) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const usernameRef = useRef<DefaultTextInput>(null);
+  const passwordRef = useRef<DefaultTextInput>(null);
   const theme = useTheme();
   const lotideContext = useContext(LotideContext);
 
+  function fail(message: string) {
+    Alert.alert("Failed to submit", message);
+  }
+
   function register() {
+    if (!username) return fail("Please enter a username");
+    if (!password) return fail("Enter a password");
+    if (!email) return fail("Please enter an email address");
+
     LotideService.register(
       `https://${props.domain}/api/unstable`,
       username,
       password,
+      email,
     )
       .then(data => {
         lotideContext.setContext({
@@ -45,6 +58,9 @@ export default function Login(props: LoginProps) {
   }
 
   function login() {
+    if (!username) return fail("Please enter a username");
+    if (!password) return fail("Enter a password");
+
     LotideService.login(
       `https://${props.domain}/api/unstable`,
       username,
@@ -111,18 +127,42 @@ export default function Login(props: LoginProps) {
             </Text>
           </Text>
         </Pressable>
+        {isRegistering && (
+          <TextInput
+            style={styles.input}
+            placeholder="Email Address"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            autoCompleteType="email"
+            returnKeyType="next"
+            onSubmitEditing={() => usernameRef.current?.focus()}
+          />
+        )}
         <TextInput
+          ref={usernameRef}
           style={styles.input}
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
+          keyboardType="ascii-capable"
+          textContentType="username"
+          autoCompleteType="username"
+          returnKeyType="next"
+          onSubmitEditing={() => passwordRef.current?.focus()}
         />
         <TextInput
+          ref={passwordRef}
           style={styles.input}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry={true}
+          textContentType={isRegistering ? "newPassword" : "password"}
+          autoCompleteType="password"
+          returnKeyType="done"
+          onSubmitEditing={submit}
         />
         <View style={styles.actionButtons}>
           <Button
