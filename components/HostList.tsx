@@ -79,10 +79,6 @@ export default function HostList(props: HostListProps) {
             host={item.domain}
             local={false}
             newLine={true}
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: "#fff",
-            }}
             styleName={{
               fontSize: 24,
               fontWeight: "300",

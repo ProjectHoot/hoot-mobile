@@ -3,7 +3,7 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import * as React from "react";
+import React, { forwardRef } from "react";
 import {
   ColorValue,
   Text as DefaultText,
@@ -54,7 +54,10 @@ export function View(props: ViewProps) {
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
 
-export function TextInput(props: DefaultTextInput["props"]) {
+export const TextInput = forwardRef<
+  DefaultTextInput,
+  DefaultTextInput["props"]
+>((props: DefaultTextInput["props"], ref) => {
   const { style, placeholderTextColor, ...otherProps } = props;
   const theme = useTheme();
 
@@ -67,9 +70,10 @@ export function TextInput(props: DefaultTextInput["props"]) {
   };
   return (
     <DefaultTextInput
+      ref={ref}
       style={[themeStyle, style]}
       placeholderTextColor={placeholderTextColor || theme.placeholderText}
       {...otherProps}
     />
   );
-}
+});
