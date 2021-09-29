@@ -13,22 +13,25 @@ import { Text, TextInput, View } from "./Themed";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import useTheme from "../hooks/useTheme";
+import { useNavigation } from "@react-navigation/core";
 
 export interface LoginProps {
   hostName?: string;
   domain: string;
+  username?: string;
   onGoBack: () => void;
 }
 
 export default function Login(props: LoginProps) {
   const [isRegistering, setIsRegistering] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(props.username || "");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const usernameRef = useRef<DefaultTextInput>(null);
   const passwordRef = useRef<DefaultTextInput>(null);
   const theme = useTheme();
   const lotideContext = useContext(LotideContext);
+  const navigation = useNavigation();
 
   function fail(message: string) {
     Alert.alert("Failed to submit", message);
@@ -164,6 +167,16 @@ export default function Login(props: LoginProps) {
           returnKeyType="done"
           onSubmitEditing={submit}
         />
+        {!isRegistering && (
+          <Pressable
+            style={{ padding: 15 }}
+            onPress={() =>
+              navigation.navigate("ForgotPassword", { node: props.domain })
+            }
+          >
+            <Text secondary>Forgot Password</Text>
+          </Pressable>
+        )}
         <View style={styles.actionButtons}>
           <Button
             title="Change Host"

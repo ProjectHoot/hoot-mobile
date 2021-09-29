@@ -27,6 +27,7 @@ export type RootStackParamList = {
   Register: undefined;
   Community: { community: Community };
   NewCommunity: undefined;
+  ForgotPassword: { node: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

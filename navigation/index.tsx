@@ -28,13 +28,13 @@ import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import RegisterScreen from "../screens/RegisterScreen";
 import CommunityScreen from "../screens/CommunityScreen";
 import ReplyScreen from "../screens/ReplyScreen";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import NewCommunityScreen from "../screens/NewCommunity";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 
 export default function Navigation({
   colorScheme,
@@ -71,7 +71,11 @@ function RootNavigator() {
       <Stack.Screen name="Community" component={CommunityScreen} />
       <Stack.Screen name="NewCommunity" component={NewCommunityScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPasswordScreen}
+        options={{ title: "Forgot Password" }}
+      />
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
