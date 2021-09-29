@@ -21,8 +21,11 @@ import ActorDisplay from "../components/ActorDisplay";
 
 export default function NewPostScreen({
   navigation,
+  route,
 }: RootTabScreenProps<"NewPostScreen">) {
-  const [community, setCommunity] = useState<Community | null>();
+  const [community, setCommunity] = useState<Community | null | undefined>(
+    route.params.community,
+  );
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [content, setContent] = useState("");
@@ -33,11 +36,14 @@ export default function NewPostScreen({
   useEffect(() => {
     return navigation.addListener("focus", () => {
       console.log(community);
+      if (route.params.community) {
+        return setCommunity(route.params.community);
+      }
       if (community === null) {
-        setCommunity(undefined);
+        return setCommunity(undefined);
       }
     });
-  }, [community, community?.id]);
+  }, [community, community?.id, route.params.community?.id]);
 
   if (ctx.login === undefined) {
     return <SuggestLogin />;

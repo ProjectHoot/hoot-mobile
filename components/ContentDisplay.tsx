@@ -24,7 +24,7 @@ export default function ContentDisplay(props: ContentDisplayProps) {
   );
   return (
     <HTMLView
-      RootComponent={Text}
+      RootComponent={props => <Text {...props} />}
       value={html.replace(/\n/g, "")}
       renderNode={renderNode(theme)}
       stylesheet={{
