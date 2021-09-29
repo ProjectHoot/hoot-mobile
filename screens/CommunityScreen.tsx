@@ -25,7 +25,7 @@ export default function CommunityScreen({
 
   useEffect(() => {
     LotideService.getCommunity(ctx, community.id).then(setCommunity);
-  }, [route.params.community.id, reloadId]);
+  }, [route.params.community.id, route.params.community.description, reloadId]);
 
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
@@ -54,10 +54,7 @@ export default function CommunityScreen({
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
       <View
-        style={[
-          styles.header,
-          { borderBottomColor: theme.secondaryBackground },
-        ]}
+        style={[styles.header, { borderBottomColor: theme.tertiaryBackground }]}
       >
         <View>
           <Text style={[styles.title]}>{community.name}</Text>
@@ -76,21 +73,39 @@ export default function CommunityScreen({
             </Text>
           )}
         </View>
-        {isFollowing ? (
+        <View style={styles.buttons}>
           <Button
-            onPress={unfollow}
-            title="Unfollow"
+            onPress={() => navigation.navigate("NewPostScreen", { community })}
+            title="Post"
             color={theme.tint}
-            accessibilityLabel="Stop seeing posts from this community"
+            accessibilityLabel="Post to this community"
           />
-        ) : (
-          <Button
-            onPress={follow}
-            title="Follow"
-            color={theme.tint}
-            accessibilityLabel="See posts from this community in your feed"
-          />
-        )}
+          {community.you_are_moderator && (
+            <Button
+              onPress={() =>
+                navigation.navigate("EditCommunity", { community })
+              }
+              title="Edit"
+              color={theme.tint}
+              accessibilityLabel="Edit your community community"
+            />
+          )}
+          {isFollowing ? (
+            <Button
+              onPress={unfollow}
+              title="Unfollow"
+              color={theme.secondaryTint}
+              accessibilityLabel="Stop seeing posts from this community"
+            />
+          ) : (
+            <Button
+              onPress={follow}
+              title="Follow"
+              color={theme.tint}
+              accessibilityLabel="See posts from this community in your feed"
+            />
+          )}
+        </View>
       </View>
       <FlatList
         data={posts}
@@ -110,14 +125,19 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   header: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
     padding: 20,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth || 1,
   },
   title: {
     fontSize: 20,
+  },
+  buttons: {
+    paddingTop: 10,
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
   item: {
     marginVertical: 0,

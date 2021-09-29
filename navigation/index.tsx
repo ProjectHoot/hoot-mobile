@@ -35,6 +35,7 @@ import NotFoundScreen from "../screens/NotFoundScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import NewCommunityScreen from "../screens/NewCommunity";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import EditCommunityScreen from "../screens/EditCommunityScreen";
 
 export default function Navigation({
   colorScheme,
@@ -70,6 +71,7 @@ function RootNavigator() {
       <Stack.Screen name="Reply" component={ReplyScreen} />
       <Stack.Screen name="Community" component={CommunityScreen} />
       <Stack.Screen name="NewCommunity" component={NewCommunityScreen} />
+      <Stack.Screen name="EditCommunity" component={EditCommunityScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen
         name="ForgotPassword"

@@ -27,16 +27,20 @@ export type RootStackParamList = {
   Register: undefined;
   Community: { community: Community };
   NewCommunity: undefined;
+  EditCommunity: { community: Community };
   ForgotPassword: { node: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, Screen>;
+  CompositeScreenProps<
+    NativeStackScreenProps<RootStackParamList, Screen>,
+    BottomTabScreenProps<RootTabParamList>
+  >;
 
 export type RootTabParamList = {
   FeedScreen: { sort: SortOption };
   SearchScreen: undefined;
-  NewPostScreen: undefined;
+  NewPostScreen: { community?: Community };
   NotificationScreen: undefined;
   ProfileScreen: undefined;
   RegisterScreen: undefined;
