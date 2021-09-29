@@ -35,7 +35,6 @@ export default function NewPostScreen({
 
   useEffect(() => {
     return navigation.addListener("focus", () => {
-      console.log(community);
       if (route.params.community) {
         return setCommunity(route.params.community);
       }

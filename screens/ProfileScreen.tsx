@@ -18,9 +18,14 @@ export default function ProfileScreen({
   const [profileList, setProfileList] = useState<string[]>([]);
   const [communities, setCommunities] = useState<Community[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [focusId, setFocusId] = useState(0);
   const theme = useTheme();
-  const lotideContext = useContext(LotideContext);
-  const ctx = lotideContext.ctx;
+  const { ctx, setContext } = useContext(LotideContext);
+
+  useEffect(
+    () => navigation.addListener("focus", () => setFocusId(x => x + 1)),
+    [],
+  );
 
   useEffect(() => {
     if (!ctx.login) return;
@@ -28,19 +33,19 @@ export default function ProfileScreen({
     LotideService.getCommunities(ctx, true).then(communities =>
       setCommunities(communities.items),
     );
-  }, [ctx.login?.user.id]);
+  }, [ctx.login?.user.id, focusId]);
 
   useEffect(() => {
     if (ctx.login !== undefined && ctx.login.user !== undefined) {
       getUserData(ctx, ctx.login?.user.id || 0).then(setProfile);
     }
-  }, [ctx.login?.token]);
+  }, [ctx.login?.token, focusId]);
 
   useEffect(() => {
     StorageService.lotideContextKV
       .listKeys()
       .then(keys => setProfileList(keys));
-  }, [ctx]);
+  }, [ctx, focusId]);
 
   if (ctx.login === undefined) {
     return <SuggestLogin />;
@@ -61,7 +66,7 @@ export default function ProfileScreen({
             StorageService.lotideContextKV
               .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
               .then(() => LotideService.logout(ctx))
-              .then(() => lotideContext.setContext({}));
+              .then(() => setContext({}));
           },
         },
         {
@@ -69,7 +74,7 @@ export default function ProfileScreen({
           style: "default",
           onPress: () => {
             StorageService.lotideContextKV.logout(ctx);
-            lotideContext.setContext({});
+            setContext({});
           },
         },
       ],
@@ -85,7 +90,7 @@ export default function ProfileScreen({
         <View>
           <Pressable hitSlop={10} onPress={() => setIsEditing(x => !x)}>
             <Text style={styles.title}>
-              {profile?.username}
+              {profile?.username || ctx.login.user.username}
               {"  "}
               <Icon
                 name="pencil-outline"
@@ -135,7 +140,7 @@ export default function ProfileScreen({
         </View>
       )}
       <Button
-        onPress={() => lotideContext.setContext({})}
+        onPress={() => setContext({})}
         title="Add Profile"
         color={theme.tint}
         accessibilityLabel="Add profile"
@@ -157,7 +162,7 @@ export default function ProfileScreen({
             onPress={() => {
               StorageService.lotideContextKV.query(p[0]).then(ctx => {
                 if (ctx !== undefined) {
-                  lotideContext.setContext(ctx);
+                  setContext(ctx);
                   setIsEditing(false);
                 }
               });
