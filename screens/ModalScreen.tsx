@@ -36,11 +36,10 @@ export default function ModalScreen({
   );
   const theme = useTheme();
 
-  useEffect(() => {
-    navigation.addListener("focus", () => {
-      setFocusId(x => x + 1);
-    });
-  });
+  useEffect(
+    () => navigation.addListener("focus", () => setFocusId(x => x + 1)),
+    [],
+  );
 
   return (
     <ScrollView>

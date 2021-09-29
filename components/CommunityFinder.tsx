@@ -10,6 +10,7 @@ import useTheme from "../hooks/useTheme";
 export interface CommunityFinderProps {
   placeholder?: string;
   onlyWhenTyping?: boolean;
+  focusId?: number;
   onSelect: (community: Community) => void;
 }
 
@@ -32,7 +33,7 @@ export default function CommunityFinder(props: CommunityFinderProps) {
 
   useEffect(() => {
     LotideService.getCommunities(ctx, false).then(setCommunities);
-  }, [ctx.login?.token]);
+  }, [ctx.login?.token, props.focusId]);
 
   const renderItem = ({ item }: { item: Community }) => {
     return (
