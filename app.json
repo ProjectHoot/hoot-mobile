@@ -2,7 +2,7 @@
   "expo": {
     "name": "hoot-mobile",
     "slug": "hoot-mobile",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -21,7 +21,7 @@
     "ios": {
       "userInterfaceStyle": "automatic",
       "supportsTablet": true,
-      "bundleIdentifier": "co.brokenlampcandle.hoot"
+      "bundleIdentifier": "org.brokenlamp.hoot"
     },
     "android": {
       "userInterfaceStyle": "automatic",
@@ -29,7 +29,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#1e2124"
       },
-      "package": "co.brokenlampcandle.hoot"
+      "package": "org.brokenlamp.hoot"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
