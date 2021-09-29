@@ -15,6 +15,7 @@ import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import LotideContext from "../store/LotideContext";
 import RepliesDisplay from "../components/RepliesDisplay";
+import { SelectedReplyContext } from "../store/SelectedReplyContext";
 
 export default function ModalScreen({
   navigation,
@@ -25,6 +26,7 @@ export default function ModalScreen({
     route.params.highlightedReplies,
   );
   const [focusId, setFocusId] = useState(0);
+  const [selectedReply, setSelectedReply] = useState<ReplyId>();
   const ctx = useContext(LotideContext).ctx;
   const replies = useReplies(
     ctx,
@@ -91,12 +93,16 @@ export default function ModalScreen({
             </Text>
           </Pressable>
         )}
-        <RepliesDisplay
-          replies={replies}
-          navigation={navigation}
-          postId={post.id}
-          highlightedReplies={highlightedReplies}
-        />
+        <SelectedReplyContext.Provider
+          value={[selectedReply, setSelectedReply]}
+        >
+          <RepliesDisplay
+            replies={replies}
+            navigation={navigation}
+            postId={post.id}
+            highlightedReplies={highlightedReplies}
+          />
+        </SelectedReplyContext.Provider>
         <View style={{ height: 300 }} />
       </View>
     </ScrollView>

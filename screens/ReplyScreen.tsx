@@ -52,7 +52,7 @@ export default function ReplyScreen({
           onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
         >
           <Text>Reply to {type}</Text>
-          {!!title && <Text style={styles.title}>From: {title}</Text>}
+          {!!title && <Text style={styles.title}>{title}</Text>}
           {html && <ContentDisplay contentHtml={html} />}
           <TextInput
             style={styles.input}

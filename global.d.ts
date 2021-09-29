@@ -10,6 +10,8 @@ interface LotideContext {
   login?: Login;
 }
 
+type SelectedReplyContext = [ReplyId | undefined, (reply?: ReplyId) => void];
+
 interface Login {
   token: string;
   user: User;
