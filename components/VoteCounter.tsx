@@ -1,6 +1,6 @@
 import { Ionicons as Icon } from "@expo/vector-icons";
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable, StyleSheet, ViewStyle } from "react-native";
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "../services/HapticService";
@@ -8,15 +8,19 @@ import LotideContext from "../store/LotideContext";
 import * as LotideService from "../services/LotideService";
 
 export interface VoteCounterProps {
-  post: Post;
+  post: Post | Reply;
   isUpvoted: boolean;
+  type?: "post" | "reply";
+  hideCount?: boolean;
+  style?: ViewStyle;
   onVote?: (isUpvote: boolean) => void;
 }
 
 export default function VoteCounter(props: VoteCounterProps) {
   const [isUpvoted, setIsUpvoted] = useState(false);
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const { ctx } = useContext(LotideContext);
+  const type = props.type || "post";
 
   const isUpvotedByAPI =
     props.post.your_vote !== null && props.post.your_vote !== undefined;
@@ -35,13 +39,25 @@ export default function VoteCounter(props: VoteCounterProps) {
     }
 
     if (isUpvoted) {
-      LotideService.removeVote(ctx, props.post.id).then(() =>
-        setIsUpvoted(false),
-      );
+      if (type == "post") {
+        LotideService.removeVote(ctx, props.post.id).then(() =>
+          setIsUpvoted(false),
+        );
+      } else {
+        LotideService.removeReplyVote(ctx, props.post.id).then(() =>
+          setIsUpvoted(false),
+        );
+      }
     } else {
-      LotideService.applyVote(ctx, props.post.id).then(() =>
-        setIsUpvoted(true),
-      );
+      if (type == "post") {
+        LotideService.applyVote(ctx, props.post.id).then(() =>
+          setIsUpvoted(true),
+        );
+      } else {
+        LotideService.applyReplyVote(ctx, props.post.id).then(() =>
+          setIsUpvoted(true),
+        );
+      }
     }
   }
 
@@ -55,17 +71,18 @@ export default function VoteCounter(props: VoteCounterProps) {
   const shouldSubtractOne = !isUpvoted && isUpvotedByAPI;
 
   return (
-    <Pressable onPress={() => toggleVote()} hitSlop={7}>
+    <Pressable onPress={() => toggleVote()} hitSlop={7} style={props.style}>
       <View style={styles.root}>
         <Icon
           name={isUpvoted ? "heart" : "heart-outline"}
           color={scoreColor}
           size={25}
         />
-
-        <Text style={{ ...styles.score, color: scoreColor }}>{`  ${
-          props.post.score + +shouldAddOne - +shouldSubtractOne
-        }  `}</Text>
+        {!props.hideCount && (
+          <Text style={{ ...styles.score, color: scoreColor }}>{`  ${
+            props.post.score + +shouldAddOne - +shouldSubtractOne
+          }  `}</Text>
+        )}
       </View>
     </Pressable>
   );

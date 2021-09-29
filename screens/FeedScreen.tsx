@@ -22,7 +22,6 @@ export default function FeedScreen({
     true,
   );
   if (!hasLogin(ctx)) return <SuggestLogin />;
-  console.log(ctx);
   const renderItem = ({ item }: { item: Post }) => (
     <Item post={item} navigation={navigation} />
   );

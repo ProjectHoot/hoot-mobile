@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { ColorValue, Pressable } from "react-native";
+import { ColorValue, Pressable, StyleSheet } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
@@ -8,6 +8,8 @@ import ElapsedTime from "./ElapsedTime";
 import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import ContentDisplay from "./ContentDisplay";
+import { SelectedReplyContext } from "../store/SelectedReplyContext";
+import VoteCounter from "./VoteCounter";
 
 export interface RepliesDisplayProps {
   replies: Paged<Reply>;
@@ -119,7 +121,8 @@ function ReplyDisplay({
   const [nextPageData, setNextPageData] = useState<Paged<Reply>>();
   const [showChildren, setShowChildren] = React.useState(true);
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const { ctx } = useContext(LotideContext);
+  const [selectedReply, setSelectedReply] = useContext(SelectedReplyContext);
 
   return (
     <View style={{ paddingLeft: 0 }}>
@@ -131,16 +134,9 @@ function ReplyDisplay({
         }}
       >
         <Pressable
-          onPress={() => setShowChildren(s => !s)}
-          onLongPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            navigation.navigate("Reply", {
-              id: reply.id,
-              title: reply.author.username,
-              html: reply.content_html,
-              type: "reply",
-            });
-          }}
+          onPress={() =>
+            setSelectedReply(selectedReply != reply.id ? reply.id : undefined)
+          }
         >
           <View
             style={{
@@ -168,6 +164,7 @@ function ReplyDisplay({
                 {reply.score}
                 {"   "}
                 <ElapsedTime time={reply.created} />
+                {!showChildren && "    ..."}
               </Text>
             </Text>
             {showChildren && !!reply.content_html && (
@@ -177,11 +174,64 @@ function ReplyDisplay({
               />
             )}
           </View>
+          {selectedReply == reply.id && (
+            <View style={styles.buttons}>
+              <VoteCounter
+                type="reply"
+                post={reply}
+                isUpvoted={false}
+                hideCount
+                style={styles.button}
+              />
+              {/* <Pressable style={styles.button}>
+                <Icon color={theme.text} size={20} name="bookmark-outline" />
+              </Pressable> */}
+              <Pressable
+                style={styles.button}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  navigation.navigate("Reply", {
+                    id: reply.id,
+                    title: reply.author.username,
+                    html: reply.content_html,
+                    type: "reply",
+                  });
+                }}
+              >
+                <Icon color={theme.text} size={20} name="arrow-undo-outline" />
+              </Pressable>
+              <Pressable
+                style={styles.button}
+                onPress={() => {
+                  setShowChildren(s => !s);
+                }}
+              >
+                <Icon
+                  color={
+                    (reply.replies?.items.length || 0) > 0
+                      ? theme.text
+                      : theme.secondaryText
+                  }
+                  size={20}
+                  name={
+                    showChildren ? "chevron-up-outline" : "chevron-down-outline"
+                  }
+                />
+              </Pressable>
+              {/* <Pressable style={styles.button}>
+                <Icon
+                  color={theme.text}
+                  size={20}
+                  name="ellipsis-vertical-outline"
+                />
+              </Pressable> */}
+            </View>
+          )}
         </Pressable>
       </View>
       {reply.replies !== null
         ? reply.replies.items.length > 0 &&
-          showChildren && (
+          (showChildren ? (
             <View style={{ paddingLeft: 15 }}>
               <RepliesDisplay
                 replies={reply.replies}
@@ -192,7 +242,9 @@ function ReplyDisplay({
                 highlightedReplies={highlightedReplies}
               />
             </View>
-          )
+          ) : (
+            <Text>...</Text>
+          ))
         : nextPageData === undefined && (
             <Pressable
               hitSlop={5}
@@ -223,3 +275,17 @@ function ReplyDisplay({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  buttons: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
+  button: {
+    padding: 10,
+    paddingHorizontal: 15,
+  },
+});

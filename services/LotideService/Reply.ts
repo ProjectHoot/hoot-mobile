@@ -17,9 +17,8 @@ export async function getPostReplies(
   return lotideRequest(
     ctx,
     "GET",
-    `posts/${postId}/replies?limit=10` + (page ? `&page=${page}` : ""),
-    undefined,
-    true,
+    `posts/${postId}/replies?limit=10&include_your=true` +
+      (page ? `&page=${page}` : ""),
   ).then(data => data.json());
 }
 
@@ -31,9 +30,8 @@ export async function getReplyReplies(
   return lotideRequest(
     ctx,
     "GET",
-    `comments/${replyId}/replies?limit=10` + (page ? `&page=${page}` : ""),
-    undefined,
-    true,
+    `comments/${replyId}/replies?limit=10&include_your=true` +
+      (page ? `&page=${page}` : ""),
   ).then(data => data.json());
 }
 
@@ -49,10 +47,18 @@ export async function replyToPost(
 
 export async function replyToReply(
   ctx: LotideContext,
-  replyId: number,
+  replyId: ReplyId,
   content: string,
-): Promise<{ id: number }> {
+): Promise<{ id: ReplyId }> {
   return lotideRequest(ctx, "POST", `comments/${replyId}/replies`, {
     content_markdown: content,
   }).then(data => data.json());
+}
+
+export async function applyReplyVote(ctx: LotideContext, replyId: ReplyId) {
+  return lotideRequest(ctx, "PUT", `comments/${replyId}/your_vote`);
+}
+
+export async function removeReplyVote(ctx: LotideContext, replyId: ReplyId) {
+  return lotideRequest(ctx, "DELETE", `comments/${replyId}/your_vote`);
 }

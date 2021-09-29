@@ -34,10 +34,10 @@ export async function submitPost(
   return lotideRequest(ctx, "POST", "posts", post).then(data => data.json());
 }
 
-export async function applyVote(ctx: LotideContext, postId: number) {
+export async function applyVote(ctx: LotideContext, postId: PostId) {
   return lotideRequest(ctx, "PUT", `posts/${postId}/your_vote`);
 }
 
-export async function removeVote(ctx: LotideContext, postId: number) {
+export async function removeVote(ctx: LotideContext, postId: PostId) {
   return lotideRequest(ctx, "DELETE", `posts/${postId}/your_vote`);
 }
