@@ -1,11 +1,11 @@
 {
   "files": {
-    "app.js": "/hoot-mobile/static/js/app.d0d3f059.chunk.js",
-    "app.js.map": "/hoot-mobile/static/js/app.d0d3f059.chunk.js.map",
+    "app.js": "/hoot-mobile/static/js/app.62f4a9f3.chunk.js",
+    "app.js.map": "/hoot-mobile/static/js/app.62f4a9f3.chunk.js.map",
     "runtime~app.js": "/hoot-mobile/static/js/runtime~app.a8af6e5e.js",
     "runtime~app.js.map": "/hoot-mobile/static/js/runtime~app.a8af6e5e.js.map",
-    "static/js/2.456803f4.chunk.js": "/hoot-mobile/static/js/2.456803f4.chunk.js",
-    "static/js/2.456803f4.chunk.js.map": "/hoot-mobile/static/js/2.456803f4.chunk.js.map",
+    "static/js/2.6f66ac36.chunk.js": "/hoot-mobile/static/js/2.6f66ac36.chunk.js",
+    "static/js/2.6f66ac36.chunk.js.map": "/hoot-mobile/static/js/2.6f66ac36.chunk.js.map",
     "fonts/AntDesign.ttf": "/hoot-mobile/./fonts/AntDesign.ttf",
     "fonts/Entypo.ttf": "/hoot-mobile/./fonts/Entypo.ttf",
     "fonts/Feather.ttf": "/hoot-mobile/./fonts/Feather.ttf",
@@ -25,11 +25,11 @@
     "index.html": "/hoot-mobile/index.html",
     "manifest.json": "/hoot-mobile/manifest.json",
     "serve.json": "/hoot-mobile/serve.json",
-    "static/js/2.456803f4.chunk.js.LICENSE.txt": "/hoot-mobile/static/js/2.456803f4.chunk.js.LICENSE.txt"
+    "static/js/2.6f66ac36.chunk.js.LICENSE.txt": "/hoot-mobile/static/js/2.6f66ac36.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime~app.a8af6e5e.js",
-    "static/js/2.456803f4.chunk.js",
-    "static/js/app.d0d3f059.chunk.js"
+    "static/js/2.6f66ac36.chunk.js",
+    "static/js/app.62f4a9f3.chunk.js"
   ]
 }
