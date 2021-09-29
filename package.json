@@ -1,7 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "typings": "types.d.ts",
-  "homepage": "https://projecthoot.github.io/hoot-mobile/",
+  "homepage": "https://hoot.brokenlamp.org",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
