@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet } from "react-native";
+import Icon from "@expo/vector-icons/Ionicons";
 import KnownHosts from "../constants/KnownHosts";
 import ActorDisplay from "./ActorDisplay";
 import { Text, TextInput, View } from "./Themed";
@@ -9,7 +10,7 @@ import { lotideContextKV } from "../services/StorageService";
 import LotideContext from "../store/LotideContext";
 
 export interface HostListProps {
-  onSelect: (domain: string, name?: string) => void;
+  onSelect: (domain: string, name?: string, username?: string) => void;
 }
 
 interface HostData {
@@ -66,9 +67,9 @@ export default function HostList(props: HostListProps) {
     return (
       <View
         style={{
-          borderBottomWidth: 1,
-          borderColor: theme.secondaryBackground,
-          paddingVertical: 10,
+          borderBottomWidth: StyleSheet.hairlineWidth || 1,
+          borderColor: theme.secondaryText,
+          paddingVertical: 25,
         }}
       >
         <Pressable
@@ -106,32 +107,49 @@ export default function HostList(props: HostListProps) {
     );
   };
   return (
-    <ScrollView style={styles.root}>
+    <ScrollView contentContainerStyle={styles.root}>
       <Text style={styles.title}>Login to continue</Text>
       {existingProfiles.length > 0 && (
         <Text style={styles.subtitle}>Select an existing profile</Text>
       )}
       {existingProfiles.map(p => {
         const [username, url] = p[0].split("@");
+        const isUnlocked = !!p[1].login;
+        const color = isUnlocked ? theme.text : theme.secondaryText;
+        const host = url
+          .replace("http://", "")
+          .replace("https://", "")
+          .split(/[/?#]/)[0];
         return (
           <Pressable
             key={p[0]}
             onPress={() => {
-              lotideContext.setContext(p[1]);
+              if (isUnlocked) {
+                lotideContext.setContext(p[1]);
+              } else {
+                props.onSelect(host.toLowerCase(), undefined, username);
+              }
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
+            <Icon
+              name={isUnlocked ? "lock-open-outline" : "lock-closed-outline"}
+              color={color}
+              style={{ marginRight: 10 }}
+              size={20}
+            />
             <ActorDisplay
               name={username}
-              host={
-                url
-                  .replace("http://", "")
-                  .replace("https://", "")
-                  .split(/[/?#]/)[0]
-              }
+              host={host}
               local={true}
               showHost={"always"}
               newLine={true}
-              style={{ paddingVertical: 5, paddingBottom: 10 }}
+              style={{ paddingVertical: 15, paddingBottom: 10 }}
+              styleName={{ color }}
             />
           </Pressable>
         );
@@ -166,15 +184,17 @@ export default function HostList(props: HostListProps) {
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
     padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 10,
+    textAlign: "center",
   },
   subtitle: {
     fontWeight: "300",
     marginBottom: 10,
+    marginTop: 15,
+    textAlign: "center",
   },
 });

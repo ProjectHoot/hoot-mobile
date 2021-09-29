@@ -52,6 +52,10 @@ export default function ProfileScreen({
       "Would you like to keep the login profile handy for later?",
       [
         {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
           text: "Remove",
           onPress: () => {
             StorageService.lotideContextKV
@@ -64,10 +68,12 @@ export default function ProfileScreen({
           text: "Keep",
           style: "default",
           onPress: () => {
+            StorageService.lotideContextKV.logout(ctx);
             lotideContext.setContext({});
           },
         },
       ],
+      { cancelable: true },
     );
   }
 

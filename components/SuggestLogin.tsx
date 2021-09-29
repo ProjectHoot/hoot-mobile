@@ -7,20 +7,23 @@ import Login from "./Login";
 export default function SuggestLogin() {
   const [hostName, setHostName] = useState<string>();
   const [domain, setDomain] = useState<string>();
+  const [username, setUsername] = useState<string>();
 
   return (
     <View style={styles.root}>
       {!domain ? (
         <HostList
-          onSelect={(domain, name) => {
+          onSelect={(domain, name, username) => {
             setHostName(name);
             setDomain(domain);
+            setUsername(username);
           }}
         />
       ) : (
         <Login
           hostName={hostName}
           domain={domain}
+          username={username}
           onGoBack={() => setDomain(undefined)}
         />
       )}
