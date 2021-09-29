@@ -1,5 +1,12 @@
-import React, { useContext } from "react";
-import { StyleSheet, FlatList, Pressable } from "react-native";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import {
+  StyleSheet,
+  FlatList,
+  Pressable,
+  useWindowDimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
@@ -10,6 +17,7 @@ import useTheme from "../hooks/useTheme";
 import LotideContext from "../store/LotideContext";
 import SuggestLogin from "../components/SuggestLogin";
 import { hasLogin } from "../services/LotideService";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function FeedScreen({
   navigation,
@@ -90,20 +98,52 @@ const styles = StyleSheet.create({
 });
 
 const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
+  const [scroll, setScroll] = useState(0);
   const theme = useTheme();
+  const dimensions = useWindowDimensions();
+  const scrollRef = useRef<ScrollView>(null);
+
+  function onScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const current = event?.nativeEvent?.contentOffset?.x;
+    if (current == null) return;
+    setScroll(old => {
+      console.log("scroll", current);
+      if (old > 0 && current < 0) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+      return current;
+    });
+  }
+
   return (
-    <Pressable
-      onPress={() => navigation.navigate("Post", { post })}
-      onLongPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        console.log(post);
-      }}
+    <ScrollView
+      ref={scrollRef}
+      horizontal
+      snapToOffsets={[100]}
+      style={{ backgroundColor: theme.blue }}
+      onTouchEnd={() => scrollRef.current?.scrollTo({ x: 100 })}
+      contentOffset={{ x: 100, y: 0 }}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
     >
-      <View
-        style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
+      <View style={{ width: 100, backgroundColor: "transparent" }} />
+      <Pressable
+        style={{ width: dimensions.width }}
+        onPress={() => navigation.navigate("Post", { post })}
+        onLongPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          console.log(post);
+        }}
       >
-        <PostDisplay post={post} navigation={navigation} />
-      </View>
-    </Pressable>
+        <View
+          style={[
+            styles.item,
+            { borderBottomColor: theme.secondaryBackground },
+          ]}
+        >
+          <PostDisplay post={post} navigation={navigation} />
+        </View>
+      </Pressable>
+    </ScrollView>
   );
 };
