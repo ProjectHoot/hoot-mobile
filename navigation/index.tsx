@@ -164,6 +164,7 @@ function BottomTabNavigator({ navigation }: any) {
       <BottomTab.Screen
         name="NewPostScreen"
         component={NewPostScreen}
+        initialParams={{ community: undefined }}
         options={{
           title: "New Post",
           tabBarIcon: ({ color }) => (

@@ -10,7 +10,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from "react-native";
-import { View, Text } from "../components/Themed";
+import { View, Text, TextInput as TextInputThemed } from "../components/Themed";
 import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
@@ -55,9 +55,9 @@ export default function NewPostScreen({
     if (!community) return;
     LotideService.submitPost(ctx, {
       community: community.id,
-      title,
+      title: title,
       href: link || undefined,
-      content_markdown: content || undefined,
+      content_markdown: content || " ",
     })
       .then(data => {
         LotideService.getPost(ctx, data.id).then(post => {
@@ -116,10 +116,10 @@ export default function NewPostScreen({
                 keyboardType="url"
                 textContentType="URL"
               />
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
+              <TextInputThemed
+                style={{ marginVertical: 20, minHeight: 100 }}
+                multiline
                 placeholder="Add post content"
-                placeholderTextColor={theme.placeholderText}
                 value={content}
                 onChangeText={setContent}
               />
@@ -129,18 +129,13 @@ export default function NewPostScreen({
               {title.length > 0 && 4 - title.length}
             </Text>
           )}
-          {!!community && (!!link || content.length > 10) && (
+          {!!community && title.length >= 4 && (
             <Button
               onPress={submit}
               title="Submit"
               color={theme.tint}
               accessibilityLabel="Submit new post"
             />
-          )}
-          {content.length < 11 && content.length > 0 && (
-            <Text style={{ color: theme.secondaryText }}>
-              {11 - content.length}
-            </Text>
           )}
         </View>
       </TouchableWithoutFeedback>
@@ -151,7 +146,7 @@ export default function NewPostScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "flex-start",
+    alignItems: "stretch",
     padding: 15,
     height: "100%",
     width: "100%",
