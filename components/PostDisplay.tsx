@@ -117,7 +117,7 @@ export default function PostDisplay(props: PostDisplayProps) {
             },
           ]}
         >
-          {props.showAuthor && <Text style={styles.by}>on{"   "}</Text>}
+          {props.showAuthor && <Text style={styles.by}>in{"   "}</Text>}
           <ActorDisplay
             name={post.community.name}
             host={post.community.host}

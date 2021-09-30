@@ -13,6 +13,10 @@ export const KnownHosts: KnownHost[] = [
     domain: "narwhal.city",
   },
   {
+    name: "FBXL",
+    domain: "lotide.fbxl.net",
+  },
+  {
     name: "Tide C",
     domain: "c.tide.tk",
   },

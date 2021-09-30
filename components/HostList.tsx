@@ -120,6 +120,7 @@ export default function HostList(props: HostListProps) {
           .replace("http://", "")
           .replace("https://", "")
           .split(/[/?#]/)[0];
+        const hostName = KnownHosts.find(x => x.domain == host)?.name;
         return (
           <Pressable
             key={p[0]}
@@ -151,6 +152,16 @@ export default function HostList(props: HostListProps) {
               style={{ paddingVertical: 15, paddingBottom: 10 }}
               styleName={{ color }}
             />
+            <View style={{ flex: 1 }} />
+            <Text
+              style={{
+                fontSize: 16,
+                color,
+                fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
+              }}
+            >
+              {hostName}
+            </Text>
           </Pressable>
         );
       })}
