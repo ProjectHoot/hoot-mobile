@@ -53,7 +53,7 @@ export default function ModalScreen({
           post={post}
           navigation={navigation}
           showHtmlContent
-          showCommunityHost
+          showAuthor
         />
         <View style={styles.actions}>
           <Icon name="bookmark-outline" size={25} color={theme.text} />

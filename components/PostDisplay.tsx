@@ -14,7 +14,7 @@ export interface PostDisplayProps {
   post: Post;
   navigation: any;
   showHtmlContent?: boolean;
-  showCommunityHost?: boolean;
+  showAuthor?: boolean;
 }
 
 export default function PostDisplay(props: PostDisplayProps) {
@@ -72,47 +72,72 @@ export default function PostDisplay(props: PostDisplayProps) {
           </Pressable>
         ))}
       {props.showHtmlContent && !!props.post.content_html && (
-        <View style={{ paddingHorizontal: 15 }}>
+        <View style={{ padding: 15 }}>
           <ContentDisplay
             contentHtml={props.post.content_html}
             contentText={props.post.content_text}
           />
         </View>
       )}
-      <View style={styles.foot}>
-        <View>
-          <Pressable
-            hitSlop={8}
-            onPress={() =>
-              props.navigation.navigate("Community", {
-                community: props.post.community,
-              })
-            }
-          >
-            <ActorDisplay
-              name={post.community.name}
-              host={post.community.host}
-              local={post.community.local}
-              showHost={"only_foreign"}
-              colorize={"never"}
-              newLine={true}
-            />
-          </Pressable>
-          <Text style={styles.by}>by {props.post.author.username}</Text>
-          {props.showCommunityHost && (
-            <Text style={styles.by}>on {props.post.community.host}</Text>
-          )}
+      {props.showAuthor && (
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 15,
+            paddingTop: 15,
+          }}
+        >
+          <Text style={styles.by}>by{"   "}</Text>
+          <ActorDisplay
+            name={post.author.username}
+            host={post.author.host}
+            local={post.author.local}
+            showHost={"only_foreign"}
+            colorize={"always"}
+            newLine={true}
+          />
         </View>
-        <View>
+      )}
+      <View style={styles.foot}>
+        <Pressable
+          hitSlop={8}
+          onPress={() =>
+            props.navigation.navigate("Community", {
+              community: props.post.community,
+            })
+          }
+          style={[
+            styles.footItem,
+            {
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            },
+          ]}
+        >
+          {props.showAuthor && <Text style={styles.by}>in{"   "}</Text>}
+          <ActorDisplay
+            name={post.community.name}
+            host={post.community.host}
+            local={post.community.local}
+            showHost={"only_foreign"}
+            colorize={props.showAuthor ? "always" : "never"}
+            newLine={true}
+          />
+        </Pressable>
+        <View style={{ flex: 1 }} />
+        <View style={styles.footItem}>
           <ElapsedTime time={props.post.created} />
         </View>
-        <View>
+        <View style={styles.footItem}>
           <Text style={styles.footText}>
             <Icon name="chatbubble-outline" size={12} />{" "}
             {props.post.replies_count_total}
           </Text>
         </View>
-        <View>
+        <View style={styles.footItem}>
           <VoteCounter post={props.post} isUpvoted={false} />
         </View>
       </View>
@@ -149,9 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    padding: 15,
   },
   footText: {},
+  footItem: {
+    padding: 15,
+  },
   by: {
     fontSize: 11,
   },
