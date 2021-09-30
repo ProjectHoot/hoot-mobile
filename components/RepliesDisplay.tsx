@@ -10,6 +10,7 @@ import LotideContext from "../store/LotideContext";
 import ContentDisplay from "./ContentDisplay";
 import { SelectedReplyContext } from "../store/SelectedReplyContext";
 import VoteCounter from "./VoteCounter";
+import ActorDisplay from "./ActorDisplay";
 
 export interface RepliesDisplayProps {
   replies: Paged<Reply>;
@@ -149,24 +150,37 @@ function ReplyDisplay({
                 : theme.background,
             }}
           >
-            <Text
+            <View
               style={{
-                color: theme.text,
-                fontSize: 16,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
                 marginBottom: 5,
-                fontWeight: "500",
               }}
             >
-              {reply.author.username}
-              {"  "}
-              <Text style={{ color: theme.text, fontSize: 14 }}>
-                <Icon name="heart-outline" size={14} color={theme.text} light />{" "}
-                {reply.score}
-                {"   "}
+              <ActorDisplay
+                name={reply.author.username}
+                host={reply.author.host}
+                local={reply.author.local}
+                showHost="only_foreign"
+                colorize="only_foreign"
+                style={{ fontSize: 16, fontWeight: "500" }}
+              />
+              <View
+                style={{
+                  marginRight: 15,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text>{!showChildren && "...    "}</Text>
+                <Icon name="heart-outline" size={14} color={theme.text} light />
+                <Text>{` ${reply.score}   `}</Text>
                 <ElapsedTime time={reply.created} />
-                {!showChildren && "    ..."}
-              </Text>
-            </Text>
+              </View>
+            </View>
             {showChildren && !!reply.content_html && (
               <ContentDisplay
                 contentHtml={reply.content_html}

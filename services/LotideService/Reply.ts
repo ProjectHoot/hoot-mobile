@@ -30,7 +30,7 @@ export async function getReplyReplies(
   return lotideRequest(
     ctx,
     "GET",
-    `comments/${replyId}/replies?limit=10&include_your=true` +
+    `comments/${replyId}/replies?limit=10&include_your=true&sort=hot` +
       (page ? `&page=${page}` : ""),
   ).then(data => data.json());
 }
