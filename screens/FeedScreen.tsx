@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, FlatList, Pressable } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
@@ -10,6 +10,8 @@ import useTheme from "../hooks/useTheme";
 import LotideContext from "../store/LotideContext";
 import SuggestLogin from "../components/SuggestLogin";
 import { hasLogin } from "../services/LotideService";
+import SwipeAction from "../components/SwipeAction";
+import useVote from "../hooks/useVote";
 
 export default function FeedScreen({
   navigation,
@@ -90,20 +92,52 @@ const styles = StyleSheet.create({
 });
 
 const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
+  const { isUpvoted, addVote, removeVote } = useVote("post", post);
+  const [isCommitting, setIsCommitting] = useState(false);
   const theme = useTheme();
+
   return (
-    <Pressable
-      onPress={() => navigation.navigate("Post", { post })}
-      onLongPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        console.log(post);
+    <SwipeAction
+      iconLeftSide={
+        isUpvoted !== isCommitting
+          ? ["heart-dislike", "heart-dislike-outline"]
+          : ["heart-outline", "heart"]
+      }
+      iconRightSide={["arrow-undo-outline", "arrow-undo"]}
+      colorLeftSide={theme.red}
+      colorRightSide={theme.blue}
+      onLeftSide={() => {
+        isUpvoted ? removeVote() : addVote();
+        setIsCommitting(true);
       }}
+      onRightSide={() => {
+        navigation.navigate("Reply", {
+          id: post.id,
+          title: post.title,
+          html: post.content_html,
+          type: "post",
+        });
+      }}
+      onReturnToCenter={() => setIsCommitting(false)}
+      backgroundColor={theme.secondaryBackground}
     >
-      <View
-        style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
+      <Pressable
+        style={{ width: "100%" }}
+        onPress={() => navigation.navigate("Post", { post })}
+        onLongPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          console.log(post);
+        }}
       >
-        <PostDisplay post={post} navigation={navigation} />
-      </View>
-    </Pressable>
+        <View
+          style={[
+            styles.item,
+            { borderBottomColor: theme.secondaryBackground },
+          ]}
+        >
+          <PostDisplay post={post} navigation={navigation} />
+        </View>
+      </Pressable>
+    </SwipeAction>
   );
 };

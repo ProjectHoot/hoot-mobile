@@ -15,7 +15,7 @@ export interface ActorDisplayProps {
   styleHost?: TextStyle;
 }
 
-export default function ActorDisplay(props: ActorDisplayProps) {
+export function ActorDisplay(props: ActorDisplayProps) {
   const theme = useTheme();
   const colorize = props.colorize || "never";
   const showHost = props.showHost || "only_foreign";
@@ -63,3 +63,5 @@ const styles = StyleSheet.create({
     fontWeight: "200",
   },
 });
+
+export default React.memo(ActorDisplay);
