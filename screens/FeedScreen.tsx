@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, FlatList, Pressable } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
