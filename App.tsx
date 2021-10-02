@@ -9,6 +9,8 @@ import Navigation from "./navigation";
 import LotideContext, { defaultLotideContext } from "./store/LotideContext";
 import * as StorageService from "./services/StorageService";
 import * as LotideService from "./services/LotideService";
+import { Provider } from "react-redux";
+import reduxStore from "./store/reduxStore";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -56,17 +58,19 @@ export default function App() {
     return null;
   } else {
     return (
-      <LotideContext.Provider
-        value={{
-          ctx,
-          setContext: (ctx: LotideContext) => applyNewContext(ctx),
-        }}
-      >
-        <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </SafeAreaProvider>
-      </LotideContext.Provider>
+      <Provider store={reduxStore}>
+        <LotideContext.Provider
+          value={{
+            ctx,
+            setContext: (ctx: LotideContext) => applyNewContext(ctx),
+          }}
+        >
+          <SafeAreaProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar />
+          </SafeAreaProvider>
+        </LotideContext.Provider>
+      </Provider>
     );
   }
 }

@@ -11,6 +11,14 @@ interface LotideContext {
 }
 
 type SelectedReplyContext = [ReplyId | undefined, (reply?: ReplyId) => void];
+type VoteContext = {
+  vote: boolean;
+  score: number;
+  addVote: () => void;
+  removeVote: () => void;
+};
+
+type ContentType = "post" | "reply";
 
 interface Login {
   token: string;

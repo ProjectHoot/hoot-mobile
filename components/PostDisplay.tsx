@@ -138,7 +138,7 @@ export default function PostDisplay(props: PostDisplayProps) {
           </Text>
         </View>
         <View style={styles.footItem}>
-          <VoteCounter post={props.post} isUpvoted={false} />
+          <VoteCounter type="post" content={post} />
         </View>
       </View>
     </View>

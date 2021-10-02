@@ -1,12 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  Pressable,
-  useWindowDimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, FlatList, Pressable } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
@@ -17,7 +10,8 @@ import useTheme from "../hooks/useTheme";
 import LotideContext from "../store/LotideContext";
 import SuggestLogin from "../components/SuggestLogin";
 import { hasLogin } from "../services/LotideService";
-import { ScrollView } from "react-native-gesture-handler";
+import SwipeAction from "../components/SwipeAction";
+import useVote from "../hooks/useVote";
 
 export default function FeedScreen({
   navigation,
@@ -98,37 +92,37 @@ const styles = StyleSheet.create({
 });
 
 const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
-  const [scroll, setScroll] = useState(0);
+  const { isUpvoted, addVote, removeVote } = useVote("post", post);
+  const [isCommitting, setIsCommitting] = useState(false);
   const theme = useTheme();
-  const dimensions = useWindowDimensions();
-  const scrollRef = useRef<ScrollView>(null);
-
-  function onScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    const current = event?.nativeEvent?.contentOffset?.x;
-    if (current == null) return;
-    setScroll(old => {
-      console.log("scroll", current);
-      if (old > 0 && current < 0) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
-      return current;
-    });
-  }
 
   return (
-    <ScrollView
-      ref={scrollRef}
-      horizontal
-      snapToOffsets={[100]}
-      style={{ backgroundColor: theme.blue }}
-      onTouchEnd={() => scrollRef.current?.scrollTo({ x: 100 })}
-      contentOffset={{ x: 100, y: 0 }}
-      onScroll={onScroll}
-      scrollEventThrottle={16}
+    <SwipeAction
+      iconLeftSide={
+        isUpvoted !== isCommitting
+          ? ["heart-dislike", "heart-dislike-outline"]
+          : ["heart-outline", "heart"]
+      }
+      iconRightSide={["arrow-undo-outline", "arrow-undo"]}
+      colorLeftSide={theme.red}
+      colorRightSide={theme.blue}
+      onLeftSide={() => {
+        isUpvoted ? removeVote() : addVote();
+        setIsCommitting(true);
+      }}
+      onRightSide={() => {
+        navigation.navigate("Reply", {
+          id: post.id,
+          title: post.title,
+          html: post.content_html,
+          type: "post",
+        });
+      }}
+      onReturnToCenter={() => setIsCommitting(false)}
+      backgroundColor={theme.secondaryBackground}
     >
-      <View style={{ width: 100, backgroundColor: "transparent" }} />
       <Pressable
-        style={{ width: dimensions.width }}
+        style={{ width: "100%" }}
         onPress={() => navigation.navigate("Post", { post })}
         onLongPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -144,6 +138,6 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
           <PostDisplay post={post} navigation={navigation} />
         </View>
       </Pressable>
-    </ScrollView>
+    </SwipeAction>
   );
 };
