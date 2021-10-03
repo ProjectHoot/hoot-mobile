@@ -1,7 +1,13 @@
 import Icon from "@expo/vector-icons/Ionicons";
 import { openURL } from "expo-linking";
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Image, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  Pressable,
+  Platform,
+  ViewStyle,
+} from "react-native";
 import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
 import { Text, View } from "../components/Themed";
@@ -46,6 +52,7 @@ export default function PostDisplay(props: PostDisplayProps) {
               uri: props.post.href,
             }}
             onLoad={event =>
+              Platform.OS !== "web" &&
               setImgAspect(
                 Math.max(
                   event.nativeEvent.source.width /
@@ -110,6 +117,7 @@ export default function PostDisplay(props: PostDisplayProps) {
           }
           style={[
             styles.footItem,
+            styles.pointer,
             {
               display: "flex",
               flexDirection: "row",
@@ -150,6 +158,9 @@ const styles = StyleSheet.create({
     marginVertical: 0,
     marginHorizontal: 0,
   },
+  pointer: {
+    ...(Platform.OS == "web" ? { cursor: "pointer" } : {}),
+  } as ViewStyle,
   title: {
     fontSize: 20,
     padding: 15,
@@ -162,6 +173,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 5,
     marginHorizontal: 15,
+    ...(Platform.OS == "web" ? { cursor: "pointer" } : {}),
   },
   image: {
     width: "100%",

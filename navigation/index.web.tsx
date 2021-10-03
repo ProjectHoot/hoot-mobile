@@ -5,13 +5,13 @@
  */
 import React, { useState } from "react";
 import Icon from "@expo/vector-icons/Ionicons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { ActionSheetIOS, ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -94,7 +94,7 @@ function RootNavigator() {
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
+const BottomTab = createDrawerNavigator<RootTabParamList>();
 
 function BottomTabNavigator({ navigation }: any) {
   const [sort, setSort] = useState<SortOption>("hot");
@@ -104,8 +104,11 @@ function BottomTabNavigator({ navigation }: any) {
     <BottomTab.Navigator
       initialRouteName="FeedScreen"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint as unknown as string,
-        tabBarShowLabel: false,
+        drawerActiveTintColor: Colors[colorScheme].tint as unknown as string,
+        headerTintColor: Colors[colorScheme].text as unknown as string,
+        headerPressColor: Colors[colorScheme].text as unknown as string,
+        drawerType: "permanent",
+        drawerHideStatusBarOnOpen: true,
       }}
     >
       <BottomTab.Screen
@@ -114,7 +117,7 @@ function BottomTabNavigator({ navigation }: any) {
         initialParams={{ sort }}
         options={({ navigation }: RootTabScreenProps<"FeedScreen">) => ({
           title: "Hoot",
-          tabBarIcon: ({ color }) => (
+          drawerIcon: ({ color }) => (
             <TabBarIcon name="newspaper-outline" color={color} />
           ),
           headerRight: () => (
@@ -156,7 +159,7 @@ function BottomTabNavigator({ navigation }: any) {
         component={SearchScreen}
         options={{
           title: "Communities",
-          tabBarIcon: ({ color }) => (
+          drawerIcon: ({ color }) => (
             <TabBarIcon name="search-outline" color={color} />
           ),
         }}
@@ -167,7 +170,7 @@ function BottomTabNavigator({ navigation }: any) {
         initialParams={{ community: undefined }}
         options={{
           title: "New Post",
-          tabBarIcon: ({ color }) => (
+          drawerIcon: ({ color }) => (
             <TabBarIcon name="add-outline" color={color} size={40} />
           ),
         }}
@@ -177,7 +180,7 @@ function BottomTabNavigator({ navigation }: any) {
         component={NotificationScreen}
         options={{
           title: "Notifications",
-          tabBarIcon: ({ color }) => (
+          drawerIcon: ({ color }) => (
             <TabBarIcon name="notifications-outline" color={color} />
           ),
         }}
@@ -187,10 +190,10 @@ function BottomTabNavigator({ navigation }: any) {
         component={ProfileScreen}
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => (
+          drawerIcon: ({ color }) => (
             <TabBarIcon name="person-circle-outline" color={color} />
           ),
-          headerLeft: () => (
+          headerRight: () => (
             <Pressable
               onPress={() => {
                 navigation.navigate("Settings");
@@ -200,10 +203,10 @@ function BottomTabNavigator({ navigation }: any) {
               })}
             >
               <Icon
-                name="cog-outline"
+                name="settings-outline"
                 size={25}
                 color={Colors[colorScheme].secondaryText}
-                style={{ marginLeft: 15 }}
+                style={{ marginRight: 15 }}
               />
             </Pressable>
           ),
@@ -221,16 +224,5 @@ function TabBarIcon(props: {
   color: string;
   size?: number;
 }) {
-  const size = props.size || 30;
-  return (
-    <Icon
-      size={size}
-      style={{
-        marginBottom: -3,
-        height: size,
-        width: size,
-      }}
-      {...props}
-    />
-  );
+  return <Icon size={30} style={{ marginBottom: -3 }} {...props} />;
 }

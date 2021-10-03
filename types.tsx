@@ -29,6 +29,13 @@ export type RootStackParamList = {
   NewCommunity: undefined;
   EditCommunity: { community: Community };
   ForgotPassword: { node: string };
+
+  FeedScreen: { sort: SortOption };
+  SearchScreen: undefined;
+  NewPostScreen: { community?: Community };
+  NotificationScreen: undefined;
+  ProfileScreen: undefined;
+  RegisterScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
