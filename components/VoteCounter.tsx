@@ -1,6 +1,12 @@
 import { Ionicons as Icon } from "@expo/vector-icons";
 import React, { useContext } from "react";
-import { Alert, Pressable, StyleSheet, ViewStyle } from "react-native";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  StyleSheet,
+  ViewStyle,
+} from "react-native";
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "../services/HapticService";
@@ -44,7 +50,11 @@ export default function VoteCounter(props: VoteCounterProps) {
   const scoreColor = isUpvoted ? theme.red : theme.text;
 
   return (
-    <Pressable onPress={() => toggleVote()} hitSlop={7} style={props.style}>
+    <Pressable
+      onPress={() => toggleVote()}
+      hitSlop={7}
+      style={[styles.root, props.style]}
+    >
       <View style={styles.root}>
         <Icon
           name={isUpvoted ? "heart" : "heart-outline"}
@@ -66,6 +76,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    ...(Platform.OS == "web" ? { cursor: "pointer" } : {}),
   },
   score: {
     fontSize: 18,

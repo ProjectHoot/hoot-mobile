@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, FlatList, Pressable } from "react-native";
+import { StyleSheet, FlatList, Pressable, Platform } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
@@ -120,21 +120,20 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
       }}
       onReturnToCenter={() => setIsCommitting(false)}
       backgroundColor={theme.secondaryBackground}
+      style={{ borderBottomWidth: 8, borderColor: theme.secondaryBackground }}
     >
       <Pressable
-        style={{ width: "100%" }}
+        style={{
+          width: "100%",
+          ...(Platform.OS == "web" ? { cursor: "pointer" } : {}),
+        }}
         onPress={() => navigation.navigate("Post", { post })}
         onLongPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           console.log(post);
         }}
       >
-        <View
-          style={[
-            styles.item,
-            { borderBottomColor: theme.secondaryBackground },
-          ]}
-        >
+        <View style={[]}>
           <PostDisplay post={post} navigation={navigation} />
         </View>
       </Pressable>

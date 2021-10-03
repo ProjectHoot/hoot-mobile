@@ -192,8 +192,7 @@ function ReplyDisplay({
             <View style={styles.buttons}>
               <VoteCounter
                 type="reply"
-                post={reply}
-                isUpvoted={false}
+                content={reply}
                 hideCount
                 style={styles.button}
               />

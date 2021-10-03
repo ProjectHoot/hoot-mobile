@@ -8,6 +8,7 @@ import {
   ScrollView,
   useWindowDimensions,
   View,
+  ViewStyle,
 } from "react-native";
 import * as Haptics from "../services/HapticService";
 
@@ -24,10 +25,12 @@ export type SwipeActionProps = {
   onReturnToCenter?: () => void;
   children: ReactNode;
   distanceToActivate?: number;
+  style?: ViewStyle;
 };
 
 export default function SwipeAction(props: SwipeActionProps) {
-  if (Platform.OS !== "ios") return <>{props.children}</>;
+  if (Platform.OS !== "ios")
+    return <View style={props.style}>{props.children}</View>;
   const distanceToActivate = props.distanceToActivate || 60;
   const [isScrolling, setIsScrolling] = useState(false);
   const [scroll, setScroll] = useState(0);
@@ -90,7 +93,7 @@ export default function SwipeAction(props: SwipeActionProps) {
       onScroll={onScroll}
       scrollEventThrottle={100}
       showsHorizontalScrollIndicator={false}
-      style={{ backgroundColor: props.backgroundColor }}
+      style={{ backgroundColor: props.backgroundColor, ...props.style }}
       overScrollMode="always"
     >
       <View
