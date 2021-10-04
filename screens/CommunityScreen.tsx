@@ -8,6 +8,8 @@ import * as LotideService from "../services/LotideService";
 import LotideContext from "../store/LotideContext";
 import { usePosts } from "../hooks/lotide";
 import PostDisplay from "../components/PostDisplay";
+import { ActorDisplay } from "../components/ActorDisplay";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CommunityScreen({
   navigation,
@@ -31,85 +33,14 @@ export default function CommunityScreen({
     <Item post={item} navigation={navigation} />
   );
 
-  const isFollowing = community.your_follow?.accepted || false;
-
-  function follow() {
-    LotideService.followCommunity(ctx, community.id).then(data => {
-      if (data.accepted === false) {
-        Alert.alert(
-          "Follow request rejected.",
-          "This could be an issue with the node you are connected to.",
-        );
-      }
-      setReloadId(x => x + 1);
-    });
-  }
-
-  function unfollow() {
-    LotideService.unfollowCommunity(ctx, community.id).then(() => {
-      setReloadId(x => x + 1);
-    });
-  }
-
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
-      <View
-        style={[styles.header, { borderBottomColor: theme.tertiaryBackground }]}
-      >
-        <View>
-          <Text style={[styles.title]}>{community.name}</Text>
-          <Text
-            style={{
-              color: community.local ? theme.blue : theme.green,
-              fontWeight: "500",
-            }}
-          >
-            {community.host}
-          </Text>
-          {community.description !== "" && (
-            <Text>
-              {"\n"}
-              {community.description}
-            </Text>
-          )}
-        </View>
-        <View style={styles.buttons}>
-          <Button
-            onPress={() => navigation.navigate("NewPostScreen", { community })}
-            title="Post"
-            color={theme.tint}
-            accessibilityLabel="Post to this community"
-          />
-          {community.you_are_moderator && (
-            <Button
-              onPress={() =>
-                navigation.navigate("EditCommunity", { community })
-              }
-              title="Edit"
-              color={theme.tint}
-              accessibilityLabel="Edit your community community"
-            />
-          )}
-          {isFollowing ? (
-            <Button
-              onPress={unfollow}
-              title="Unfollow"
-              color={theme.secondaryTint}
-              accessibilityLabel="Stop seeing posts from this community"
-            />
-          ) : (
-            <Button
-              onPress={follow}
-              title="Follow"
-              color={theme.tint}
-              accessibilityLabel="See posts from this community in your feed"
-            />
-          )}
-        </View>
-      </View>
       <FlatList
         data={posts}
         renderItem={renderItem}
+        ListHeaderComponent={
+          <ListHeader community={community} setReloadId={setReloadId} />
+        }
         keyExtractor={(post, index) => `${post.id}-${index}`}
         refreshing={isLoadingPosts}
         onRefresh={refreshPosts}
@@ -126,13 +57,16 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
+    paddingVertical: 15,
     borderBottomWidth: StyleSheet.hairlineWidth || 1,
   },
   title: {
     fontSize: 20,
   },
+  description: {
+    marginTop: 10,
+  },
   buttons: {
-    paddingTop: 10,
     display: "flex",
     flexDirection: "row",
     width: "100%",
@@ -163,3 +97,93 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
     </Pressable>
   );
 };
+
+type ListHeaderProps = {
+  community: Community;
+  setReloadId: (a: (x: number) => number) => void;
+};
+
+const ListHeader = React.memo((props: ListHeaderProps) => {
+  const theme = useTheme();
+  const navigation = useNavigation();
+  const community = props.community;
+  const setReloadId = props.setReloadId;
+  const { ctx } = useContext(LotideContext);
+
+  const isFollowing = community.your_follow?.accepted || false;
+
+  function follow() {
+    LotideService.followCommunity(ctx, community.id).then(data => {
+      if (data.accepted === false) {
+        Alert.alert(
+          "Follow request rejected.",
+          "This could be an issue with the node you are connected to.",
+        );
+      }
+      setReloadId(x => x + 1);
+    });
+  }
+
+  function unfollow() {
+    LotideService.unfollowCommunity(ctx, community.id).then(() => {
+      setReloadId(x => x + 1);
+    });
+  }
+
+  return (
+    <View
+      style={[
+        styles.header,
+        {
+          borderBottomColor: theme.tertiaryBackground,
+        },
+      ]}
+    >
+      <View>
+        <ActorDisplay
+          name={community.name}
+          host={community.host}
+          local={community.local}
+          newLine={true}
+          colorize="always"
+          showHost="always"
+          styleName={[styles.title]}
+        />
+        {community.description !== "" && (
+          <Text style={styles.description}>{community.description}</Text>
+        )}
+      </View>
+      <View style={[styles.buttons]}>
+        <Button
+          onPress={() => navigation.navigate("NewPostScreen", { community })}
+          title="Post"
+          color={theme.tint}
+          accessibilityLabel="Post to this community"
+        />
+        {community.you_are_moderator && (
+          <Button
+            onPress={() => navigation.navigate("EditCommunity", { community })}
+            title="Edit"
+            color={theme.tint}
+            accessibilityLabel="Edit your community community"
+          />
+        )}
+        {isFollowing ? (
+          <Button
+            onPress={unfollow}
+            title="Unfollow"
+            color={theme.secondaryTint}
+            accessibilityLabel="Stop seeing posts from this community"
+          />
+        ) : (
+          <Button
+            onPress={follow}
+            title="Follow"
+            color={theme.tint}
+            accessibilityLabel="See posts from this community in your feed"
+          />
+        )}
+      </View>
+    </View>
+  );
+});
