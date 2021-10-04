@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TextStyle } from "react-native";
+import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 
@@ -10,9 +10,9 @@ export interface ActorDisplayProps {
   colorize?: "always" | "never" | "only_foreign";
   showHost?: "always" | "never" | "only_foreign";
   newLine?: boolean;
-  style?: TextStyle;
-  styleName?: TextStyle;
-  styleHost?: TextStyle;
+  style?: StyleProp<TextStyle>;
+  styleName?: StyleProp<TextStyle>;
+  styleHost?: StyleProp<TextStyle>;
 }
 
 export function ActorDisplay(props: ActorDisplayProps) {
