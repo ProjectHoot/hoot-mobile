@@ -154,7 +154,12 @@ function ReplyDisplay({
                 }}
               >
                 <Text>{!showChildren && "...    "}</Text>
-                <Icon name="heart-outline" size={14} color={theme.text} light />
+                <Icon
+                  name={reply.your_vote ? "heart" : "heart-outline"}
+                  size={14}
+                  color={theme.text}
+                  light
+                />
                 <Text>{` ${reply.score}   `}</Text>
                 <ElapsedTime time={reply.created} />
               </View>
@@ -236,7 +241,7 @@ function ReplyDisplay({
         ) : (
           <Text>...</Text>
         ))}
-      {replies?.next_page && (
+      {replies == undefined && (
         <Pressable hitSlop={5} onPress={loadNextPage}>
           <View style={{ paddingHorizontal: 15, paddingBottom: 10 }}>
             <Text style={{ color: theme.tint }}>

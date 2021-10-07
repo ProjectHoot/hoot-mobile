@@ -22,27 +22,33 @@ export default function useReplies(
   const ctx = useLotideCtx();
 
   useEffect(() => {
-    if (!replies) {
+    if (!replies && type == "post") {
       loadNextPage();
     }
   }, [!!replies]);
 
   function loadNextPage() {
     if (!ctx) return;
-    if (replies && !replies.next_page) return;
+    if (replies && replies.next_page === null) return;
     switch (type) {
       case "post":
         LotideService.getPostReplies(
           ctx,
           id,
           replies?.next_page || undefined,
-        ).then(replies => {
-          dispatch(setReplyMulti({ replies: replies[1] }));
+        ).then(newReplies => {
+          dispatch(setReplyMulti({ replies: newReplies[1] }));
           dispatch(
             editPost({
               id,
               post: {
-                replies: replies[0],
+                replies: {
+                  items: [
+                    ...(replies?.items || []),
+                    ...(newReplies[0]?.items || []),
+                  ],
+                  next_page: newReplies[0]?.next_page || null,
+                },
               },
             }),
           );
@@ -53,13 +59,19 @@ export default function useReplies(
           ctx,
           id,
           replies?.next_page || undefined,
-        ).then(replies => {
-          dispatch(setReplyMulti({ replies: replies[1] }));
+        ).then(newReplies => {
+          dispatch(setReplyMulti({ replies: newReplies[1] }));
           dispatch(
             editReply({
               id,
               reply: {
-                replies: replies[0],
+                replies: {
+                  items: [
+                    ...(replies?.items || []),
+                    ...(newReplies[0]?.items || []),
+                  ],
+                  next_page: newReplies[0]?.next_page || null,
+                },
               },
             }),
           );

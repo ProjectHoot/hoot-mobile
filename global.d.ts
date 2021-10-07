@@ -147,8 +147,12 @@ interface Reply {
   created: string;
   deleted: boolean;
   local: boolean;
+  /**
+   * If undefined, then the reply has replies that aren't being loaded due to depth restrictions
+   * The api will need to be hit again to get them
+   * */
   replies?: Paged<ReplyId>;
-  your_vote: {};
+  your_vote?: boolean;
   score: number;
 }
 

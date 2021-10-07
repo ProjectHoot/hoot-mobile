@@ -21,7 +21,7 @@ export async function getPostReplies(
       (page ? `&page=${page}` : ""),
   )
     .then(data => data.json())
-    .then((replies: Paged<RawReply>) => transformReplyMulti(replies));
+    .then(transformReplyMulti);
 }
 
 export async function getReplyReplies(
@@ -34,7 +34,9 @@ export async function getReplyReplies(
     "GET",
     `comments/${replyId}/replies?limit=10&include_your=true&sort=hot` +
       (page ? `&page=${page}` : ""),
-  ).then(data => data.json());
+  )
+    .then(data => data.json())
+    .then(transformReplyMulti);
 }
 
 export async function replyToPost(
@@ -65,7 +67,10 @@ export async function removeReplyVote(ctx: LotideContext, replyId: ReplyId) {
   return lotideRequest(ctx, "DELETE", `comments/${replyId}/your_vote`);
 }
 
-type RawReply = Omit<Reply, "replies"> & { replies: Paged<RawReply> | null };
+type RawReply = Omit<Omit<Reply, "replies">, "your_vote"> & {
+  replies: Paged<RawReply> | null;
+  your_vote?: {} | null;
+};
 
 export function transformReply(reply: Readonly<RawReply>): Reply[] {
   const replies = reply.replies;
@@ -75,6 +80,7 @@ export function transformReply(reply: Readonly<RawReply>): Reply[] {
   const newReply: Reply = {
     ...reply,
     replies: childIds,
+    your_vote: reply.your_vote !== null && reply.your_vote !== undefined,
   };
 
   return [newReply, ...childData];
