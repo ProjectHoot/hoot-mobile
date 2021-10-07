@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet } from "react-native";
 import ActorDisplay from "../components/ActorDisplay";
 import ContentDisplay from "../components/ContentDisplay";
 import SuggestLogin from "../components/SuggestLogin";
 
 import { Text, View } from "../components/Themed";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 import useTheme from "../hooks/useTheme";
 import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import { transformToFullNotification } from "../transformers/NotificationTransformer";
 import { RootTabScreenProps } from "../types";
 
@@ -18,10 +18,10 @@ export default function NotificationScreen({
   const [isRefreshing, setIsRefreshing] = useState(true);
   const [focusId, setFocusId] = useState(0);
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const ctx = useLotideCtx();
 
   useEffect(() => {
-    if (!ctx.login) return;
+    if (!ctx?.login) return;
     LotideService.getNotifications(ctx).then(notifications => {
       const promises = notifications.map(n =>
         transformToFullNotification(ctx, n),
@@ -37,7 +37,7 @@ export default function NotificationScreen({
     [],
   );
 
-  if (!ctx.login) return <SuggestLogin />;
+  if (!ctx?.login) return <SuggestLogin />;
 
   const renderItem = ({ item }: { item: FullNotification }) => {
     return (
@@ -49,7 +49,7 @@ export default function NotificationScreen({
               ? [item.origin.id, item.reply.id]
               : [item.reply.id];
           navigation.navigate("Post", {
-            post: item.post,
+            postId: item.post.id,
             highlightedReplies,
           });
         }}

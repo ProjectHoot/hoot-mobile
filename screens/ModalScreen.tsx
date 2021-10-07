@@ -1,5 +1,5 @@
 import Icon from "@expo/vector-icons/Ionicons";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   StatusBar,
@@ -10,36 +10,22 @@ import {
 import * as Haptics from "../services/HapticService";
 import PostDisplay from "../components/PostDisplay";
 import { View, Text } from "../components/Themed";
-import { useReplies } from "../hooks/lotide";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
-import LotideContext from "../store/LotideContext";
 import RepliesDisplay from "../components/RepliesDisplay";
-import { SelectedReplyContext } from "../store/SelectedReplyContext";
+import usePost from "../hooks/usePost";
 
 export default function ModalScreen({
   navigation,
   route,
 }: RootStackScreenProps<"Post">) {
-  const post = route.params.post;
+  const postId = route.params.postId;
+  const post = usePost(postId);
+  if (!post) return <Text>No post</Text>;
   const [highlightedReplies, setHighlightedReplies] = useState(
     route.params.highlightedReplies,
   );
-  const [focusId, setFocusId] = useState(0);
-  const [selectedReply, setSelectedReply] = useState<ReplyId>();
-  const ctx = useContext(LotideContext).ctx;
-  const replies = useReplies(
-    ctx,
-    post.id,
-    [focusId, highlightedReplies?.join(",")],
-    highlightedReplies?.[0],
-  );
   const theme = useTheme();
-
-  useEffect(
-    () => navigation.addListener("focus", () => setFocusId(x => x + 1)),
-    [],
-  );
 
   return (
     <ScrollView>
@@ -50,7 +36,7 @@ export default function ModalScreen({
         }}
       >
         <PostDisplay
-          post={post}
+          postId={post.id}
           navigation={navigation}
           showHtmlContent
           showAuthor
@@ -92,16 +78,13 @@ export default function ModalScreen({
             </Text>
           </Pressable>
         )}
-        <SelectedReplyContext.Provider
-          value={[selectedReply, setSelectedReply]}
-        >
-          <RepliesDisplay
-            replies={replies}
-            navigation={navigation}
-            postId={post.id}
-            highlightedReplies={highlightedReplies}
-          />
-        </SelectedReplyContext.Provider>
+        <RepliesDisplay
+          parentType="post"
+          parentId={post.id}
+          navigation={navigation}
+          postId={post.id}
+          highlightedReplies={highlightedReplies}
+        />
         <View style={{ height: 300 }} />
       </View>
     </ScrollView>

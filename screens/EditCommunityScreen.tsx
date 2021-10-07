@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Button,
@@ -12,8 +12,8 @@ import { TextInput } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import ActorDisplay from "../components/ActorDisplay";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export default function ReplyScreen({
   navigation,
@@ -22,9 +22,10 @@ export default function ReplyScreen({
   const community = route.params.community;
   const [description, setDescription] = useState(community.description || "");
   const theme = useTheme();
-  const { ctx } = useContext(LotideContext);
+  const ctx = useLotideCtx();
 
   function submit() {
+    if (!ctx) return;
     LotideService.editCommunity(ctx, community.id, description)
       .then(() => LotideService.getCommunity(ctx, community.id))
       .then(data =>

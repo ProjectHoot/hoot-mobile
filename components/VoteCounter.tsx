@@ -1,5 +1,5 @@
 import { Ionicons as Icon } from "@expo/vector-icons";
-import React, { useContext } from "react";
+import React from "react";
 import {
   Alert,
   Platform,
@@ -10,8 +10,8 @@ import {
 import { View, Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "../services/HapticService";
-import LotideContext from "../store/LotideContext";
 import useVote from "../hooks/useVote";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export interface VoteCounterProps {
   content: Post | Reply;
@@ -23,16 +23,13 @@ export interface VoteCounterProps {
 
 export default function VoteCounter(props: VoteCounterProps) {
   const theme = useTheme();
-  const { ctx } = useContext(LotideContext);
-  const { isUpvoted, score, addVote, removeVote } = useVote(
-    props.type,
-    props.content,
-  );
+  const ctx = useLotideCtx();
+  const { isUpvoted, addVote, removeVote } = useVote(props.type, props.content);
 
   function toggleVote() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    if (ctx.login === undefined) {
+    if (!ctx?.login) {
       Alert.alert(
         "Login to like",
         "Leave a like when you login to a community",
@@ -64,7 +61,7 @@ export default function VoteCounter(props: VoteCounterProps) {
         {!props.hideCount && (
           <Text
             style={{ ...styles.score, color: scoreColor }}
-          >{`  ${score}  `}</Text>
+          >{`  ${props.content.score}  `}</Text>
         )}
       </View>
     </Pressable>

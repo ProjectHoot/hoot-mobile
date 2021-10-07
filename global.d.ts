@@ -3,10 +3,11 @@ type PostId = number;
 type ReplyId = number;
 type UserId = number;
 
-type SortOption = "hot" | "new";
+type SortOption = "hot" | "new" | "top";
 
 interface LotideContext {
   apiUrl?: string;
+  apiVersion?: number;
   login?: Login;
 }
 
@@ -27,6 +28,7 @@ interface Login {
 
 interface InstanceInfo {
   description?: string;
+  apiVersion: number;
   software: {
     name: string;
     version: string;
@@ -92,7 +94,8 @@ interface Post {
   score: number;
   sticky: boolean;
   title: string;
-  your_vote?: null | {};
+  your_vote?: boolean;
+  replies?: Paged<ReplyId>;
 }
 
 interface NewPost {
@@ -144,7 +147,7 @@ interface Reply {
   created: string;
   deleted: boolean;
   local: boolean;
-  replies: Paged<Reply> | null;
+  replies?: Paged<ReplyId>;
   your_vote: {};
   score: number;
 }

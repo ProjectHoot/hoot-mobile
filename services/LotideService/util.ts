@@ -12,7 +12,7 @@ export async function lotideRequest(
   noLogin: boolean = false,
 ): Promise<any | undefined> {
   if (!ctx.apiUrl) throw "No API url";
-  if (!noLogin && ctx.login == undefined) throw "Not logged in";
+  if (!noLogin && !ctx.login?.token) throw "Not logged in";
   return fetch(`${ctx.apiUrl}/${path}`, {
     method,
     headers: buildHeaders(ctx),

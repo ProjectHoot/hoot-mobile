@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Alert, Button, StyleSheet, TextInput } from "react-native";
 import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export default function NewCommunityScreen({
   navigation,
@@ -12,9 +12,12 @@ export default function NewCommunityScreen({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const ctx = useLotideCtx();
+
+  if (!ctx) return null;
 
   function submit() {
+    if (!ctx?.login) return;
     LotideService.newCommunity(ctx, name)
       .then(async data => {
         const id = data.community.id;
