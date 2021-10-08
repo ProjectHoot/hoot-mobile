@@ -30,10 +30,8 @@ export default function CommunityFinder(props: CommunityFinderProps) {
     if (props.onlyWhenTyping && filterText === "") return [];
     if (!communities) return [];
     if (filterText === "") return communities.items;
-    return communities.items.filter(
-      c =>
-        c.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        c.host.includes(filterText.toLowerCase()),
+    return communities.items.filter(c =>
+      c.name.toLowerCase().includes(filterText.toLowerCase()),
     );
   })();
 
