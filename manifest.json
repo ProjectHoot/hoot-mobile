@@ -2,8 +2,8 @@
   "background_color": "#2c1324",
   "display": "standalone",
   "lang": "en",
-  "name": "hoot-mobile",
-  "short_name": "hoot-mobile",
+  "name": "Hoot",
+  "short_name": "Hoot",
   "start_url": "/?utm_source=web_app_manifest",
   "orientation": "portrait",
   "related_applications": [
