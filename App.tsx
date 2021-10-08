@@ -1,40 +1,48 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
-import LotideContext, { defaultLotideContext } from "./store/LotideContext";
 import * as StorageService from "./services/StorageService";
 import * as LotideService from "./services/LotideService";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
+import { setCtx } from "./slices/lotideSlice";
 import reduxStore from "./store/reduxStore";
+import { useLotideCtx } from "./hooks/useLotideCtx";
+import { Alert } from "react-native";
 
-export default function App() {
+function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [ctx, setContext] = useState<LotideContext>(defaultLotideContext);
+  const ctx = useLotideCtx();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     StorageService.lotideContext.query().then(ctx => {
       if (ctx !== undefined) {
-        setContext(ctx);
+        dispatch(setCtx(ctx));
       }
     });
   }, []);
 
   useEffect(() => {
-    if (!ctx.apiUrl) return;
+    if (!ctx?.apiUrl) return;
     LotideService.getInstanceInfo(ctx)
       .then(data => {
-        console.log(data);
-        if (!data.software.version.startsWith("0.9.")) {
-          throw "Bad version";
-        }
+        console.log(ctx);
+        console.log("version", data.apiVersion);
+        if (data.apiVersion < 8 || data.apiVersion > 10) throw "Bad version";
+        if (data.apiVersion == ctx.apiVersion) return;
+        applyNewContext({
+          ...ctx,
+          apiVersion: data.apiVersion,
+        });
       })
-      .catch(() => {
+      .catch(e => {
+        Alert.alert("Failed to login", e);
         StorageService.lotideContextKV
           .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
           .then(() => applyNewContext({}));
@@ -45,32 +53,31 @@ export default function App() {
         .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
         .then(() => applyNewContext({}));
     });
-  }, [ctx]);
+  }, [ctx?.apiUrl, ctx?.apiVersion]);
 
   function applyNewContext(ctx: LotideContext) {
     StorageService.lotideContextKV
       .store(ctx)
       .then(() => AsyncStorage.setItem("@lotide_ctx", JSON.stringify(ctx)))
-      .then(() => setContext(ctx));
+      .then(() => dispatch(setCtx(ctx)));
   }
 
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
-      <Provider store={reduxStore}>
-        <LotideContext.Provider
-          value={{
-            ctx,
-            setContext: (ctx: LotideContext) => applyNewContext(ctx),
-          }}
-        >
-          <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
-            <StatusBar />
-          </SafeAreaProvider>
-        </LotideContext.Provider>
-      </Provider>
+      <SafeAreaProvider>
+        <Navigation colorScheme={colorScheme} />
+        <StatusBar />
+      </SafeAreaProvider>
     );
   }
+}
+
+export default function () {
+  return (
+    <Provider store={reduxStore}>
+      <App />
+    </Provider>
+  );
 }

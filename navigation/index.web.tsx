@@ -12,7 +12,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { ActionSheetIOS, ColorSchemeName, Pressable } from "react-native";
+import { ColorSchemeName, Pressable } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -36,6 +36,7 @@ import NotificationScreen from "../screens/NotificationScreen";
 import NewCommunityScreen from "../screens/NewCommunity";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import EditCommunityScreen from "../screens/EditCommunityScreen";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export default function Navigation({
   colorScheme,
@@ -98,6 +99,7 @@ const BottomTab = createDrawerNavigator<RootTabParamList>();
 
 function BottomTabNavigator({ navigation }: any) {
   const [sort, setSort] = useState<SortOption>("hot");
+  const ctx = useLotideCtx();
   const colorScheme = useColorScheme();
 
   return (
@@ -123,20 +125,14 @@ function BottomTabNavigator({ navigation }: any) {
           headerRight: () => (
             <Pressable
               onPress={() => {
-                ActionSheetIOS.showActionSheetWithOptions(
-                  {
-                    options: ["Cancel", "Hot", "New"],
-                    title: "Sort by:",
-                    cancelButtonIndex: 0,
-                  },
-                  buttonIndex => {
-                    const newSort = [sort, "hot", "new"][
-                      buttonIndex
-                    ] as SortOption;
-                    setSort(newSort);
-                    navigation.navigate("FeedScreen", { sort: newSort });
-                  },
-                );
+                const sortSwitch: { [key: string]: SortOption } = {
+                  top: "hot",
+                  hot: "new",
+                  new: (ctx?.apiVersion || 0) < 10 ? "hot" : "top",
+                };
+                const newSort: SortOption = sortSwitch[sort];
+                setSort(newSort);
+                navigation.navigate("FeedScreen", { sort: newSort });
               }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
@@ -144,7 +140,11 @@ function BottomTabNavigator({ navigation }: any) {
             >
               <Icon
                 name={
-                  { hot: "flame-outline", new: "time-outline" }[sort] as any
+                  {
+                    hot: "flame-outline",
+                    new: "time-outline",
+                    top: "arrow-up-outline",
+                  }[sort] as any
                 }
                 size={25}
                 color={Colors[colorScheme].tint}

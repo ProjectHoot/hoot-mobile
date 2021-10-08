@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import { Text, TextInput, View } from "./Themed";
 import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import useTheme from "../hooks/useTheme";
 import { useNavigation } from "@react-navigation/core";
+import { useDispatch } from "react-redux";
+import { setCtx } from "../slices/lotideSlice";
 
 export interface LoginProps {
   hostName?: string;
@@ -30,7 +31,7 @@ export default function Login(props: LoginProps) {
   const usernameRef = useRef<DefaultTextInput>(null);
   const passwordRef = useRef<DefaultTextInput>(null);
   const theme = useTheme();
-  const lotideContext = useContext(LotideContext);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   function fail(message: string) {
@@ -49,10 +50,12 @@ export default function Login(props: LoginProps) {
       email,
     )
       .then(data => {
-        lotideContext.setContext({
-          apiUrl: `https://${props.domain}/api/unstable`,
-          login: data,
-        });
+        dispatch(
+          setCtx({
+            apiUrl: `https://${props.domain}/api/unstable`,
+            login: data,
+          }),
+        );
       })
       .catch(e => {
         Alert.alert("Failed to register", e);
@@ -70,10 +73,12 @@ export default function Login(props: LoginProps) {
       password,
     )
       .then(data => {
-        lotideContext.setContext({
-          apiUrl: `https://${props.domain}/api/unstable`,
-          login: data,
-        });
+        dispatch(
+          setCtx({
+            apiUrl: `https://${props.domain}/api/unstable`,
+            login: data,
+          }),
+        );
       })
       .catch(e => {
         Alert.alert("Failed to login", e);

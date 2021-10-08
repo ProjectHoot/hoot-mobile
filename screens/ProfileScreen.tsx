@@ -1,15 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Pressable, ScrollView, StyleSheet } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import { View, Text, TextInput } from "../components/Themed";
 import { getUserData } from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import SuggestLogin from "../components/SuggestLogin";
 import * as LotideService from "../services/LotideService";
 import * as StorageService from "../services/StorageService";
 import useTheme from "../hooks/useTheme";
 import ActorDisplay from "../components/ActorDisplay";
+import { useLotideCtx } from "../hooks/useLotideCtx";
+import { useDispatch } from "react-redux";
+import { setCtx } from "../slices/lotideSlice";
 
 export default function ProfileScreen({
   navigation,
@@ -20,7 +22,8 @@ export default function ProfileScreen({
   const [isEditing, setIsEditing] = useState(false);
   const [focusId, setFocusId] = useState(0);
   const theme = useTheme();
-  const { ctx, setContext } = useContext(LotideContext);
+  const ctx = useLotideCtx();
+  const dispatch = useDispatch();
 
   useEffect(
     () => navigation.addListener("focus", () => setFocusId(x => x + 1)),
@@ -28,18 +31,18 @@ export default function ProfileScreen({
   );
 
   useEffect(() => {
-    if (!ctx.login) return;
+    if (!ctx?.login) return;
     // TODO: Use the pagination feature
     LotideService.getCommunities(ctx, true).then(communities =>
       setCommunities(communities.items),
     );
-  }, [ctx.login?.user.id, focusId]);
+  }, [ctx?.login?.user.id, focusId]);
 
   useEffect(() => {
-    if (ctx.login !== undefined && ctx.login.user !== undefined) {
+    if (ctx?.login !== undefined && ctx.login.user !== undefined) {
       getUserData(ctx, ctx.login?.user.id || 0).then(setProfile);
     }
-  }, [ctx.login?.token, focusId]);
+  }, [ctx?.login?.token, focusId]);
 
   useEffect(() => {
     StorageService.lotideContextKV
@@ -47,11 +50,12 @@ export default function ProfileScreen({
       .then(keys => setProfileList(keys));
   }, [ctx, focusId]);
 
-  if (ctx.login === undefined) {
+  if (ctx?.login === undefined) {
     return <SuggestLogin />;
   }
 
   function logout() {
+    if (!ctx?.login) return;
     Alert.alert(
       "Log out",
       "Would you like to keep the login profile handy for later?",
@@ -66,7 +70,7 @@ export default function ProfileScreen({
             StorageService.lotideContextKV
               .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
               .then(() => LotideService.logout(ctx))
-              .then(() => setContext({}));
+              .then(() => dispatch(setCtx({})));
           },
         },
         {
@@ -74,7 +78,7 @@ export default function ProfileScreen({
           style: "default",
           onPress: () => {
             StorageService.lotideContextKV.logout(ctx);
-            setContext({});
+            dispatch(setCtx({}));
           },
         },
       ],
@@ -139,12 +143,14 @@ export default function ProfileScreen({
           </View>
         </View>
       )}
-      <Button
-        onPress={() => setContext({})}
-        title="Add Profile"
-        color={theme.tint}
-        accessibilityLabel="Add profile"
-      />
+      <View style={styles.buttonView}>
+        <Button
+          onPress={() => dispatch(setCtx({}))}
+          title="Add Profile"
+          color={theme.tint}
+          accessibilityLabel="Add profile"
+        />
+      </View>
       {profileList
         .map(p => [p, ...p.split("@")] as string[])
         .map(p => [
@@ -162,7 +168,8 @@ export default function ProfileScreen({
             onPress={() => {
               StorageService.lotideContextKV.query(p[0]).then(ctx => {
                 if (ctx !== undefined) {
-                  setContext(ctx);
+                  dispatch(setCtx(ctx));
+                  StorageService.lotideContext.store(ctx);
                   setIsEditing(false);
                 }
               });
@@ -178,7 +185,7 @@ export default function ProfileScreen({
             />
           </Pressable>
         ))}
-      <View style={{ paddingTop: 10 }}>
+      <View style={[styles.buttonView, { paddingTop: 10 }]}>
         <Button
           onPress={() => navigation.navigate("NewCommunity")}
           title="Create Community"
@@ -217,6 +224,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
     padding: 20,
   },
   title: {
@@ -240,6 +248,10 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  buttonView: {
+    display: "flex",
+    alignItems: "center",
   },
   separator: {
     marginVertical: 30,

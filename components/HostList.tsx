@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import KnownHosts from "../constants/KnownHosts";
@@ -7,7 +7,8 @@ import { Text, TextInput, View } from "./Themed";
 import * as LotideService from "../services/LotideService";
 import useTheme from "../hooks/useTheme";
 import { lotideContextKV } from "../services/StorageService";
-import LotideContext from "../store/LotideContext";
+import { setCtx } from "../slices/lotideSlice";
+import { useDispatch } from "react-redux";
 
 export interface HostListProps {
   onSelect: (domain: string, name?: string, username?: string) => void;
@@ -26,7 +27,7 @@ export default function HostList(props: HostListProps) {
     [string, LotideContext][]
   >([]);
   const theme = useTheme();
-  const lotideContext = useContext(LotideContext);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     KnownHosts.map((h, i) => {
@@ -62,7 +63,7 @@ export default function HostList(props: HostListProps) {
   }, []);
 
   const renderItem = ({ item }: { item: HostData }) => {
-    const enabled = item.instanceInfo?.software.version.startsWith("0.9.");
+    const enabled = (item.instanceInfo?.apiVersion || 0) > 8;
     const color = enabled ? theme.text : theme.secondaryText;
     return (
       <View
@@ -90,6 +91,7 @@ export default function HostList(props: HostListProps) {
           {item.instanceInfo ? (
             <>
               <Text style={{ color: theme.secondaryText }}>
+                {item.instanceInfo.software.name}{" "}
                 {item.instanceInfo.software.version}
                 {!enabled && " - Out of date"}
               </Text>
@@ -126,7 +128,7 @@ export default function HostList(props: HostListProps) {
             key={p[0]}
             onPress={() => {
               if (isUnlocked) {
-                lotideContext.setContext(p[1]);
+                dispatch(setCtx(p[1]));
               } else {
                 props.onSelect(host.toLowerCase(), undefined, username);
               }

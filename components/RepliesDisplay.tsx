@@ -1,37 +1,39 @@
-import React, { useContext, useState } from "react";
-import { ColorValue, Pressable, StyleSheet } from "react-native";
+import React from "react";
+import { ColorValue, Pressable, StyleSheet, View } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
-import { View, Text } from "./Themed";
+import { Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
 import * as Haptics from "../services/HapticService";
 import ElapsedTime from "./ElapsedTime";
-import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import ContentDisplay from "./ContentDisplay";
-import { SelectedReplyContext } from "../store/SelectedReplyContext";
 import VoteCounter from "./VoteCounter";
 import ActorDisplay from "./ActorDisplay";
+import { useLotideCtx } from "../hooks/useLotideCtx";
+import useReplies from "../hooks/useReplies";
+import useReply from "../hooks/useReply";
+import useSelectedReply from "../hooks/useSelectedReply";
 
 export interface RepliesDisplayProps {
-  replies: Paged<Reply>;
+  parentType: ContentType;
+  parentId: number;
   navigation: any;
   layer?: number;
   postId?: PostId;
-  replyId?: ReplyId;
   highlightedReplies?: ReplyId[];
 }
 
 export default function RepliesDisplay({
-  replies,
+  parentType,
+  parentId,
   navigation,
   layer = 0,
   postId,
-  replyId,
   highlightedReplies = [],
 }: RepliesDisplayProps) {
-  const [nextPageData, setNextPageData] = useState<Paged<Reply>>();
+  const { replies, loadNextPage } = useReplies(parentType, parentId);
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const ctx = useLotideCtx();
+  if (!ctx) return null;
   const layerColors = [
     theme.text,
     theme.red,
@@ -44,56 +46,27 @@ export default function RepliesDisplay({
     theme.purple,
   ];
 
+  if (!replies) return <Text>Can't find replies</Text>;
+
   return (
     <View>
-      {replies.items.map(reply => (
+      {replies.items.map(replyId => (
         <ReplyDisplay
-          reply={reply}
+          replyId={replyId}
           layer={layer}
-          key={reply.id}
+          key={replyId}
           navigation={navigation}
           layerColors={layerColors}
           postId={postId}
           highlightedReplies={highlightedReplies}
         />
       ))}
-      {replies.next_page !== null &&
-        nextPageData === undefined &&
-        (postId || replyId) && (
-          <Pressable
-            hitSlop={5}
-            onPress={() => {
-              if (replyId) {
-                LotideService.getReplyReplies(
-                  ctx,
-                  replyId,
-                  replies.next_page || undefined,
-                ).then(setNextPageData);
-              } else if (postId) {
-                LotideService.getPostReplies(
-                  ctx,
-                  postId,
-                  replies.next_page || undefined,
-                ).then(setNextPageData);
-              }
-            }}
-          >
-            <Text
-              style={{ color: theme.tint, paddingTop: 5, paddingBottom: 10 }}
-            >
-              More replies <Icon name="chevron-down-outline" />
-            </Text>
-          </Pressable>
-        )}
-      {nextPageData !== undefined && (
-        <RepliesDisplay
-          replies={nextPageData}
-          navigation={navigation}
-          layer={layer}
-          postId={postId}
-          replyId={replyId}
-          highlightedReplies={highlightedReplies}
-        />
+      {replies.next_page !== null && (
+        <Pressable hitSlop={5} onPress={loadNextPage}>
+          <Text style={{ color: theme.tint, paddingTop: 5, paddingBottom: 10 }}>
+            More replies <Icon name="chevron-down-outline" />
+          </Text>
+        </Pressable>
       )}
       {replies.next_page === null && layer === 0 && (
         <Text style={{ margin: 17, color: theme.secondaryText }}>
@@ -105,25 +78,30 @@ export default function RepliesDisplay({
 }
 
 function ReplyDisplay({
-  reply,
+  replyId,
   layer = 0,
   navigation,
   layerColors,
   postId,
   highlightedReplies = [],
 }: {
-  reply: Reply;
+  replyId: ReplyId;
   layer: number;
   navigation: any;
   layerColors: ColorValue[];
   postId?: PostId;
   highlightedReplies?: ReplyId[];
 }) {
-  const [nextPageData, setNextPageData] = useState<Paged<Reply>>();
+  const reply = useReply(replyId);
+  const { replies, loadNextPage } = useReplies("reply", replyId);
   const [showChildren, setShowChildren] = React.useState(true);
   const theme = useTheme();
-  const { ctx } = useContext(LotideContext);
-  const [selectedReply, setSelectedReply] = useContext(SelectedReplyContext);
+  const ctx = useLotideCtx();
+  const [selectedReply, setSelectedReply] = useSelectedReply();
+
+  if (!ctx) return null;
+
+  if (!reply) return <Text>Failed to load reply</Text>;
 
   return (
     <View style={{ paddingLeft: 0 }}>
@@ -166,6 +144,7 @@ function ReplyDisplay({
                 showHost="only_foreign"
                 colorize="only_foreign"
                 style={{ fontSize: 16, fontWeight: "500" }}
+                userId={reply.author.id}
               />
               <View
                 style={{
@@ -176,7 +155,12 @@ function ReplyDisplay({
                 }}
               >
                 <Text>{!showChildren && "...    "}</Text>
-                <Icon name="heart-outline" size={14} color={theme.text} light />
+                <Icon
+                  name={reply.your_vote ? "heart" : "heart-outline"}
+                  size={14}
+                  color={theme.text}
+                  light
+                />
                 <Text>{` ${reply.score}   `}</Text>
                 <ElapsedTime time={reply.created} />
               </View>
@@ -242,48 +226,30 @@ function ReplyDisplay({
           )}
         </Pressable>
       </View>
-      {reply.replies !== null
-        ? reply.replies.items.length > 0 &&
-          (showChildren ? (
-            <View style={{ paddingLeft: 15 }}>
-              <RepliesDisplay
-                replies={reply.replies}
-                layer={layer + 1}
-                navigation={navigation}
-                postId={postId}
-                replyId={reply.id}
-                highlightedReplies={highlightedReplies}
-              />
-            </View>
-          ) : (
-            <Text>...</Text>
-          ))
-        : nextPageData === undefined && (
-            <Pressable
-              hitSlop={5}
-              onPress={() => {
-                LotideService.getReplyReplies(ctx, reply.id).then(
-                  setNextPageData,
-                );
-              }}
-            >
-              <View style={{ paddingHorizontal: 15, paddingBottom: 10 }}>
-                <Text style={{ color: theme.tint }}>
-                  More replies <Icon name="chevron-forward-outline" />
-                </Text>
-              </View>
-            </Pressable>
-          )}
-      {nextPageData !== undefined && (
-        <View style={{ paddingLeft: 15 }}>
-          <RepliesDisplay
-            replies={nextPageData}
-            navigation={navigation}
-            layer={layer + 1}
-            postId={postId}
-            replyId={reply.id}
-          />
-        </View>
+      {replies &&
+        replies.items.length > 0 &&
+        (showChildren ? (
+          <View style={{ paddingLeft: 15 }}>
+            <RepliesDisplay
+              parentType="reply"
+              parentId={replyId}
+              layer={layer + 1}
+              navigation={navigation}
+              postId={postId}
+              highlightedReplies={highlightedReplies}
+            />
+          </View>
+        ) : (
+          <Text>...</Text>
+        ))}
+      {replies == undefined && (
+        <Pressable hitSlop={5} onPress={loadNextPage}>
+          <View style={{ paddingHorizontal: 15, paddingBottom: 10 }}>
+            <Text style={{ color: theme.tint }}>
+              More replies <Icon name="chevron-forward-outline" />
+            </Text>
+          </View>
+        </Pressable>
       )}
     </View>
   );

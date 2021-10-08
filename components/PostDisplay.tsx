@@ -15,32 +15,34 @@ import useTheme from "../hooks/useTheme";
 import * as Haptics from "../services/HapticService";
 import ContentDisplay from "./ContentDisplay";
 import ActorDisplay from "./ActorDisplay";
+import usePost from "../hooks/usePost";
 
 export interface PostDisplayProps {
-  post: Post;
+  postId: PostId;
   navigation: any;
   showHtmlContent?: boolean;
   showAuthor?: boolean;
 }
 
 export default function PostDisplay(props: PostDisplayProps) {
+  const post = usePost(props.postId);
   const [imgAspect, setImgAspect] = useState(1);
-  const isImage = useMemo(() => isImageUrl(props.post.href), [props.post.href]);
+  const isImage = useMemo(() => post && isImageUrl(post.href), [post?.href]);
   const theme = useTheme();
 
-  const post = props.post;
+  if (!post) return <Text>Failed to load post</Text>;
 
   return (
     <View>
       <Text style={styles.title}>
-        {props.post.sticky && (
+        {post.sticky && (
           <>
             <Icon name="pin" size={25} color={theme.secondaryTint} />{" "}
           </>
         )}
-        {props.post.title}
+        {post.title}
       </Text>
-      {props.post.href &&
+      {post.href &&
         (isImage ? (
           <Image
             style={{
@@ -49,7 +51,7 @@ export default function PostDisplay(props: PostDisplayProps) {
               backgroundColor: theme.secondaryBackground,
             }}
             source={{
-              uri: props.post.href,
+              uri: post.href,
             }}
             onLoad={event =>
               Platform.OS !== "web" &&
@@ -70,19 +72,19 @@ export default function PostDisplay(props: PostDisplayProps) {
             ]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              if (props.post.href) {
-                openURL(props.post.href);
+              if (post.href) {
+                openURL(post.href);
               }
             }}
           >
-            <Text>{props.post.href}</Text>
+            <Text>{post.href}</Text>
           </Pressable>
         ))}
-      {props.showHtmlContent && !!props.post.content_html && (
+      {props.showHtmlContent && !!post.content_html && (
         <View style={{ padding: 15 }}>
           <ContentDisplay
-            contentHtml={props.post.content_html}
-            contentText={props.post.content_text}
+            contentHtml={post.content_html}
+            contentText={post.content_text}
           />
         </View>
       )}
@@ -104,6 +106,7 @@ export default function PostDisplay(props: PostDisplayProps) {
             showHost={"only_foreign"}
             colorize={"always"}
             newLine={true}
+            userId={post.author.id}
           />
         </View>
       )}
@@ -112,7 +115,7 @@ export default function PostDisplay(props: PostDisplayProps) {
           hitSlop={8}
           onPress={() =>
             props.navigation.navigate("Community", {
-              community: props.post.community,
+              community: post.community,
             })
           }
           style={[
@@ -137,12 +140,12 @@ export default function PostDisplay(props: PostDisplayProps) {
         </Pressable>
         <View style={{ flex: 1 }} />
         <View style={styles.footItem}>
-          <ElapsedTime time={props.post.created} />
+          <ElapsedTime time={post.created} />
         </View>
         <View style={styles.footItem}>
           <Text style={styles.footText}>
             <Icon name="chatbubble-outline" size={12} />{" "}
-            {props.post.replies_count_total}
+            {post.replies_count_total}
           </Text>
         </View>
         <View style={styles.footItem}>

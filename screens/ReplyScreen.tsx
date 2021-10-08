@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Button,
   Keyboard,
@@ -11,9 +11,9 @@ import { Text, TextInput } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
 import ContentDisplay from "../components/ContentDisplay";
 import { ScrollView } from "react-native-gesture-handler";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export default function ReplyScreen({
   navigation,
@@ -22,13 +22,14 @@ export default function ReplyScreen({
   const [text, setText] = useState("");
   const scrollRef = useRef<ScrollView>(null);
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const ctx = useLotideCtx();
   const id = route.params.id;
   const title = route.params.title;
   const html = route.params.html;
   const type = route.params.type;
 
   function submit() {
+    if (!ctx?.login) return;
     if (type === "post") {
       LotideService.replyToPost(ctx, id, text).then(() => navigation.pop());
     } else {

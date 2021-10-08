@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
-import LotideContext from "../store/LotideContext";
 import { TextInput, View } from "./Themed";
 import * as LotideService from "../services/LotideService";
 import ActorDisplay from "./ActorDisplay";
 import useTheme from "../hooks/useTheme";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export interface CommunityFinderProps {
   placeholder?: string;
@@ -17,7 +17,7 @@ export interface CommunityFinderProps {
 export default function CommunityFinder(props: CommunityFinderProps) {
   const [communities, setCommunities] = useState<Paged<Community>>();
   const [filterText, setFilterText] = useState("");
-  const ctx = useContext(LotideContext).ctx;
+  const ctx = useLotideCtx();
   const theme = useTheme();
 
   const communitiesToDisplay = (() => {
@@ -32,8 +32,9 @@ export default function CommunityFinder(props: CommunityFinderProps) {
   })();
 
   useEffect(() => {
+    if (!ctx) return;
     LotideService.getCommunities(ctx, false).then(setCommunities);
-  }, [ctx.login?.token, props.focusId]);
+  }, [ctx?.login?.token, props.focusId]);
 
   const renderItem = ({ item }: { item: Community }) => {
     return (

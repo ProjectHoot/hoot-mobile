@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -11,18 +11,21 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { View, Text, TextInput as TextInputThemed } from "../components/Themed";
-import LotideContext from "../store/LotideContext";
 import { RootTabScreenProps } from "../types";
 import * as LotideService from "../services/LotideService";
 import useTheme from "../hooks/useTheme";
 import SuggestLogin from "../components/SuggestLogin";
 import CommunityFinder from "../components/CommunityFinder";
 import ActorDisplay from "../components/ActorDisplay";
+import { useLotideCtx } from "../hooks/useLotideCtx";
+import { useDispatch } from "react-redux";
+import { setPost } from "../slices/postSlice";
 
 export default function NewPostScreen({
   navigation,
   route,
 }: RootTabScreenProps<"NewPostScreen">) {
+  const dispatch = useDispatch();
   const [community, setCommunity] = useState<Community | null | undefined>(
     route.params.community,
   );
@@ -30,8 +33,7 @@ export default function NewPostScreen({
   const [link, setLink] = useState("");
   const [content, setContent] = useState("");
   const theme = useTheme();
-  const lotideContext = useContext(LotideContext);
-  const ctx = lotideContext.ctx;
+  const ctx = useLotideCtx();
 
   useEffect(() => {
     return navigation.addListener("focus", () => {
@@ -44,7 +46,7 @@ export default function NewPostScreen({
     });
   }, [community, community?.id, route.params.community?.id]);
 
-  if (ctx.login === undefined) {
+  if (!ctx?.login) {
     return <SuggestLogin />;
   }
 
@@ -52,7 +54,7 @@ export default function NewPostScreen({
     return <CommunityFinder onSelect={setCommunity} onlyWhenTyping />;
 
   function submit() {
-    if (!community) return;
+    if (!ctx || !community) return;
     LotideService.submitPost(ctx, {
       community: community.id,
       title: title,
@@ -62,7 +64,8 @@ export default function NewPostScreen({
       .then(data => {
         LotideService.getPost(ctx, data.id).then(post => {
           reset();
-          navigation.navigate("Post", { post });
+          dispatch(setPost({ post }));
+          navigation.navigate("Post", { postId: post.id });
         });
       })
       .catch(e => Alert.alert("Could not submit post", e));

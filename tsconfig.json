@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowUnreachableCode": false,
     "alwaysStrict": true,
+    "experimentalDecorators": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,

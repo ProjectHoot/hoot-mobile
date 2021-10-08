@@ -18,8 +18,8 @@ declare global {
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Modal: { post: Post; highlightedReplies?: ReplyId[] };
-  Post: { post: Post; highlightedReplies?: ReplyId[] };
+  Modal: { postId: PostId; highlightedReplies?: ReplyId[] };
+  Post: { postId: PostId; highlightedReplies?: ReplyId[] };
   NotFound: undefined;
   Web: undefined;
   Reply: { id: number; title?: string; html: string; type: "post" | "reply" };

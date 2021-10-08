@@ -1,37 +1,39 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, FlatList, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
 import * as Haptics from "../services/HapticService";
 import * as LotideService from "../services/LotideService";
-import LotideContext from "../store/LotideContext";
-import { usePosts } from "../hooks/lotide";
 import PostDisplay from "../components/PostDisplay";
 import { ActorDisplay } from "../components/ActorDisplay";
 import { useNavigation } from "@react-navigation/native";
+import { useLotideCtx } from "../hooks/useLotideCtx";
+import useFeed from "../hooks/useFeed";
 
 export default function CommunityScreen({
-  navigation,
   route,
 }: RootStackScreenProps<"Community">) {
   const [community, setCommunity] = useState(route.params.community);
-  const [posts, isLoadingPosts, refreshPosts, loadNextPage] = usePosts(
-    "hot",
-    undefined,
-    community.id,
-  );
+  const [posts, loadNextPage, refreshPosts] = useFeed({
+    sort: "hot",
+    communityId: community.id,
+  });
   const [reloadId, setReloadId] = useState(0);
   const theme = useTheme();
-  const ctx = useContext(LotideContext).ctx;
+  const ctx = useLotideCtx();
 
   useEffect(() => {
+    if (!ctx) return;
     LotideService.getCommunity(ctx, community.id).then(setCommunity);
-  }, [route.params.community.id, route.params.community.description, reloadId]);
+  }, [
+    ctx?.apiUrl,
+    route.params.community.id,
+    route.params.community.description,
+    reloadId,
+  ]);
 
-  const renderItem = ({ item }: { item: Post }) => (
-    <Item post={item} navigation={navigation} />
-  );
+  const renderItem = ({ item }: { item: PostId }) => <Item postId={item} />;
 
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
@@ -41,8 +43,8 @@ export default function CommunityScreen({
         ListHeaderComponent={
           <ListHeader community={community} setReloadId={setReloadId} />
         }
-        keyExtractor={(post, index) => `${post.id}-${index}`}
-        refreshing={isLoadingPosts}
+        keyExtractor={(postId, index) => `${postId}-${index}`}
+        refreshing={posts.length == 0}
         onRefresh={refreshPosts}
         onEndReachedThreshold={2}
         onEndReached={loadNextPage}
@@ -80,11 +82,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
+const Item = ({ postId }: { postId: PostId }) => {
   const theme = useTheme();
+  const navigation = useNavigation();
   return (
     <Pressable
-      onPress={() => navigation.navigate("Post", { post })}
+      onPress={() => navigation.navigate("Post", { postId })}
       onLongPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       }}
@@ -92,7 +95,7 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
       <View
         style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
       >
-        <PostDisplay post={post} navigation={navigation} />
+        <PostDisplay postId={postId} navigation={navigation} />
       </View>
     </Pressable>
   );
@@ -108,11 +111,12 @@ const ListHeader = React.memo((props: ListHeaderProps) => {
   const navigation = useNavigation();
   const community = props.community;
   const setReloadId = props.setReloadId;
-  const { ctx } = useContext(LotideContext);
+  const ctx = useLotideCtx();
 
   const isFollowing = community.your_follow?.accepted || false;
 
   function follow() {
+    if (!ctx) return;
     LotideService.followCommunity(ctx, community.id).then(data => {
       if (data.accepted === false) {
         Alert.alert(
@@ -125,6 +129,7 @@ const ListHeader = React.memo((props: ListHeaderProps) => {
   }
 
   function unfollow() {
+    if (!ctx) return;
     LotideService.unfollowCommunity(ctx, community.id).then(() => {
       setReloadId(x => x + 1);
     });
@@ -153,37 +158,41 @@ const ListHeader = React.memo((props: ListHeaderProps) => {
           <Text style={styles.description}>{community.description}</Text>
         )}
       </View>
-      <View style={[styles.buttons]}>
-        <Button
-          onPress={() => navigation.navigate("NewPostScreen", { community })}
-          title="Post"
-          color={theme.tint}
-          accessibilityLabel="Post to this community"
-        />
-        {community.you_are_moderator && (
+      {!!ctx && (
+        <View style={[styles.buttons]}>
           <Button
-            onPress={() => navigation.navigate("EditCommunity", { community })}
-            title="Edit"
+            onPress={() => navigation.navigate("NewPostScreen", { community })}
+            title="Post"
             color={theme.tint}
-            accessibilityLabel="Edit your community community"
+            accessibilityLabel="Post to this community"
           />
-        )}
-        {isFollowing ? (
-          <Button
-            onPress={unfollow}
-            title="Unfollow"
-            color={theme.secondaryTint}
-            accessibilityLabel="Stop seeing posts from this community"
-          />
-        ) : (
-          <Button
-            onPress={follow}
-            title="Follow"
-            color={theme.tint}
-            accessibilityLabel="See posts from this community in your feed"
-          />
-        )}
-      </View>
+          {community.you_are_moderator && (
+            <Button
+              onPress={() =>
+                navigation.navigate("EditCommunity", { community })
+              }
+              title="Edit"
+              color={theme.tint}
+              accessibilityLabel="Edit your community community"
+            />
+          )}
+          {isFollowing ? (
+            <Button
+              onPress={unfollow}
+              title="Unfollow"
+              color={theme.secondaryTint}
+              accessibilityLabel="Stop seeing posts from this community"
+            />
+          ) : (
+            <Button
+              onPress={follow}
+              title="Follow"
+              color={theme.tint}
+              accessibilityLabel="See posts from this community in your feed"
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 });

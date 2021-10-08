@@ -4,9 +4,9 @@ export async function getPost(
   ctx: LotideContext,
   postId: PostId,
 ): Promise<Post> {
-  return lotideRequest(ctx, "GET", `posts/${postId}`, undefined, true).then(
-    data => data.json(),
-  );
+  return lotideRequest(ctx, "GET", `posts/${postId}`, undefined, true)
+    .then(data => data.json())
+    .then(transformVote);
 }
 
 export async function getPosts(
@@ -24,7 +24,9 @@ export async function getPosts(
   ]
     .filter(x => x)
     .join("&");
-  return lotideRequest(ctx, "GET", url).then(data => data.json());
+  return lotideRequest(ctx, "GET", url)
+    .then(data => data.json())
+    .then(data => ({ ...data, items: data.items.map(transformVote) }));
 }
 
 export async function submitPost(
@@ -40,4 +42,15 @@ export async function applyVote(ctx: LotideContext, postId: PostId) {
 
 export async function removeVote(ctx: LotideContext, postId: PostId) {
   return lotideRequest(ctx, "DELETE", `posts/${postId}/your_vote`);
+}
+
+export function transformVote(post: Readonly<Post>): Post {
+  if (post.your_vote !== undefined) {
+    return {
+      ...post,
+      your_vote: post.your_vote !== null,
+    };
+  } else {
+    return post;
+  }
 }

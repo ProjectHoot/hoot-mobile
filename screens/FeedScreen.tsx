@@ -1,40 +1,40 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, FlatList, Pressable, Platform } from "react-native";
 
 import PostDisplay from "../components/PostDisplay";
 import { View } from "../components/Themed";
 import * as Haptics from "../services/HapticService";
-import { usePosts } from "../hooks/lotide";
+import useFeed from "../hooks/useFeed";
 import { RootTabScreenProps } from "../types";
 import useTheme from "../hooks/useTheme";
-import LotideContext from "../store/LotideContext";
 import SuggestLogin from "../components/SuggestLogin";
-import { hasLogin } from "../services/LotideService";
 import SwipeAction from "../components/SwipeAction";
 import useVote from "../hooks/useVote";
+import { useLotideCtx } from "../hooks/useLotideCtx";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reduxStore";
+import { useNavigation } from "@react-navigation/core";
 
 export default function FeedScreen({
   navigation,
   route,
 }: RootTabScreenProps<"FeedScreen">) {
   const sort = route.params.sort;
-  const ctx = useContext(LotideContext).ctx;
-  const [posts, isLoadingPosts, refreshPosts, loadNextPage] = usePosts(
+  const ctx = useLotideCtx();
+  const [posts, loadNextPage, resetPosts] = useFeed({
     sort,
-    true,
-  );
-  if (!hasLogin(ctx)) return <SuggestLogin />;
-  const renderItem = ({ item }: { item: Post }) => (
-    <Item post={item} navigation={navigation} />
-  );
+    inYourFollows: true,
+  });
+  if (!ctx?.login) return <SuggestLogin />;
+  const renderItem = ({ item }: { item: PostId }) => <Item postId={item} />;
   return (
     <View style={styles.container}>
       <FlatList
         data={posts}
         renderItem={renderItem}
-        keyExtractor={(post, index) => `${post.id}-${index}`}
-        refreshing={isLoadingPosts}
-        onRefresh={refreshPosts}
+        keyExtractor={(postId, index) => `${postId}-${index}`}
+        refreshing={posts.length == 0}
+        onRefresh={resetPosts}
         onEndReachedThreshold={2}
         onEndReached={loadNextPage}
       />
@@ -91,10 +91,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
+const Item = ({ postId }: { postId: PostId }) => {
+  const post = useSelector((state: RootState) => state.posts.posts[postId]);
   const { isUpvoted, addVote, removeVote } = useVote("post", post);
   const [isCommitting, setIsCommitting] = useState(false);
   const theme = useTheme();
+  const navigation = useNavigation();
 
   return (
     <SwipeAction
@@ -127,14 +129,14 @@ const Item = ({ post, navigation }: { post: Post; navigation: any }) => {
           width: "100%",
           ...(Platform.OS == "web" ? { cursor: "pointer" } : {}),
         }}
-        onPress={() => navigation.navigate("Post", { post })}
+        onPress={() => navigation.navigate("Post", { postId })}
         onLongPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           console.log(post);
         }}
       >
         <View style={[]}>
-          <PostDisplay post={post} navigation={navigation} />
+          <PostDisplay postId={postId} navigation={navigation} />
         </View>
       </Pressable>
     </SwipeAction>

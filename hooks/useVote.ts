@@ -1,33 +1,25 @@
-import { useDispatch, useSelector } from "react-redux";
-import { setVote } from "../slices/voteSlice";
-import { AppDispatch, RootState } from "../store/reduxStore";
+import { useDispatch } from "react-redux";
+import { setPostVote } from "../slices/postSlice";
+import { AppDispatch } from "../store/reduxStore";
 import * as LotideService from "../services/LotideService";
-import { useContext, useEffect } from "react";
-import LotideContext from "../store/LotideContext";
+import { useLotideCtx } from "./useLotideCtx";
+import { setReplyVote } from "../slices/replySlice";
 
 export default function useVote(type: ContentType, content: Post | Reply) {
-  const isUpvotedByAPI =
-    content.your_vote !== null && content.your_vote !== undefined;
-  const upvoteSelected: boolean | undefined = useSelector(
-    (state: RootState) => state.vote[type][content.id],
-  );
+  const isUpvoted = !!content.your_vote;
   const dispatch = useDispatch<AppDispatch>();
-  const { ctx } = useContext(LotideContext);
-
-  useEffect(() => {
-    // TODO: This is a terrible way of doing this.
-    if (upvoteSelected === undefined) {
-      dispatchVote(isUpvotedByAPI);
-    }
-  }, [isUpvotedByAPI]);
-
-  const isUpvoted = !!upvoteSelected;
+  const ctx = useLotideCtx();
 
   function dispatchVote(vote: boolean) {
-    dispatch(setVote({ type, id: content.id, vote }));
+    if (type == "post") {
+      dispatch(setPostVote({ id: content.id, vote }));
+    } else {
+      dispatch(setReplyVote({ id: content.id, vote }));
+    }
   }
 
   function addVote() {
+    if (!ctx?.login) return;
     if (type == "post") {
       LotideService.applyVote(ctx, content.id).then(() => dispatchVote(true));
     } else {
@@ -38,6 +30,7 @@ export default function useVote(type: ContentType, content: Post | Reply) {
   }
 
   function removeVote() {
+    if (!ctx?.login) return;
     if (type == "post") {
       LotideService.removeVote(ctx, content.id).then(() => dispatchVote(false));
     } else {
@@ -47,12 +40,8 @@ export default function useVote(type: ContentType, content: Post | Reply) {
     }
   }
 
-  const shouldAddOne = isUpvoted && !isUpvotedByAPI;
-  const shouldSubtractOne = !isUpvoted && isUpvotedByAPI;
-
   return {
     isUpvoted,
-    score: content.score + +shouldAddOne - +shouldSubtractOne,
     addVote,
     removeVote,
   };

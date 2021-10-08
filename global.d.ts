@@ -3,10 +3,11 @@ type PostId = number;
 type ReplyId = number;
 type UserId = number;
 
-type SortOption = "hot" | "new";
+type SortOption = "hot" | "new" | "top";
 
 interface LotideContext {
   apiUrl?: string;
+  apiVersion?: number;
   login?: Login;
 }
 
@@ -27,6 +28,7 @@ interface Login {
 
 interface InstanceInfo {
   description?: string;
+  apiVersion: number;
   software: {
     name: string;
     version: string;
@@ -52,20 +54,17 @@ interface UserNotification {
 
 interface FullNotification {
   unseen: boolean;
-  reply: {
-    id: ReplyId;
-    content_text?: string;
-    content_html?: string;
-    author: Profile;
-  };
+  replyId: ReplyId;
   origin: {
-    type: "post" | "comment";
+    type: "post" | "reply";
     id: number;
-    content_text?: string;
-    content_html?: string;
-    author: Profile;
   };
-  post: Post;
+  postId: PostId;
+}
+
+interface FullNotificationOrigin {
+  type: "post" | "reply";
+  id: number;
 }
 
 interface User {
@@ -92,7 +91,8 @@ interface Post {
   score: number;
   sticky: boolean;
   title: string;
-  your_vote?: null | {};
+  your_vote?: boolean;
+  replies?: Paged<ReplyId>;
 }
 
 interface NewPost {
@@ -144,8 +144,12 @@ interface Reply {
   created: string;
   deleted: boolean;
   local: boolean;
-  replies: Paged<Reply> | null;
-  your_vote: {};
+  /**
+   * If undefined, then the reply has replies that aren't being loaded due to depth restrictions
+   * The api will need to be hit again to get them
+   * */
+  replies?: Paged<ReplyId>;
+  your_vote?: boolean;
   score: number;
 }
 

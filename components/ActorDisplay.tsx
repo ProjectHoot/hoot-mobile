@@ -2,6 +2,7 @@ import React from "react";
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { Text } from "./Themed";
 import useTheme from "../hooks/useTheme";
+import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export interface ActorDisplayProps {
   name: string;
@@ -13,12 +14,17 @@ export interface ActorDisplayProps {
   style?: StyleProp<TextStyle>;
   styleName?: StyleProp<TextStyle>;
   styleHost?: StyleProp<TextStyle>;
+  userId?: UserId;
 }
 
 export function ActorDisplay(props: ActorDisplayProps) {
   const theme = useTheme();
+  const ctx = useLotideCtx();
   const colorize = props.colorize || "never";
   const showHost = props.showHost || "only_foreign";
+
+  const isUser: boolean =
+    (props.userId && props.userId == ctx?.login?.user.id) || false;
 
   const shouldDoIfLocal = (
     when: "always" | "never" | "only_foreign",
@@ -32,7 +38,9 @@ export function ActorDisplay(props: ActorDisplayProps) {
   const shouldColorize = shouldDoIfLocal(colorize, props.local);
   const shouldShowHost = shouldDoIfLocal(showHost, props.local);
 
-  const nameStyle = shouldColorize
+  const nameStyle = isUser
+    ? { color: theme.secondaryTint }
+    : shouldColorize
     ? { color: props.local ? theme.blue : theme.green }
     : {};
 
@@ -48,6 +56,13 @@ export function ActorDisplay(props: ActorDisplayProps) {
           {props.newLine && "\n"}
           {!props.newLine && "@"}
           {props.host}
+        </Text>
+      )}
+      {isUser && (
+        <Text
+          style={[styles.host, { color: theme.secondaryText }, props.styleHost]}
+        >
+          {" (you)"}
         </Text>
       )}
     </Text>
