@@ -9,6 +9,15 @@ export async function getReply(
     .then(transformReply);
 }
 
+export async function getRawReply(
+  ctx: LotideContext,
+  replyId: ReplyId,
+): Promise<RawReply> {
+  return lotideRequest(ctx, "GET", `comments/${replyId}`, undefined, true).then(
+    data => data.json(),
+  );
+}
+
 export async function getPostReplies(
   ctx: LotideContext,
   postId: PostId,

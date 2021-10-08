@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet } from "react-native";
 import ActorDisplay from "../components/ActorDisplay";
@@ -6,9 +7,10 @@ import SuggestLogin from "../components/SuggestLogin";
 
 import { Text, View } from "../components/Themed";
 import { useLotideCtx } from "../hooks/useLotideCtx";
+import usePost from "../hooks/usePost";
+import useReply from "../hooks/useReply";
 import useTheme from "../hooks/useTheme";
 import * as LotideService from "../services/LotideService";
-import { transformToFullNotification } from "../transformers/NotificationTransformer";
 import { RootTabScreenProps } from "../types";
 
 export default function NotificationScreen({
@@ -17,19 +19,13 @@ export default function NotificationScreen({
   const [notifications, setNotifications] = useState<FullNotification[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(true);
   const [focusId, setFocusId] = useState(0);
-  const theme = useTheme();
   const ctx = useLotideCtx();
 
   useEffect(() => {
     if (!ctx?.login) return;
-    LotideService.getNotifications(ctx).then(notifications => {
-      const promises = notifications.map(n =>
-        transformToFullNotification(ctx, n),
-      );
-      Promise.all(promises)
-        .then(setNotifications)
-        .then(() => setIsRefreshing(false));
-    });
+    LotideService.getNotifications(ctx)
+      .then(setNotifications)
+      .then(() => setIsRefreshing(false));
   }, [focusId]);
 
   useEffect(
@@ -39,71 +35,16 @@ export default function NotificationScreen({
 
   if (!ctx?.login) return <SuggestLogin />;
 
-  const renderItem = ({ item }: { item: FullNotification }) => {
-    return (
-      <Pressable
-        style={[styles.item, { borderColor: theme.secondaryBackground }]}
-        onPress={() => {
-          const highlightedReplies =
-            item.origin.type === "comment"
-              ? [item.origin.id, item.reply.id]
-              : [item.reply.id];
-          navigation.navigate("Post", {
-            postId: item.post.id,
-            highlightedReplies,
-          });
-        }}
-      >
-        <Text style={styles.name}>{item.post.author.username}</Text>
-        <Text style={styles.title}>{item.post.title}</Text>
-        <Text>
-          In{" "}
-          <ActorDisplay
-            name={item.post.community.name}
-            host={item.post.community.host}
-            local={item.post.community.local}
-            showHost={"always"}
-            colorize={"never"}
-          />
-        </Text>
-        {item.origin.type === "comment" ? (
-          <>
-            <View style={[styles.level1, { borderColor: theme.secondaryText }]}>
-              <Text style={styles.name}>{item.origin.author.username}</Text>
-              <ContentDisplay
-                contentHtml={item.origin.content_html}
-                contentText={item.origin.content_text}
-              />
-            </View>
-            <View style={[styles.level2, { borderColor: theme.tint }]}>
-              <Text style={styles.name}>{item.reply.author.username}</Text>
-              <ContentDisplay
-                contentHtml={item.reply.content_html}
-                contentText={item.reply.content_text}
-              />
-            </View>
-          </>
-        ) : (
-          <>
-            <View style={[styles.level1, { borderColor: theme.tint }]}>
-              <Text style={styles.name}>{item.reply.author.username}</Text>
-              <ContentDisplay
-                contentHtml={item.reply.content_html}
-                contentText={item.reply.content_text}
-              />
-            </View>
-          </>
-        )}
-      </Pressable>
-    );
-  };
+  const renderItem = ({ item }: { item: FullNotification }) => (
+    <Item item={item} />
+  );
 
   return (
     <FlatList
       style={styles.container}
       data={notifications}
       renderItem={renderItem}
-      keyExtractor={(item, index) => `${item.reply.id}-${index}`}
+      keyExtractor={(item, index) => `${item.replyId}-${index}`}
       refreshing={isRefreshing}
       onRefresh={() => {
         setIsRefreshing(true);
@@ -113,17 +54,140 @@ export default function NotificationScreen({
   );
 }
 
+const Item = ({ item }: { item: FullNotification }) => {
+  const post = usePost(item.postId);
+  const originReply = useReply(
+    item.origin.type == "reply" ? item.origin.id : undefined,
+  );
+  const reply = useReply(item.replyId);
+  const theme = useTheme();
+  const navigation = useNavigation();
+
+  if (!post || !reply || (item.origin.type === "reply" && !originReply))
+    return null;
+
+  return (
+    <Pressable
+      style={[
+        styles.item,
+        {
+          borderBottomColor: theme.secondaryBackground,
+        },
+      ]}
+      onPress={() => {
+        const highlightedReplies =
+          item.origin.type === "reply"
+            ? [item.origin.id, item.replyId]
+            : [item.replyId];
+        navigation.navigate("Post", {
+          postId: item.postId,
+          highlightedReplies,
+        });
+      }}
+    >
+      <Text>
+        New reply to your {item.origin.type == "post" ? "Post" : "Reply"}
+      </Text>
+      <Text style={styles.title}>{post.title}</Text>
+      <ActorDisplay
+        name={post.author.username}
+        host={post.author.host}
+        local={post.author.local}
+        showHost="only_foreign"
+        colorize="never"
+        userId={post.author.id}
+      />
+      {item.origin.type === "reply" && originReply ? (
+        <>
+          <View style={[styles.level1, { borderColor: theme.secondaryText }]}>
+            <ActorDisplay
+              name={originReply.author.username}
+              host={originReply.author.host}
+              local={originReply.author.local}
+              showHost="only_foreign"
+              colorize="only_foreign"
+              userId={originReply.author.id}
+            />
+            <ContentDisplay
+              contentHtml={originReply.content_html}
+              contentText={originReply.content_text}
+            />
+          </View>
+          <View
+            style={[
+              styles.level2,
+              {
+                borderColor: theme.tint,
+                backgroundColor: theme.secondaryBackground,
+              },
+            ]}
+          >
+            <ActorDisplay
+              name={reply.author.username}
+              host={reply.author.host}
+              local={reply.author.local}
+              showHost="only_foreign"
+              colorize="only_foreign"
+            />
+            <ContentDisplay
+              contentHtml={reply.content_html}
+              contentText={reply.content_text}
+            />
+          </View>
+        </>
+      ) : (
+        <>
+          <View
+            style={[
+              styles.level1,
+              {
+                borderColor: theme.tint,
+                backgroundColor: theme.secondaryBackground,
+              },
+            ]}
+          >
+            <ActorDisplay
+              name={reply.author.username}
+              host={reply.author.host}
+              local={reply.author.local}
+              showHost="only_foreign"
+              colorize="only_foreign"
+            />
+            <ContentDisplay
+              contentHtml={reply.content_html}
+              contentText={reply.content_text}
+            />
+          </View>
+        </>
+      )}
+      <View style={styles.community}>
+        <ActorDisplay
+          name={post.community.name}
+          host={post.community.host}
+          local={post.community.local}
+          showHost={"always"}
+          colorize={"never"}
+          newLine
+        />
+      </View>
+    </Pressable>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  item: { borderBottomWidth: 5, padding: 15 },
+  item: {
+    borderBottomWidth: 5,
+    padding: 15,
+  },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    marginTop: 15,
   },
   level1: {
-    marginTop: 5,
+    marginTop: 15,
     borderLeftWidth: 2,
     paddingLeft: 15,
     padding: 5,
@@ -141,5 +205,8 @@ const styles = StyleSheet.create({
   },
   thin: {
     fontWeight: "200",
+  },
+  community: {
+    marginTop: 15,
   },
 });

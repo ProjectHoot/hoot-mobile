@@ -144,6 +144,7 @@ function ReplyDisplay({
                 showHost="only_foreign"
                 colorize="only_foreign"
                 style={{ fontSize: 16, fontWeight: "500" }}
+                userId={reply.author.id}
               />
               <View
                 style={{

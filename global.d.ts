@@ -54,20 +54,17 @@ interface UserNotification {
 
 interface FullNotification {
   unseen: boolean;
-  reply: {
-    id: ReplyId;
-    content_text?: string;
-    content_html?: string;
-    author: Profile;
-  };
+  replyId: ReplyId;
   origin: {
-    type: "post" | "comment";
+    type: "post" | "reply";
     id: number;
-    content_text?: string;
-    content_html?: string;
-    author: Profile;
   };
-  post: Post;
+  postId: PostId;
+}
+
+interface FullNotificationOrigin {
+  type: "post" | "reply";
+  id: number;
 }
 
 interface User {

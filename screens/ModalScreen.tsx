@@ -21,11 +21,12 @@ export default function ModalScreen({
 }: RootStackScreenProps<"Post">) {
   const postId = route.params.postId;
   const post = usePost(postId);
-  if (!post) return <Text>No post</Text>;
   const [highlightedReplies, setHighlightedReplies] = useState(
     route.params.highlightedReplies,
   );
   const theme = useTheme();
+
+  if (!post) return <Text>No post</Text>;
 
   return (
     <ScrollView>

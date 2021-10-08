@@ -106,6 +106,7 @@ export default function PostDisplay(props: PostDisplayProps) {
             showHost={"only_foreign"}
             colorize={"always"}
             newLine={true}
+            userId={post.author.id}
           />
         </View>
       )}
