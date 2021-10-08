@@ -17,6 +17,7 @@ import {
   ColorSchemeName,
   Platform,
   Pressable,
+  useWindowDimensions,
 } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -42,6 +43,7 @@ import NewCommunityScreen from "../screens/NewCommunity";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import EditCommunityScreen from "../screens/EditCommunityScreen";
 import { useLotideCtx } from "../hooks/useLotideCtx";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
 export default function Navigation({
   colorScheme,
@@ -65,11 +67,14 @@ export default function Navigation({
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const dimensions = useWindowDimensions();
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Root"
-        component={BottomTabNavigator}
+        component={
+          dimensions.width < 1200 ? BottomTabNavigator : DrawerNavigator
+        }
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Web" component={ModalScreen} />
@@ -245,6 +250,124 @@ function BottomTabNavigator({ navigation }: any) {
         }}
       />
     </BottomTab.Navigator>
+  );
+}
+
+const Drawer = createDrawerNavigator<RootTabParamList>();
+
+function DrawerNavigator({ navigation }: any) {
+  const [sort, setSort] = useState<SortOption>("hot");
+  const ctx = useLotideCtx();
+  const colorScheme = useColorScheme();
+
+  return (
+    <Drawer.Navigator
+      initialRouteName="FeedScreen"
+      screenOptions={{
+        drawerActiveTintColor: "orange",
+        drawerType: "permanent",
+      }}
+    >
+      <Drawer.Screen
+        name="FeedScreen"
+        component={FeedScreen}
+        initialParams={{ sort }}
+        options={({ navigation }: RootTabScreenProps<"FeedScreen">) => ({
+          title: "Hoot",
+          drawerIcon: ({ color }) => (
+            <TabBarIcon name="newspaper-outline" color={color} />
+          ),
+          headerRight: () => (
+            <Pressable
+              onPress={() => {
+                const sortSwitch: { [key: string]: SortOption } = {
+                  top: "hot",
+                  hot: "new",
+                  new: (ctx?.apiVersion || 0) < 10 ? "hot" : "top",
+                };
+                const newSort: SortOption = sortSwitch[sort];
+                setSort(newSort);
+                navigation.navigate("FeedScreen", { sort: newSort });
+              }}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon
+                name={
+                  {
+                    hot: "flame-outline",
+                    new: "time-outline",
+                    top: "arrow-up-outline",
+                  }[sort] as any
+                }
+                size={25}
+                color={Colors[colorScheme].tint}
+                style={{ marginRight: 15 }}
+              />
+            </Pressable>
+          ),
+        })}
+      />
+      <Drawer.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{
+          title: "Communities",
+          drawerIcon: ({ color }) => (
+            <TabBarIcon name="search-outline" color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="NewPostScreen"
+        component={NewPostScreen}
+        initialParams={{ community: undefined }}
+        options={{
+          title: "New Post",
+          drawerIcon: ({ color }) => (
+            <TabBarIcon name="add-outline" color={color} size={40} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="NotificationScreen"
+        component={NotificationScreen}
+        options={{
+          title: "Notifications",
+          drawerIcon: ({ color }) => (
+            <TabBarIcon name="notifications-outline" color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{
+          title: "Profile",
+          drawerIcon: ({ color }) => (
+            <TabBarIcon name="person-circle-outline" color={color} />
+          ),
+          headerRight: () => (
+            <Pressable
+              onPress={() => {
+                navigation.navigate("Settings");
+              }}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Icon
+                name="settings-outline"
+                size={25}
+                color={Colors[colorScheme].secondaryText}
+                style={{ marginRight: 15 }}
+              />
+            </Pressable>
+          ),
+        }}
+      />
+    </Drawer.Navigator>
   );
 }
 
