@@ -40,7 +40,9 @@ export default function ContentDisplay(props: ContentDisplayProps) {
         small: { fontSize: 10 },
       }}
       textComponentProps={{ style: { color: theme.text } }}
-      onLinkLongPress={url => Alert.alert("Link", url)}
+      onLinkLongPress={url =>
+        Alert.alert("Link", url, undefined, { cancelable: true })
+      }
     />
   );
 }
