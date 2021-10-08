@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  Alert,
+  Button,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import { View, Text, TextInput } from "../components/Themed";
 import { getUserData } from "../services/LotideService";
@@ -56,6 +63,13 @@ export default function ProfileScreen({
 
   function logout() {
     if (!ctx?.login) return;
+    if (Platform.OS === "web") {
+      StorageService.lotideContextKV
+        .remove(`${ctx.login?.user.username}@${ctx.apiUrl}`)
+        .then(() => LotideService.logout(ctx))
+        .then(() => dispatch(setCtx({})));
+      return;
+    }
     Alert.alert(
       "Log out",
       "Would you like to keep the login profile handy for later?",
