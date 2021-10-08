@@ -17,7 +17,7 @@ React-Native requires [NPM](https://docs.npmjs.com/downloading-and-installing-no
 
 ### Yarn
 
-Hoot Mobile uses [Yarn](https://yarnpkg.com/getting-started/install) for its build process. See [here]() to install.
+Hoot Mobile uses [Yarn](https://yarnpkg.com/getting-started/install) for its build process.
 
 ```bash
 yarn       # insntall deps
