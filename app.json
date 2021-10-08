@@ -24,6 +24,7 @@
       "bundleIdentifier": "org.brokenlamp.hoot"
     },
     "android": {
+      "versionCode": 2,
       "userInterfaceStyle": "automatic",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
