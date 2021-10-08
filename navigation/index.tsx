@@ -264,11 +264,8 @@ function DrawerNavigator({ navigation }: any) {
     <Drawer.Navigator
       initialRouteName="FeedScreen"
       screenOptions={{
-        drawerActiveTintColor: Colors[colorScheme].tint as unknown as string,
-        headerTintColor: Colors[colorScheme].text as unknown as string,
-        headerPressColor: Colors[colorScheme].text as unknown as string,
+        drawerActiveTintColor: "orange",
         drawerType: "permanent",
-        drawerHideStatusBarOnOpen: true,
       }}
     >
       <Drawer.Screen

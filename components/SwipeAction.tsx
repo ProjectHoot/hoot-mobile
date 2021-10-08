@@ -38,6 +38,7 @@ export default function SwipeAction(props: SwipeActionProps) {
   const [isRight, setIsRight] = useState(false);
   const [isCommitted, setIsCommitted] = useState(false);
   const dimensions = useWindowDimensions();
+  const [width, setWidth] = useState<number>(dimensions.width);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -75,56 +76,58 @@ export default function SwipeAction(props: SwipeActionProps) {
   }
 
   return (
-    <ScrollView
-      ref={scrollRef}
-      horizontal
-      snapToOffsets={[
-        distanceToActivate,
-        distanceToActivate + dimensions.width,
-      ]}
-      snapToStart={false}
-      snapToEnd={false}
-      onScrollBeginDrag={() => setIsScrolling(true)}
-      onScrollEndDrag={() => {
-        scrollRef.current?.scrollTo({ x: distanceToActivate });
-        setIsScrolling(false);
-      }}
-      contentOffset={{ x: distanceToActivate, y: 0 }}
-      onScroll={onScroll}
-      scrollEventThrottle={100}
-      showsHorizontalScrollIndicator={false}
-      style={{ backgroundColor: props.backgroundColor, ...props.style }}
-      overScrollMode="always"
+    <View
+      onLayout={e => setWidth(e.nativeEvent.layout.width)}
+      style={{ width: "100%" }}
     >
-      <View
-        style={{
-          width: distanceToActivate,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        snapToOffsets={[distanceToActivate, distanceToActivate + width]}
+        snapToStart={false}
+        snapToEnd={false}
+        onScrollBeginDrag={() => setIsScrolling(true)}
+        onScrollEndDrag={() => {
+          scrollRef.current?.scrollTo({ x: distanceToActivate });
+          setIsScrolling(false);
         }}
+        contentOffset={{ x: distanceToActivate, y: 0 }}
+        onScroll={onScroll}
+        scrollEventThrottle={100}
+        showsHorizontalScrollIndicator={false}
+        style={{ backgroundColor: props.backgroundColor, ...props.style }}
+        overScrollMode="always"
       >
-        <Icon
-          name={props.iconLeftSide[+isLeft || +isCommitted]}
-          color={props.colorLeftSide}
-          size={25}
-        />
-      </View>
-      <View style={{ width: dimensions.width }}>{props.children}</View>
-      <View
-        style={{
-          width: distanceToActivate,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Icon
-          name={props.iconRightSide[+isRight || +isCommitted]}
-          color={props.colorRightSide}
-          size={25}
-        />
-      </View>
-    </ScrollView>
+        <View
+          style={{
+            width: distanceToActivate,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Icon
+            name={props.iconLeftSide[+isLeft || +isCommitted]}
+            color={props.colorLeftSide}
+            size={25}
+          />
+        </View>
+        <View style={{ width: width }}>{props.children}</View>
+        <View
+          style={{
+            width: distanceToActivate,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Icon
+            name={props.iconRightSide[+isRight || +isCommitted]}
+            color={props.colorRightSide}
+            size={25}
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
