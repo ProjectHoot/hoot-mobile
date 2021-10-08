@@ -36,6 +36,7 @@ export default function NewCommunityScreen({
       <TextInput
         style={[styles.input, { fontSize: 20, color: theme.text }]}
         placeholder="Community Name"
+        placeholderTextColor={theme.placeholderText}
         value={name}
         onChangeText={setName}
       />
@@ -44,6 +45,7 @@ export default function NewCommunityScreen({
           <TextInput
             style={[styles.input, { color: theme.text }]}
             placeholder="Description (Optional)"
+            placeholderTextColor={theme.placeholderText}
             value={description}
             onChangeText={setDescription}
           />
