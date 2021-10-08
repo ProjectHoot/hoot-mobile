@@ -54,7 +54,7 @@ export default function ReplyScreen({
         >
           <Text>Reply to {type}</Text>
           {!!title && <Text style={styles.title}>{title}</Text>}
-          {html && <ContentDisplay contentHtml={html} />}
+          {!!html && <ContentDisplay contentHtml={html} />}
           <TextInput
             style={styles.input}
             multiline
