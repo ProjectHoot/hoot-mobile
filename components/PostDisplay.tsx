@@ -1,21 +1,14 @@
+import React from "react";
 import Icon from "@expo/vector-icons/Ionicons";
-import { openURL } from "expo-linking";
-import React, { useMemo, useState } from "react";
-import {
-  StyleSheet,
-  Image,
-  Pressable,
-  Platform,
-  ViewStyle,
-} from "react-native";
+import { StyleSheet, Pressable, Platform, ViewStyle } from "react-native";
 import ElapsedTime from "./ElapsedTime";
 import VoteCounter from "./VoteCounter";
 import { Text, View } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
-import * as Haptics from "../services/HapticService";
 import ContentDisplay from "./ContentDisplay";
 import ActorDisplay from "./ActorDisplay";
 import usePost from "../hooks/usePost";
+import HrefDisplay from "./HrefDisplay";
 
 export interface PostDisplayProps {
   postId: PostId;
@@ -26,8 +19,6 @@ export interface PostDisplayProps {
 
 export default function PostDisplay(props: PostDisplayProps) {
   const post = usePost(props.postId);
-  const [imgAspect, setImgAspect] = useState(1);
-  const isImage = useMemo(() => post && isImageUrl(post.href), [post?.href]);
   const theme = useTheme();
 
   if (!post) return <Text>Failed to load post</Text>;
@@ -42,44 +33,7 @@ export default function PostDisplay(props: PostDisplayProps) {
         )}
         {post.title}
       </Text>
-      {post.href &&
-        (isImage ? (
-          <Image
-            style={{
-              ...styles.image,
-              aspectRatio: imgAspect,
-              backgroundColor: theme.secondaryBackground,
-            }}
-            source={{
-              uri: post.href,
-            }}
-            onLoad={event =>
-              Platform.OS !== "web" &&
-              setImgAspect(
-                Math.max(
-                  event.nativeEvent.source.width /
-                    event.nativeEvent.source.height,
-                  0.5,
-                ),
-              )
-            }
-          />
-        ) : (
-          <Pressable
-            style={[
-              styles.link,
-              { backgroundColor: theme.secondaryBackground },
-            ]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              if (post.href) {
-                openURL(post.href);
-              }
-            }}
-          >
-            <Text>{post.href}</Text>
-          </Pressable>
-        ))}
+      {post.href && <HrefDisplay href={post.href} />}
       {props.showHtmlContent && !!post.content_html && (
         <View style={{ padding: 15 }}>
           <ContentDisplay
@@ -208,10 +162,3 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-
-function isImageUrl(url?: string): boolean {
-  if (!url) return false;
-  return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"].some(ext =>
-    url.endsWith(ext),
-  );
-}
