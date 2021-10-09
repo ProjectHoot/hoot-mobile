@@ -153,4 +153,10 @@ interface Reply {
   score: number;
 }
 
+interface HrefData {
+  imageUrl?: string;
+  linkUrl?: string;
+  isVideo?: boolean;
+}
+
 type Refreshable<T> = [T, boolean, () => void];
