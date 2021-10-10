@@ -101,6 +101,7 @@ export default function CommunityFinder(props: CommunityFinderProps) {
       keyExtractor={(item, index) => `${item.id}-${index}`}
       contentContainerStyle={styles.list}
       stickyHeaderIndices={[0]}
+      style={{ backgroundColor: theme.background }}
       ListHeaderComponent={
         <View style={{ backgroundColor: theme.background, padding: 15 }}>
           <TextInput

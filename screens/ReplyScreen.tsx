@@ -46,6 +46,7 @@ export default function ReplyScreen({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: theme.background }}
     >
       <ScrollView ref={scrollRef}>
         <Pressable

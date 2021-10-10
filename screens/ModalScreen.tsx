@@ -29,7 +29,7 @@ export default function ModalScreen({
   if (!post) return <Text>No post</Text>;
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: theme.background }}>
       <View
         style={{
           ...styles.item,
