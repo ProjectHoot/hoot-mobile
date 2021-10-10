@@ -19,6 +19,7 @@ export default function NotificationScreen({
   const [notifications, setNotifications] = useState<FullNotification[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(true);
   const [focusId, setFocusId] = useState(0);
+  const theme = useTheme();
   const ctx = useLotideCtx();
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function NotificationScreen({
 
   return (
     <FlatList
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       data={notifications}
       renderItem={renderItem}
       keyExtractor={(item, index) => `${item.replyId}-${index}`}
