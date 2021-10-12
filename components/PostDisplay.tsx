@@ -33,34 +33,22 @@ export default function PostDisplay(props: PostDisplayProps) {
         )}
         {post.title}
       </Text>
+      <ActorDisplay
+        name={post.author.username}
+        host={post.author.host}
+        local={post.author.local}
+        showHost={"only_foreign"}
+        colorize={"never"}
+        newLine={true}
+        userId={post.author.id}
+        style={styles.username}
+      />
       {post.href && <HrefDisplay href={post.href} />}
       {props.showHtmlContent && !!post.content_html && (
         <View style={{ padding: 15 }}>
           <ContentDisplay
             contentHtml={post.content_html}
             contentText={post.content_text}
-          />
-        </View>
-      )}
-      {props.showAuthor && (
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 15,
-            paddingTop: 15,
-          }}
-        >
-          <Text style={styles.by}>by{"   "}</Text>
-          <ActorDisplay
-            name={post.author.username}
-            host={post.author.host}
-            local={post.author.local}
-            showHost={"only_foreign"}
-            colorize={"always"}
-            newLine={true}
-            userId={post.author.id}
           />
         </View>
       )}
@@ -72,17 +60,8 @@ export default function PostDisplay(props: PostDisplayProps) {
               community: post.community,
             })
           }
-          style={[
-            styles.footItem,
-            styles.pointer,
-            {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            },
-          ]}
+          style={[styles.footItem, styles.pointer]}
         >
-          {props.showAuthor && <Text style={styles.by}>in{"   "}</Text>}
           <ActorDisplay
             name={post.community.name}
             host={post.community.host}
@@ -121,6 +100,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     padding: 15,
+  },
+  username: {
+    paddingLeft: 15,
+    paddingBottom: 15,
   },
   contentText: {
     fontSize: 12,
