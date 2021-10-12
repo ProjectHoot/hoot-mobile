@@ -36,12 +36,7 @@ export default function ModalScreen({
           backgroundColor: theme.background,
         }}
       >
-        <PostDisplay
-          postId={post.id}
-          navigation={navigation}
-          showHtmlContent
-          showAuthor
-        />
+        <PostDisplay postId={post.id} navigation={navigation} showAuthor />
         <View style={styles.actions}>
           <Icon name="bookmark-outline" size={25} color={theme.text} />
           <Pressable

@@ -13,7 +13,7 @@ import HrefDisplay from "./HrefDisplay";
 export interface PostDisplayProps {
   postId: PostId;
   navigation: any;
-  showHtmlContent?: boolean;
+  truncateContent?: boolean;
   showAuthor?: boolean;
 }
 
@@ -31,7 +31,7 @@ export default function PostDisplay(props: PostDisplayProps) {
             <Icon name="pin" size={25} color={theme.secondaryTint} />{" "}
           </>
         )}
-        {post.title}
+        {post.title} {post.id}
       </Text>
       <ActorDisplay
         name={post.author.username}
@@ -44,11 +44,13 @@ export default function PostDisplay(props: PostDisplayProps) {
         style={styles.username}
       />
       {post.href && <HrefDisplay href={post.href} />}
-      {props.showHtmlContent && !!post.content_html && (
+      {!!post.content_html && (
         <View style={{ padding: 15 }}>
           <ContentDisplay
             contentHtml={post.content_html}
             contentText={post.content_text}
+            maxChars={props.truncateContent ? 200 : undefined}
+            postId={post.id}
           />
         </View>
       )}

@@ -11,6 +11,8 @@ export interface ContentDisplayProps {
   contentHtml?: string;
   contentText?: string;
   contentMarkdown?: string;
+  maxChars?: number;
+  postId?: PostId;
 }
 
 export default function ContentDisplay(props: ContentDisplayProps) {
@@ -22,28 +24,119 @@ export default function ContentDisplay(props: ContentDisplayProps) {
       `<p>${props.contentText}</p>`,
     [props.contentHtml, props.contentMarkdown, props.contentText],
   );
-  return (
-    <HTMLView
-      RootComponent={props => <Text {...props} />}
-      value={html.replace(/\n/g, "")}
-      renderNode={renderNode(theme)}
-      stylesheet={{
-        a: { color: theme.secondaryTint },
-        cite: { fontStyle: "italic" },
-        del: {
-          textDecorationLine: "line-through",
-          textDecorationStyle: "solid",
-        },
-        dfn: { fontStyle: "italic" },
-        ins: { textDecorationLine: "underline" },
-        samp: { fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace" },
-        small: { fontSize: 10 },
-      }}
-      textComponentProps={{ style: { color: theme.text } }}
-      onLinkLongPress={url =>
-        Alert.alert("Link", url, undefined, { cancelable: true })
+
+  const maxChars = props.maxChars;
+
+  const countedRenderNode = () => {
+    let charCount = 0;
+    let isSkip = false;
+    let indent = 0;
+    let isStarted = false;
+
+    const fun = (
+      node: HTMLViewNode,
+      index: number,
+      siblings: HTMLViewNode,
+      parent: HTMLViewNode,
+      defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode,
+    ) => {
+      if (!maxChars)
+        return renderNode(theme)(
+          node,
+          index,
+          siblings,
+          parent,
+          defaultRenderer,
+        );
+      if (isSkip) return undefined;
+      if (charCount >= maxChars) return null;
+      if (node.name === undefined && node.data && charCount < maxChars) {
+        let newCharCount = charCount + node.data.length;
+        if (newCharCount >= maxChars && charCount < maxChars) {
+          const delta = maxChars - charCount;
+          charCount = newCharCount;
+          isSkip = true;
+          const x = defaultRenderer(
+            [
+              { ...node, data: node.data.substring(0, delta) + "..." },
+            ] as any as HTMLViewNode,
+            parent,
+          );
+          isSkip = false;
+          return null;
+        }
+        charCount = newCharCount;
       }
-    />
+      return renderNode(theme)(node, index, siblings, parent, defaultRenderer);
+    };
+
+    return (
+      node: HTMLViewNode,
+      index: number,
+      siblings: HTMLViewNode,
+      parent: HTMLViewNode,
+      defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode,
+    ) => {
+      if (!isStarted && props.postId == 16090) {
+        console.log("\n\nSTART\n");
+        isStarted = true;
+      }
+      indent++;
+      if (props.postId == 16090) {
+        console.log(
+          "  ".repeat(indent),
+          node.type,
+          node.name,
+          node.data,
+          node.next,
+        );
+      }
+      const out = fun(
+        { ...node, next: undefined },
+        index,
+        siblings,
+        parent,
+        defaultRenderer,
+      );
+      if (props.postId == 16090) {
+        console.log("  ".repeat(indent), "out:", !!out);
+      }
+      indent--;
+      return out;
+    };
+  };
+
+  return (
+    <View style={{ backgroundColor: "red" }}>
+      <HTMLView
+        RootComponent={props => <Text {...props} />}
+        nodeComponentProps={{
+          style: { borderWidth: 1, backgroundColor: "blue" },
+        }}
+        value={html.replace(/\n/g, "")}
+        renderNode={countedRenderNode()}
+        stylesheet={{
+          a: { color: theme.secondaryTint },
+          cite: { fontStyle: "italic" },
+          del: {
+            textDecorationLine: "line-through",
+            textDecorationStyle: "solid",
+          },
+          dfn: { fontStyle: "italic" },
+          ins: { textDecorationLine: "underline" },
+          samp: { fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace" },
+          small: { fontSize: 10 },
+        }}
+        textComponentProps={{
+          style: {
+            color: theme.text,
+          },
+        }}
+        onLinkLongPress={url =>
+          Alert.alert("Link", url, undefined, { cancelable: true })
+        }
+      />
+    </View>
   );
 }
 
@@ -185,7 +278,7 @@ function Details({ children }: { children: React.ReactChild[] }) {
   const theme = useTheme();
 
   const [summary, ...realChildren] = children.filter(
-    (x: any) => x.props.children.toString().trim() !== "",
+    (x: any) => x?.props?.children?.toString().trim() !== "",
   );
 
   return (

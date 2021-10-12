@@ -136,7 +136,11 @@ const Item = ({ postId }: { postId: PostId }) => {
         }}
       >
         <View style={[]}>
-          <PostDisplay postId={postId} navigation={navigation} />
+          <PostDisplay
+            postId={postId}
+            navigation={navigation}
+            truncateContent={true}
+          />
         </View>
       </Pressable>
     </SwipeAction>
