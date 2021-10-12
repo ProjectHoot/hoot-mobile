@@ -37,7 +37,6 @@ export default function HrefDisplay({ href }: { href: string }) {
             uri: hrefData.imageUrl,
           }}
           onLoad={event => {
-            console.log(event.nativeEvent.source);
             Platform.OS !== "web" &&
               setImgAspect(
                 Math.max(
