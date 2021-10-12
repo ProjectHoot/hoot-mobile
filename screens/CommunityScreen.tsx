@@ -95,7 +95,7 @@ const Item = ({ postId }: { postId: PostId }) => {
       <View
         style={[styles.item, { borderBottomColor: theme.secondaryBackground }]}
       >
-        <PostDisplay postId={postId} navigation={navigation} />
+        <PostDisplay postId={postId} navigation={navigation} truncateContent />
       </View>
     </Pressable>
   );

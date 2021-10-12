@@ -31,7 +31,7 @@ export default function PostDisplay(props: PostDisplayProps) {
             <Icon name="pin" size={25} color={theme.secondaryTint} />{" "}
           </>
         )}
-        {post.title} {post.id}
+        {post.title.trim()}
       </Text>
       <ActorDisplay
         name={post.author.username}
@@ -43,13 +43,14 @@ export default function PostDisplay(props: PostDisplayProps) {
         userId={post.author.id}
         style={styles.username}
       />
-      {post.href && <HrefDisplay href={post.href} />}
+      {!!post.href && <HrefDisplay href={post.href} />}
+      {!!post.href && !!post.content_html && <View style={{ marginTop: 15 }} />}
       {!!post.content_html && (
-        <View style={{ padding: 15 }}>
+        <View style={{ paddingHorizontal: 15 }}>
           <ContentDisplay
             contentHtml={post.content_html}
             contentText={post.content_text}
-            maxChars={props.truncateContent ? 200 : undefined}
+            maxChars={props.truncateContent ? 256 : undefined}
             postId={post.id}
           />
         </View>

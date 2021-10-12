@@ -16,6 +16,7 @@ export interface ContentDisplayProps {
 }
 
 export default function ContentDisplay(props: ContentDisplayProps) {
+  const [isTruncated, setIsTruncated] = useState(false);
   const theme = useTheme();
   const html = useMemo(
     () =>
@@ -30,10 +31,7 @@ export default function ContentDisplay(props: ContentDisplayProps) {
   const countedRenderNode = () => {
     let charCount = 0;
     let isSkip = false;
-    let indent = 0;
-    let isStarted = false;
-
-    const fun = (
+    return (
       node: HTMLViewNode,
       index: number,
       siblings: HTMLViewNode,
@@ -63,56 +61,19 @@ export default function ContentDisplay(props: ContentDisplayProps) {
             parent,
           );
           isSkip = false;
-          return null;
+          setIsTruncated(true);
+          return x;
         }
         charCount = newCharCount;
       }
       return renderNode(theme)(node, index, siblings, parent, defaultRenderer);
     };
-
-    return (
-      node: HTMLViewNode,
-      index: number,
-      siblings: HTMLViewNode,
-      parent: HTMLViewNode,
-      defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode,
-    ) => {
-      if (!isStarted && props.postId == 16090) {
-        console.log("\n\nSTART\n");
-        isStarted = true;
-      }
-      indent++;
-      if (props.postId == 16090) {
-        console.log(
-          "  ".repeat(indent),
-          node.type,
-          node.name,
-          node.data,
-          node.next,
-        );
-      }
-      const out = fun(
-        { ...node, next: undefined },
-        index,
-        siblings,
-        parent,
-        defaultRenderer,
-      );
-      if (props.postId == 16090) {
-        console.log("  ".repeat(indent), "out:", !!out);
-      }
-      indent--;
-      return out;
-    };
   };
 
   return (
-    <View style={{ backgroundColor: "red" }}>
+    <View>
       <HTMLView
         RootComponent={props => <Text {...props} />}
-        nodeComponentProps={{
-          style: { borderWidth: 1, backgroundColor: "blue" },
-        }}
         value={html.replace(/\n/g, "")}
         renderNode={countedRenderNode()}
         stylesheet={{
@@ -136,6 +97,11 @@ export default function ContentDisplay(props: ContentDisplayProps) {
           Alert.alert("Link", url, undefined, { cancelable: true })
         }
       />
+      {isTruncated && (
+        <Text style={{ color: theme.secondaryText, paddingVertical: 15 }}>
+          Read More
+        </Text>
+      )}
     </View>
   );
 }
