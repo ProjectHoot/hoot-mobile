@@ -35,7 +35,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
 import SettingsScreen from "../screens/SettingsScreen/SettingsScreen";
 import CommunityScreen from "../screens/CommunityScreen";
-import ReplyScreen from "../screens/ReplyScreen";
+import CommentScreen from "../screens/CommentScreen";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import NotificationScreen from "../screens/NotificationScreen";
@@ -79,7 +79,7 @@ function RootNavigator() {
       />
       <Stack.Screen name="Web" component={ModalScreen} />
       <Stack.Screen name="Post" component={ModalScreen} />
-      <Stack.Screen name="Reply" component={ReplyScreen} />
+      <Stack.Screen name="Comment" component={CommentScreen} />
       <Stack.Screen name="Community" component={CommunityScreen} />
       <Stack.Screen name="NewCommunity" component={NewCommunityScreen} />
       <Stack.Screen name="EditCommunity" component={EditCommunityScreen} />

@@ -1,6 +1,6 @@
 type CommunityId = number;
 type PostId = number;
-type ReplyId = number;
+type CommentId = number;
 type UserId = number;
 
 type SortOption = "hot" | "new" | "top";
@@ -11,7 +11,6 @@ interface LotideContext {
   login?: Login;
 }
 
-type SelectedReplyContext = [ReplyId | undefined, (reply?: ReplyId) => void];
 type VoteContext = {
   vote: boolean;
   score: number;
@@ -19,7 +18,7 @@ type VoteContext = {
   removeVote: () => void;
 };
 
-type ContentType = "post" | "reply";
+type ContentType = "post" | "comment";
 
 interface Login {
   token: string;
@@ -44,7 +43,7 @@ interface InstanceInfo {
 interface UserNotification {
   unseen: boolean;
   type: "post_reply" | "comment_reply";
-  reply: {
+  comment: {
     id: number;
     remote_url: string;
     content_text?: string;
@@ -60,16 +59,16 @@ interface UserNotification {
 
 interface FullNotification {
   unseen: boolean;
-  replyId: ReplyId;
+  commentId: CommentId;
   origin: {
-    type: "post" | "reply";
+    type: "post" | "comment";
     id: number;
   };
   postId: PostId;
 }
 
 interface FullNotificationOrigin {
-  type: "post" | "reply";
+  type: "post" | "comment";
   id: number;
 }
 
@@ -98,7 +97,7 @@ interface Post {
   sticky: boolean;
   title: string;
   your_vote?: boolean;
-  replies?: Paged<ReplyId>;
+  replies?: Paged<CommentId>;
 }
 
 interface NewPost {
@@ -137,7 +136,7 @@ interface Community {
   };
 }
 
-interface Reply {
+interface Comment {
   id: number;
   content_text: string;
   content_html: string;
@@ -151,10 +150,10 @@ interface Reply {
   deleted: boolean;
   local: boolean;
   /**
-   * If undefined, then the reply has replies that aren't being loaded due to depth restrictions
+   * If undefined, then the comment has replies that aren't being loaded due to depth restrictions
    * The api will need to be hit again to get them
    * */
-  replies?: Paged<ReplyId>;
+  replies?: Paged<CommentId>;
   your_vote?: boolean;
   score: number;
 }

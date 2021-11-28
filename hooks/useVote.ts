@@ -3,9 +3,9 @@ import { setPostVote } from "../slices/postSlice";
 import { AppDispatch } from "../store/reduxStore";
 import * as LotideService from "../services/LotideService";
 import { useLotideCtx } from "./useLotideCtx";
-import { setReplyVote } from "../slices/replySlice";
+import { setCommentVote } from "../slices/commentSlice";
 
-export default function useVote(type: ContentType, content: Post | Reply) {
+export default function useVote(type: ContentType, content: Post | Comment) {
   const isUpvoted = !!content.your_vote;
   const dispatch = useDispatch<AppDispatch>();
   const ctx = useLotideCtx();
@@ -14,7 +14,7 @@ export default function useVote(type: ContentType, content: Post | Reply) {
     if (type == "post") {
       dispatch(setPostVote({ id: content.id, vote }));
     } else {
-      dispatch(setReplyVote({ id: content.id, vote }));
+      dispatch(setCommentVote({ id: content.id, vote }));
     }
   }
 
@@ -23,7 +23,7 @@ export default function useVote(type: ContentType, content: Post | Reply) {
     if (type == "post") {
       LotideService.applyVote(ctx, content.id).then(() => dispatchVote(true));
     } else {
-      LotideService.applyReplyVote(ctx, content.id).then(() =>
+      LotideService.applyCommentVote(ctx, content.id).then(() =>
         dispatchVote(true),
       );
     }
@@ -34,7 +34,7 @@ export default function useVote(type: ContentType, content: Post | Reply) {
     if (type == "post") {
       LotideService.removeVote(ctx, content.id).then(() => dispatchVote(false));
     } else {
-      LotideService.removeReplyVote(ctx, content.id).then(() =>
+      LotideService.removeCommentVote(ctx, content.id).then(() =>
         dispatchVote(false),
       );
     }

@@ -15,7 +15,7 @@ import * as LotideService from "../services/LotideService";
 import ActorDisplay from "../components/ActorDisplay";
 import { useLotideCtx } from "../hooks/useLotideCtx";
 
-export default function ReplyScreen({
+export default function EditCommunityScreen({
   navigation,
   route,
 }: RootStackScreenProps<"EditCommunity">) {

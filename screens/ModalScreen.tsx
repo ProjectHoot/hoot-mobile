@@ -12,7 +12,7 @@ import PostDisplay from "../components/PostDisplay";
 import { View, Text } from "../components/Themed";
 import useTheme from "../hooks/useTheme";
 import { RootStackScreenProps } from "../types";
-import RepliesDisplay from "../components/RepliesDisplay";
+import CommentsDisplay from "../components/CommentsDisplay";
 import usePost from "../hooks/usePost";
 
 export default function ModalScreen({
@@ -21,8 +21,8 @@ export default function ModalScreen({
 }: RootStackScreenProps<"Post">) {
   const postId = route.params.postId;
   const post = usePost(postId);
-  const [highlightedReplies, setHighlightedReplies] = useState(
-    route.params.highlightedReplies,
+  const [highlightedComments, setHighlightedComments] = useState(
+    route.params.highlightedComments,
   );
   const theme = useTheme();
 
@@ -43,7 +43,7 @@ export default function ModalScreen({
             hitSlop={5}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Reply", {
+              navigation.navigate("Comment", {
                 id: post.id,
                 title: post.title,
                 html: post.content_html,
@@ -67,19 +67,19 @@ export default function ModalScreen({
             <Icon name="share-outline" size={25} color={theme.text} />
           </Pressable>
         </View>
-        {highlightedReplies && (
-          <Pressable onPress={() => setHighlightedReplies(undefined)}>
+        {highlightedComments && (
+          <Pressable onPress={() => setHighlightedComments(undefined)}>
             <Text style={{ color: theme.tint, paddingVertical: 10 }}>
-              Show all replies
+              Show all comments
             </Text>
           </Pressable>
         )}
-        <RepliesDisplay
+        <CommentsDisplay
           parentType="post"
           parentId={post.id}
           navigation={navigation}
           postId={post.id}
-          highlightedReplies={highlightedReplies}
+          highlightedComments={highlightedComments}
         />
         <View style={{ height: 300 }} />
       </View>

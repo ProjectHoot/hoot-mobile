@@ -14,7 +14,7 @@ import useVote from "../hooks/useVote";
 import { useLotideCtx } from "../hooks/useLotideCtx";
 
 export interface VoteCounterProps {
-  content: Post | Reply;
+  content: Post | Comment;
   type: ContentType;
   hideCount?: boolean;
   style?: ViewStyle;

@@ -15,9 +15,9 @@ export function transformToFullNotification(
 ): FullNotification {
   return {
     unseen: notification.unseen,
-    replyId: notification.reply.id,
+    commentId: notification.comment.id,
     origin: notification.comment
-      ? { type: "reply", id: notification.comment! }
+      ? { type: "comment", id: notification.comment.id }
       : { type: "post", id: notification.post.id },
     postId: notification.post.id,
   };
