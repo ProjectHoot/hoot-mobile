@@ -9,6 +9,7 @@ import useTheme from "../hooks/useTheme";
 import { lotideContextKV } from "../services/StorageService";
 import { setCtx } from "../slices/lotideSlice";
 import { useDispatch } from "react-redux";
+import ContentDisplay from "./ContentDisplay";
 
 export interface HostListProps {
   onSelect: (domain: string, name?: string, username?: string) => void;
@@ -65,6 +66,7 @@ export default function HostList(props: HostListProps) {
   const renderItem = ({ item }: { item: HostData }) => {
     const enabled = (item.instanceInfo?.apiVersion || 0) > 8;
     const color = enabled ? theme.text : theme.secondaryText;
+    const description = item.instanceInfo?.description;
     return (
       <View
         style={{
@@ -95,9 +97,16 @@ export default function HostList(props: HostListProps) {
                 {item.instanceInfo.software.version}
                 {!enabled && " - Out of date"}
               </Text>
-              {!!item.instanceInfo.description && (
-                <Text style={{ color }}>{item.instanceInfo.description}</Text>
-              )}
+              {!!description &&
+                (typeof description === "string" ? (
+                  <Text style={{ color }}>{description}</Text>
+                ) : (
+                  <ContentDisplay
+                    contentHtml={description.content_html}
+                    contentMarkdown={description.content_markdown}
+                    contentText={description.content_text}
+                  />
+                ))}
             </>
           ) : item.instanceInfo === null ? (
             <Text style={{ color }}>Failed to load info</Text>

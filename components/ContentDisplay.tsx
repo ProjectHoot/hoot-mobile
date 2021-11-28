@@ -225,7 +225,7 @@ const renderNode =
   };
 
 function parseMarkdown(markdown?: string): string | undefined {
-  if (markdown === "" || markdown === undefined) return undefined;
+  if (!markdown) return undefined;
   return markdown
     .replace(/^### (.*$)/gim, "<h3>$1</h3>")
     .replace(/^## (.*$)/gim, "<h2>$1</h2>")

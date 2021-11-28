@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Button,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import Icon from "@expo/vector-icons/Ionicons";
-import { View, Text, TextInput } from "../components/Themed";
+import { Alert, Platform, ScrollView, StyleSheet } from "react-native";
+import { View, Text } from "../components/Themed";
 import { getUserData } from "../services/LotideService";
 import { RootTabScreenProps } from "../types";
 import SuggestLogin from "../components/SuggestLogin";
@@ -19,14 +11,13 @@ import ActorDisplay from "../components/ActorDisplay";
 import { useLotideCtx } from "../hooks/useLotideCtx";
 import { useDispatch } from "react-redux";
 import { setCtx } from "../slices/lotideSlice";
+import { TappableList } from "../components/TappableList";
 
 export default function ProfileScreen({
   navigation,
 }: RootTabScreenProps<"ProfileScreen">) {
   const [profile, setProfile] = useState<Profile>();
-  const [profileList, setProfileList] = useState<string[]>([]);
   const [communities, setCommunities] = useState<Community[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
   const [focusId, setFocusId] = useState(0);
   const theme = useTheme();
   const ctx = useLotideCtx();
@@ -51,15 +42,11 @@ export default function ProfileScreen({
     }
   }, [ctx?.login?.token, focusId]);
 
-  useEffect(() => {
-    StorageService.lotideContextKV
-      .listKeys()
-      .then(keys => setProfileList(keys));
-  }, [ctx, focusId]);
-
   if (ctx?.login === undefined) {
     return <SuggestLogin />;
   }
+
+  if (!profile) return <Text>Cannot load profile</Text>;
 
   function logout() {
     if (!ctx?.login) return;
@@ -100,113 +87,85 @@ export default function ProfileScreen({
     );
   }
 
+  function comingSoon() {
+    Alert.alert("Coming soon", "This feature isn't ready yet");
+  }
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
       <View style={styles.header}>
         <View>
-          <Pressable hitSlop={10} onPress={() => setIsEditing(x => !x)}>
-            <Text style={styles.title}>
-              {profile?.username || ctx.login.user.username}
-              {"  "}
-              <Icon
-                name="pencil-outline"
-                size={20}
-                color={theme.secondaryText}
-              />
-            </Text>
-          </Pressable>
-          <Text style={{ color: theme.secondaryText }}>{profile?.host}</Text>
-          {!!profile?.avatar && <Text>{profile?.avatar?.url}</Text>}
-          {!!profile?.description && <Text>{profile?.description}</Text>}
-        </View>
-        <Button
-          onPress={logout}
-          title="Log Out"
-          color={theme.secondaryTint}
-          accessibilityLabel="Log out of the Hoot network"
-        />
-      </View>
-      {isEditing && (
-        <View style={styles.editView}>
-          <TextInput style={styles.editViewText} placeholder="New email" />
-          <TextInput
-            style={styles.editViewText}
-            placeholder="User bio"
-            multiline={true}
+          <ActorDisplay
+            name={profile.username}
+            host={profile.host}
+            local={true}
+            showHost="always"
+            colorize="never"
+            newLine
+            style={{ fontSize: 18 }}
           />
-          <TextInput style={styles.editViewText} placeholder="New password" />
-          <TextInput
-            style={styles.editViewText}
-            placeholder="Confirm new password"
-          />
-          <View style={styles.editViewActionButtons}>
-            <Button
-              onPress={() => setIsEditing(false)}
-              title="Cancel"
-              color={theme.secondaryTint}
-              accessibilityLabel="Add profile"
-            />
-            <Button
-              onPress={() => Alert.alert("unimplemented")}
-              title="Submit"
-              color={theme.tint}
-              accessibilityLabel="Add profile"
-            />
-          </View>
+          {!!profile.avatar && <Text>{profile.avatar.url}</Text>}
+          {!!profile.description && <Text>{profile.description}</Text>}
         </View>
-      )}
-      <View style={styles.buttonView}>
-        <Button
-          onPress={() => dispatch(setCtx({}))}
-          title="Add Profile"
-          color={theme.tint}
-          accessibilityLabel="Add profile"
-        />
       </View>
-      {profileList
-        .map(p => [p, ...p.split("@")] as string[])
-        .map(p => [
-          p[0],
-          p[1],
-          p[2].replace("http://", "").replace("https://", "").split(/[/?#]/)[0],
-        ])
-        .map(p => (
-          <Pressable
-            key={p[0]}
-            style={[
-              styles.altProfileButton,
-              { borderColor: theme.secondaryBackground },
-            ]}
-            onPress={() => {
-              StorageService.lotideContextKV.query(p[0]).then(ctx => {
-                if (ctx !== undefined) {
-                  dispatch(setCtx(ctx));
-                  StorageService.lotideContext.store(ctx);
-                  setIsEditing(false);
-                }
-              });
-            }}
-          >
-            <ActorDisplay
-              name={p[1]}
-              host={p[2]}
-              local={true}
-              showHost={"always"}
-              colorize={"never"}
-              newLine={true}
-            />
-          </Pressable>
-        ))}
-      <View style={[styles.buttonView, { paddingTop: 10 }]}>
-        <Button
-          onPress={() => navigation.navigate("NewCommunity")}
-          title="Create Community"
-          color={theme.tint}
-          accessibilityLabel="Create a new community"
-        />
-      </View>
+      <TappableList
+        items={[
+          {
+            title: "Switch Account",
+            icon: "person-add-outline",
+            onPress: () => dispatch(setCtx({})),
+          },
+          {
+            title: "Log Out",
+            icon: "log-out-outline",
+            onPress: () => logout(),
+          },
+          {
+            title: "App Settings",
+            icon: "settings-outline",
+            disabled: true,
+            onPress: comingSoon,
+          },
+          {
+            title: "Edit Account",
+            icon: "pencil-outline",
+            disabled: true,
+            onPress: comingSoon,
+          },
+          {
+            title: "Your Posts / Comments",
+            icon: "newspaper-outline",
+            disabled: true,
+            onPress: comingSoon,
+          },
+          {
+            title: "Saved",
+            icon: "bookmark-outline",
+            disabled: true,
+            onPress: comingSoon,
+          },
+          {
+            title: "New Community",
+            icon: "people-outline",
+            onPress: () => navigation.navigate("NewCommunity"),
+          },
+        ]}
+        style={{ marginHorizontal: 20 }}
+      />
+
+      <TappableList
+        items={[
+          {
+            title: "Moderation",
+            icon: "shield-outline",
+            disabled: true,
+            onPress: comingSoon,
+          },
+        ]}
+        style={{ marginHorizontal: 20, marginTop: 20 }}
+      />
       <Text style={styles.followingTitle}>Communities You Follow:</Text>
       {communities.map(community => (
         <View
