@@ -33,7 +33,7 @@ import FeedScreen from "../screens/FeedScreen";
 import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NewPostScreen from "../screens/NewPostScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import SettingsScreen from "../screens/SettingsScreen/SettingsScreen";
 import CommunityScreen from "../screens/CommunityScreen";
 import ReplyScreen from "../screens/ReplyScreen";
 import ModalScreen from "../screens/ModalScreen";

@@ -27,7 +27,13 @@ interface Login {
 }
 
 interface InstanceInfo {
-  description?: string;
+  description?:
+    | string
+    | {
+        content_html?: string;
+        content_markdown?: string;
+        content_text?: string;
+      };
   apiVersion: number;
   software: {
     name: string;
