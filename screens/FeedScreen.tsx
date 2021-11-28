@@ -113,7 +113,7 @@ const Item = ({ postId }: { postId: PostId }) => {
         setIsCommitting(true);
       }}
       onRightSide={() => {
-        navigation.navigate("Reply", {
+        navigation.navigate("Comment", {
           id: post.id,
           title: post.title,
           html: post.content_html,

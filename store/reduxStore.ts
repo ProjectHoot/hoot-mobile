@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import postReducer from "../slices/postSlice";
 import lotideReducer from "../slices/lotideSlice";
-import replyReducer from "../slices/replySlice";
+import commentReducer from "../slices/commentSlice";
 
 const store = configureStore({
   reducer: {
     lotide: lotideReducer,
     posts: postReducer,
-    replies: replyReducer,
+    comments: commentReducer,
   },
 });
 

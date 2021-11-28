@@ -15,10 +15,10 @@ import ContentDisplay from "../components/ContentDisplay";
 import { ScrollView } from "react-native-gesture-handler";
 import { useLotideCtx } from "../hooks/useLotideCtx";
 
-export default function ReplyScreen({
+export default function CommentScreen({
   navigation,
   route,
-}: RootStackScreenProps<"Reply">) {
+}: RootStackScreenProps<"Comment">) {
   const [text, setText] = useState("");
   const scrollRef = useRef<ScrollView>(null);
   const theme = useTheme();
@@ -31,9 +31,11 @@ export default function ReplyScreen({
   function submit() {
     if (!ctx?.login) return;
     if (type === "post") {
-      LotideService.replyToPost(ctx, id, text).then(() => navigation.pop());
+      LotideService.commentOnPost(ctx, id, text).then(() => navigation.pop());
     } else {
-      LotideService.replyToReply(ctx, id, text).then(() => navigation.pop());
+      LotideService.commentOnComment(ctx, id, text).then(() =>
+        navigation.pop(),
+      );
     }
   }
 
@@ -59,7 +61,7 @@ export default function ReplyScreen({
           <TextInput
             style={styles.input}
             multiline
-            placeholder="Type your reply"
+            placeholder="Type your comment"
             value={text}
             onChangeText={setText}
             onFocus={scrollToBottom}

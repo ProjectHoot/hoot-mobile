@@ -8,7 +8,7 @@ import SuggestLogin from "../components/SuggestLogin";
 import { Text, View } from "../components/Themed";
 import { useLotideCtx } from "../hooks/useLotideCtx";
 import usePost from "../hooks/usePost";
-import useReply from "../hooks/useReply";
+import useComment from "../hooks/useComment";
 import useTheme from "../hooks/useTheme";
 import * as LotideService from "../services/LotideService";
 import { RootTabScreenProps } from "../types";
@@ -45,7 +45,7 @@ export default function NotificationScreen({
       style={[styles.container, { backgroundColor: theme.background }]}
       data={notifications}
       renderItem={renderItem}
-      keyExtractor={(item, index) => `${item.replyId}-${index}`}
+      keyExtractor={(item, index) => `${item.commentId}-${index}`}
       refreshing={isRefreshing}
       onRefresh={() => {
         setIsRefreshing(true);
@@ -57,14 +57,14 @@ export default function NotificationScreen({
 
 const Item = ({ item }: { item: FullNotification }) => {
   const post = usePost(item.postId);
-  const originReply = useReply(
-    item.origin.type == "reply" ? item.origin.id : undefined,
+  const originComment = useComment(
+    item.origin.type === "comment" ? item.origin.id : undefined,
   );
-  const reply = useReply(item.replyId);
+  const comment = useComment(item.commentId);
   const theme = useTheme();
   const navigation = useNavigation();
 
-  if (!post || !reply || (item.origin.type === "reply" && !originReply))
+  if (!post || !comment || (item.origin.type === "comment" && !originComment))
     return null;
 
   return (
@@ -76,18 +76,18 @@ const Item = ({ item }: { item: FullNotification }) => {
         },
       ]}
       onPress={() => {
-        const highlightedReplies =
-          item.origin.type === "reply"
-            ? [item.origin.id, item.replyId]
-            : [item.replyId];
+        const highlightedComments =
+          item.origin.type === "comment"
+            ? [item.origin.id, item.commentId]
+            : [item.commentId];
         navigation.navigate("Post", {
           postId: item.postId,
-          highlightedReplies,
+          highlightedComments,
         });
       }}
     >
       <Text>
-        New reply to your {item.origin.type == "post" ? "Post" : "Reply"}
+        New reply to your {item.origin.type == "post" ? "Post" : "Comment"}
       </Text>
       <Text style={styles.title}>{post.title}</Text>
       <ActorDisplay
@@ -98,20 +98,20 @@ const Item = ({ item }: { item: FullNotification }) => {
         colorize="never"
         userId={post.author.id}
       />
-      {item.origin.type === "reply" && originReply ? (
+      {item.origin.type === "comment" && originComment ? (
         <>
           <View style={[styles.level1, { borderColor: theme.secondaryText }]}>
             <ActorDisplay
-              name={originReply.author.username}
-              host={originReply.author.host}
-              local={originReply.author.local}
+              name={originComment.author.username}
+              host={originComment.author.host}
+              local={originComment.author.local}
               showHost="only_foreign"
               colorize="only_foreign"
-              userId={originReply.author.id}
+              userId={originComment.author.id}
             />
             <ContentDisplay
-              contentHtml={originReply.content_html}
-              contentText={originReply.content_text}
+              contentHtml={originComment.content_html}
+              contentText={originComment.content_text}
             />
           </View>
           <View
@@ -124,15 +124,15 @@ const Item = ({ item }: { item: FullNotification }) => {
             ]}
           >
             <ActorDisplay
-              name={reply.author.username}
-              host={reply.author.host}
-              local={reply.author.local}
+              name={comment.author.username}
+              host={comment.author.host}
+              local={comment.author.local}
               showHost="only_foreign"
               colorize="only_foreign"
             />
             <ContentDisplay
-              contentHtml={reply.content_html}
-              contentText={reply.content_text}
+              contentHtml={comment.content_html}
+              contentText={comment.content_text}
             />
           </View>
         </>
@@ -148,15 +148,15 @@ const Item = ({ item }: { item: FullNotification }) => {
             ]}
           >
             <ActorDisplay
-              name={reply.author.username}
-              host={reply.author.host}
-              local={reply.author.local}
+              name={comment.author.username}
+              host={comment.author.host}
+              local={comment.author.local}
               showHost="only_foreign"
               colorize="only_foreign"
             />
             <ContentDisplay
-              contentHtml={reply.content_html}
-              contentText={reply.content_text}
+              contentHtml={comment.content_html}
+              contentText={comment.content_text}
             />
           </View>
         </>

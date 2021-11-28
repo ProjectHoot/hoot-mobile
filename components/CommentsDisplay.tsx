@@ -9,28 +9,28 @@ import ContentDisplay from "./ContentDisplay";
 import VoteCounter from "./VoteCounter";
 import ActorDisplay from "./ActorDisplay";
 import { useLotideCtx } from "../hooks/useLotideCtx";
-import useReplies from "../hooks/useReplies";
-import useReply from "../hooks/useReply";
-import useSelectedReply from "../hooks/useSelectedReply";
+import useComments from "../hooks/useComments";
+import useComment from "../hooks/useComment";
+import useSelectedComment from "../hooks/useSelectedComment";
 
-export interface RepliesDisplayProps {
+export interface CommentsDisplayProps {
   parentType: ContentType;
   parentId: number;
   navigation: any;
   layer?: number;
   postId?: PostId;
-  highlightedReplies?: ReplyId[];
+  highlightedComments?: CommentId[];
 }
 
-export default function RepliesDisplay({
+export default function CommentsDisplay({
   parentType,
   parentId,
   navigation,
   layer = 0,
   postId,
-  highlightedReplies = [],
-}: RepliesDisplayProps) {
-  const { replies, loadNextPage } = useReplies(parentType, parentId);
+  highlightedComments = [],
+}: CommentsDisplayProps) {
+  const { comments, loadNextPage } = useComments(parentType, parentId);
   const theme = useTheme();
   const ctx = useLotideCtx();
   if (!ctx) return null;
@@ -46,62 +46,62 @@ export default function RepliesDisplay({
     theme.purple,
   ];
 
-  if (!replies) return <Text>Can't find replies</Text>;
+  if (!comments) return <Text>Can't find comments</Text>;
 
   return (
     <View>
-      {replies.items.map(replyId => (
-        <ReplyDisplay
-          replyId={replyId}
+      {comments.items.map(commentId => (
+        <CommentDisplay
+          commentId={commentId}
           layer={layer}
-          key={replyId}
+          key={commentId}
           navigation={navigation}
           layerColors={layerColors}
           postId={postId}
-          highlightedReplies={highlightedReplies}
+          highlightedComments={highlightedComments}
         />
       ))}
-      {replies.next_page !== null && (
+      {comments.next_page !== null && (
         <Pressable hitSlop={5} onPress={loadNextPage}>
           <Text style={{ color: theme.tint, paddingTop: 5, paddingBottom: 10 }}>
-            More replies <Icon name="chevron-down-outline" />
+            More comments <Icon name="chevron-down-outline" />
           </Text>
         </Pressable>
       )}
-      {replies.next_page === null && layer === 0 && (
+      {comments.next_page === null && layer === 0 && (
         <Text style={{ margin: 17, color: theme.secondaryText }}>
-          {replies.items.length > 0 ? "No more replies" : "No replies yet"}
+          {comments.items.length > 0 ? "No more comments" : "No comments yet"}
         </Text>
       )}
     </View>
   );
 }
 
-function ReplyDisplay({
-  replyId,
+function CommentDisplay({
+  commentId,
   layer = 0,
   navigation,
   layerColors,
   postId,
-  highlightedReplies = [],
+  highlightedComments = [],
 }: {
-  replyId: ReplyId;
+  commentId: CommentId;
   layer: number;
   navigation: any;
   layerColors: ColorValue[];
   postId?: PostId;
-  highlightedReplies?: ReplyId[];
+  highlightedComments?: CommentId[];
 }) {
-  const reply = useReply(replyId);
-  const { replies, loadNextPage } = useReplies("reply", replyId);
+  const comment = useComment(commentId);
+  const { comments, loadNextPage } = useComments("comment", commentId);
   const [showChildren, setShowChildren] = React.useState(true);
   const theme = useTheme();
   const ctx = useLotideCtx();
-  const [selectedReply, setSelectedReply] = useSelectedReply();
+  const [selectedComment, setSelectedComment] = useSelectedComment();
 
   if (!ctx) return null;
 
-  if (!reply) return <Text>Failed to load reply</Text>;
+  if (!comment) return <Text>Failed to load comment</Text>;
 
   return (
     <View style={{ paddingLeft: 0 }}>
@@ -114,7 +114,9 @@ function ReplyDisplay({
       >
         <Pressable
           onPress={() =>
-            setSelectedReply(selectedReply != reply.id ? reply.id : undefined)
+            setSelectedComment(
+              selectedComment != comment.id ? comment.id : undefined,
+            )
           }
         >
           <View
@@ -123,7 +125,7 @@ function ReplyDisplay({
               borderColor: layerColors[layer % layerColors.length],
               paddingLeft: 15,
               paddingVertical: 3,
-              backgroundColor: highlightedReplies.includes(reply.id)
+              backgroundColor: highlightedComments.includes(comment.id)
                 ? theme.secondaryBackground
                 : theme.background,
             }}
@@ -138,13 +140,13 @@ function ReplyDisplay({
               }}
             >
               <ActorDisplay
-                name={reply.author.username}
-                host={reply.author.host}
-                local={reply.author.local}
+                name={comment.author.username}
+                host={comment.author.host}
+                local={comment.author.local}
                 showHost="only_foreign"
                 colorize="only_foreign"
                 style={{ fontSize: 16, fontWeight: "500" }}
-                userId={reply.author.id}
+                userId={comment.author.id}
               />
               <View
                 style={{
@@ -156,27 +158,27 @@ function ReplyDisplay({
               >
                 <Text>{!showChildren && "...    "}</Text>
                 <Icon
-                  name={reply.your_vote ? "heart" : "heart-outline"}
+                  name={comment.your_vote ? "heart" : "heart-outline"}
                   size={14}
                   color={theme.text}
                   light
                 />
-                <Text>{` ${reply.score}   `}</Text>
-                <ElapsedTime time={reply.created} />
+                <Text>{` ${comment.score}   `}</Text>
+                <ElapsedTime time={comment.created} />
               </View>
             </View>
-            {showChildren && !!reply.content_html && (
+            {showChildren && !!comment.content_html && (
               <ContentDisplay
-                contentHtml={reply.content_html}
-                contentText={reply.content_text}
+                contentHtml={comment.content_html}
+                contentText={comment.content_text}
               />
             )}
           </View>
-          {selectedReply == reply.id && (
+          {selectedComment == comment.id && (
             <View style={styles.buttons}>
               <VoteCounter
-                type="reply"
-                content={reply}
+                type="comment"
+                content={comment}
                 hideCount
                 style={styles.button}
               />
@@ -187,11 +189,11 @@ function ReplyDisplay({
                 style={styles.button}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  navigation.navigate("Reply", {
-                    id: reply.id,
-                    title: reply.author.username,
-                    html: reply.content_html,
-                    type: "reply",
+                  navigation.navigate("Comment", {
+                    id: comment.id,
+                    title: comment.author.username,
+                    html: comment.content_html,
+                    type: "comment",
                   });
                 }}
               >
@@ -205,7 +207,7 @@ function ReplyDisplay({
               >
                 <Icon
                   color={
-                    (reply.replies?.items.length || 0) > 0
+                    (comment.replies?.items.length || 0) > 0
                       ? theme.text
                       : theme.secondaryText
                   }
@@ -226,27 +228,27 @@ function ReplyDisplay({
           )}
         </Pressable>
       </View>
-      {replies &&
-        replies.items.length > 0 &&
+      {comments &&
+        comments.items.length > 0 &&
         (showChildren ? (
           <View style={{ paddingLeft: 15 }}>
-            <RepliesDisplay
-              parentType="reply"
-              parentId={replyId}
+            <CommentsDisplay
+              parentType="comment"
+              parentId={commentId}
               layer={layer + 1}
               navigation={navigation}
               postId={postId}
-              highlightedReplies={highlightedReplies}
+              highlightedComments={highlightedComments}
             />
           </View>
         ) : (
           <Text>...</Text>
         ))}
-      {replies == undefined && (
+      {comments == undefined && (
         <Pressable hitSlop={5} onPress={loadNextPage}>
           <View style={{ paddingHorizontal: 15, paddingBottom: 10 }}>
             <Text style={{ color: theme.tint }}>
-              More replies <Icon name="chevron-forward-outline" />
+              More comments <Icon name="chevron-forward-outline" />
             </Text>
           </View>
         </Pressable>
