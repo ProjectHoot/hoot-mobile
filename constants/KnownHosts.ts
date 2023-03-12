@@ -14,7 +14,7 @@ export const KnownHosts: KnownHost[] = [
   },
   { 
     name: "nfld",
-    domain: "https://lotide.nfld.uk/",
+    domain: "lotide.nfld.uk",
   },
   {
     name: "Tide C",
