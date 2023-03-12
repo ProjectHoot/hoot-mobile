@@ -15,4 +15,5 @@ This is just for development because the moment expo stops, you lose access to t
 
 1. Open an account on expo.dev
 2. run the command: "eas build -p android --profile preview"
-3.
+3. enter the username and password of your account
+4. Log onto expo.dev to acquire your apk file
