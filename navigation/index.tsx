@@ -141,7 +141,7 @@ function BottomTabNavigator({ navigation }: any) {
               onPress={() => {
                 console.log(ctx);
                 if (Platform.OS == "ios") {
-                  ActionSheetIOS.showActionSheetWithOptions(
+ 		   ActionSheetIOS.showActionSheetWithOptions(
                     {
                       options: [
                         "Cancel",
@@ -192,16 +192,6 @@ function BottomTabNavigator({ navigation }: any) {
         })}
       />
       <BottomTab.Screen
-        name="SearchScreen"
-        component={SearchScreen}
-        options={{
-          title: "Communities",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="search-outline" color={color} />
-          ),
-        }}
-      />
-      <BottomTab.Screen
         name="NewPostScreen"
         component={NewPostScreen}
         initialParams={{ community: undefined }}
@@ -219,33 +209,6 @@ function BottomTabNavigator({ navigation }: any) {
           title: "Notifications",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="notifications-outline" color={color} />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="person-circle-outline" color={color} />
-          ),
-          headerLeft: () => (
-            <Pressable
-              onPress={() => {
-                navigation.navigate("Settings");
-              }}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <Icon
-                name="cog-outline"
-                size={25}
-                color={Colors[colorScheme].secondaryText}
-                style={{ marginLeft: 15 }}
-              />
-            </Pressable>
           ),
         }}
       />
