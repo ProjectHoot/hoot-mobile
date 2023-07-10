@@ -5,16 +5,16 @@ export interface KnownHost {
 
 export const KnownHosts: KnownHost[] = [
   {
-    name: "Gold&Black",
-    domain: "hoot.goldandblack.xyz",
-  },
-  {
     name: "Narwhal.City",
     domain: "narwhal.city",
   },
   {
     name: "FBXL",
     domain: "lotide.fbxl.net",
+  },
+  { 
+    name: "nfld",
+    domain: "lotide.nfld.uk",
   },
   {
     name: "Tide C",

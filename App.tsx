@@ -34,7 +34,7 @@ function App() {
       .then(data => {
         console.log(ctx);
         console.log("version", data.apiVersion);
-        if (data.apiVersion < 8 || data.apiVersion > 10) throw "Bad version";
+        if (data.apiVersion < 8) throw "Bad version";
         if (data.apiVersion == ctx.apiVersion) return;
         applyNewContext({
           ...ctx,
